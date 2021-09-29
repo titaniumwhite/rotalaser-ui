@@ -73,7 +73,7 @@
           <div class="pa-2">
           <v-switch
             v-model="$vuetify.theme.dark"
-            label="Cambia Tema"
+            label="Tema Scuro"
           >
           </v-switch>
           </div>
