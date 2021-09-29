@@ -11,6 +11,7 @@ export default new Vuetify({
       iconfont: 'mdiSvg' || 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
     },
     theme: {
+      
       themes: {
         dark: {
           primary: colors.blue.lighten3,
@@ -19,11 +20,17 @@ export default new Vuetify({
           error: colors.red.accent3,   
         },
         light: {
-          primary: colors.cyan,
-          secondary: colors.cyan.darken1,
+          primary: colors.blue,
+          secondary: colors.pink.lighten1,
           accent: colors.shades.black,
           error: colors.red.accent3,        
         }
       }
+    },
+    options: {
+      themeCache: {
+        get: key => localStorage.getItem(key),
+        set: (key, value) => localStorage.setItem(key, value),
+      },
     },
 })
