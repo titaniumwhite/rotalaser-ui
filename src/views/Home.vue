@@ -11,11 +11,29 @@
 
         <v-toolbar-title class="font-weight-bold">{{text}}</v-toolbar-title>
 
-        <v-spacer></v-spacer>
+        <v-row
+          no-gutters
+          :align="align"
+          style="height: 1px;"
+        >
 
-        <v-btn icon>
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
+          <v-col></v-col>
+
+          <v-col
+            cols = 8
+          >
+            
+            <v-text-field
+              filled
+              label="Cerca"
+              prepend-inner-icon="mdi-magnify"
+          ></v-text-field>
+          
+          </v-col>
+
+          <v-col></v-col>
+        </v-row>
+
 
         <v-btn icon>
           <v-icon>mdi-filter</v-icon>
