@@ -5,125 +5,128 @@
     */
 -->
 <template>
-   <v-app>
-    <v-main>
+  <div id="app">
+  <v-app id="inspire">
+    <v-card>
+       <v-system-bar 
+          color="primary darken-3"
+          height="30"
+          window
+          dark
+      >
+      </v-system-bar>
+      <v-toolbar
+        color="primary"
+        dark
+        flat
+      >
 
-        <v-system-bar 
-            color="primary darken-3"
-            height="30"
-            window
-            dark
-        >
-        </v-system-bar>
+        <v-btn icon 
+          @click.stop="$router.go(-1)">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+  
+        <v-toolbar-title class="font-weight-bold">Fustella {{$route.params.id}}</v-toolbar-title>
 
-        <v-app-bar
-            color="primary"
-            dark
-        >
-            <v-btn icon 
-            @click.stop="$router.go(-1)">
-            <v-icon>mdi-arrow-left</v-icon>
-            </v-btn>
+        <v-spacer></v-spacer>
 
-            <v-toolbar-title class="font-weight-bold">Fustella {{$route.params.id}}</v-toolbar-title>
-            
-            <v-spacer></v-spacer>
+        <v-text-field 
+            transition="slide-x-reverse-transition"
+            solo
+            dense 
+            hide-details
+            rounded
+            clearable
+            single-line
+            background-color="primary darken-3"
+            label="Cerca"
+            prepend-inner-icon="mdi-magnify"
+        > 
+        </v-text-field>
+  
+        <v-spacer></v-spacer>
 
-            <v-text-field 
-                transition="slide-x-reverse-transition"
-                solo
-                dense 
-                hide-details
-                rounded
-                clearable
-                single-line
-                background-color="primary darken-3"
-                label="Cerca"
-                prepend-inner-icon="mdi-magnify"
-            > 
-            </v-text-field>
-
-            <v-spacer></v-spacer>
-        
-            <v-btn icon>
+        <v-btn icon>
             <v-icon>mdi-filter</v-icon>
-            </v-btn>
+        </v-btn>
 
-            <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                    color="white"
-                    icon
-                    v-bind="attrs"
-                    v-on="on"
-                    @click="$router.push('/')"
-                    >
-                    <v-icon>mdi-logout-variant</v-icon>
-                    </v-btn>
-                </template>
-                <span>Logout</span>
-            </v-tooltip>
-            
-            <template v-slot:extension>
-                <v-tabs
-                v-model="tab"
-                align-with-title
+        <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                color="white"
+                icon
+                v-bind="attrs"
+                v-on="on"
+                @click="$router.push('/')"
                 >
-                    <v-tabs-slider color="secondary"></v-tabs-slider>
-
-                    <v-tab
-                        v-for="item in items"
-                        :key="item"
-                    >
-                        {{ item }}
-                    </v-tab>
-
-                    <v-tab-item
-                        v-for="item in items"
-                        :key="item"
-                    >  
-                        <v-container  fluid>  
-                            
-                            <v-row v-if="item == 'grafici'">
-
-                                <v-col auto>
-                                    <v-card>
-                                        <v-card-title>Grafico</v-card-title>
-                                        <v-layout justify-center>
-                                            <mdb-line-chart
-                                            :data="lineChartData"
-                                            :options="lineChartOptions"   
-                                            ></mdb-line-chart>
-                                        </v-layout>     
-                                    </v-card>
-                                </v-col>
-
-                                <v-col auto>
-                                    <v-card>
-                                        <v-card-title>Grafico 2</v-card-title>
-                                
-                                        <v-layout justify-center>
-                                            <mdb-line-chart
-                                            :data="lineChartData1"
-                                            :options="lineChartOptions1"
-                                            ></mdb-line-chart>
-                                        </v-layout>  
-
-                                    </v-card>
-                                </v-col>
-                            </v-row>
-                        </v-container>
-                    </v-tab-item>
-                </v-tabs>
+                <v-icon>mdi-logout-variant</v-icon>
+                </v-btn>
             </template>
-        </v-app-bar>
+            <span>Logout</span>
+        </v-tooltip>
+  
+        <template v-slot:extension>
+          <v-tabs
+            v-model="tab"
+            align-with-title
+          >
+            <v-tabs-slider color="secondary"></v-tabs-slider>
+  
+            <v-tab
+              v-for="item in items"
+              :key="item"
+            >
+              {{ item }}
+            </v-tab>
+          </v-tabs>
+        </template>
+      </v-toolbar>
+  
 
-    </v-main>  
+      <v-tabs-items v-model="tab">
+        <v-tab-item
+          v-for="item in items"
+          :key="item"
+        >
+        <v-container fluid>
+          <v-row>
+            <v-col auto v-if="item=='grafici'">
+              <v-card>
+              <v-card-title>Grafico</v-card-title>
+
+              <v-layout justify-center>
+                  <mdb-line-chart
+                    :data="lineChartData"
+                    :options="lineChartOptions"   
+                    ></mdb-line-chart>
+              </v-layout>
+              </v-card>
+            </v-col>
+
+            <v-col auto>
+              <v-card>
+              <v-card-title>Grafico Brutto</v-card-title>
+              
+              <v-layout justify-center>
+
+              <mdb-line-chart
+                :data="lineChartData1"
+                :options="lineChartOptions1"
+              ></mdb-line-chart> 
+              </v-layout>
+              </v-card>     
+            </v-col>
+            
+          </v-row>
+        
+          </v-container>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-card>
   </v-app>
+</div>
+
 </template>
-
-
-
 
 <script>
 import { mdbLineChart} from "mdbvue";
@@ -134,6 +137,7 @@ import { mdbLineChart} from "mdbvue";
     },
     data() {
       return {
+        tab: null,
         items: [
           'grafici', 'cad', 'analisi predittiva'
         ],

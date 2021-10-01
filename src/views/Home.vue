@@ -60,7 +60,6 @@
       <v-navigation-drawer
         v-model="drawer"
         absolute
-        bottom
         temporary
       >
         <v-layout column fill-height>        
