@@ -55,6 +55,7 @@
           v-show="!searching">
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
+
         <v-btn icon>
             <v-icon>mdi-filter</v-icon>
         </v-btn>
@@ -82,6 +83,7 @@
             <v-tabs-slider color="secondary"></v-tabs-slider>
   
             <v-tab
+              dark
               v-for="item in items"
               :key="item"
             >
@@ -250,3 +252,10 @@ import { mdbLineChart} from "mdbvue";
     }
   };
 </script>
+
+<style>
+/* Fixing selected tab invisible in dark mode */
+.v-tabs-slider-wrapper, .v-tab--active {
+  color: #fff !important;
+}
+</style>
