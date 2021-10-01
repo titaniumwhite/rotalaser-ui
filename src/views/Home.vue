@@ -1,5 +1,5 @@
 <template>
-   <v-app>
+   <v-app> 
      <v-main>
       <v-system-bar 
         color="primary darken-3"
@@ -7,44 +7,33 @@
         window
         dark
       >
-        <span 
-          class="white--text font-weight-bold"
-        >
-        {{text}}
-        </span>
-
-        <v-spacer></v-spacer>
 
       </v-system-bar>
+
       <v-app-bar
         color="primary"
         dark
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <v-row
-          no-gutters
-          style="height: 50px;"
-        >
 
-          <v-col></v-col>
-
-          <v-col
-            cols = 8
-          >
-            
-            <v-text-field
+        <v-toolbar-title class="font-weight-bold">{{text}}</v-toolbar-title>
+          
+        <v-spacer></v-spacer>
+        <v-text-field 
+              transition="slide-x-reverse-transition"
               solo
+              dense 
+              hide-details
               rounded
+              clearable
+              single-line
               background-color="primary darken-3"
               label="Cerca"
               prepend-inner-icon="mdi-magnify"
-          ></v-text-field>
-          
-          </v-col>
-
-          <v-col></v-col>
-        </v-row>
-
+        > 
+        </v-text-field>
+        <v-spacer></v-spacer>
+        
 
         <v-btn icon>
           <v-icon>mdi-filter</v-icon>
@@ -57,12 +46,14 @@
               icon
               v-bind="attrs"
               v-on="on"
+              @click="$router.push('/')"
             >
               <v-icon>mdi-logout-variant</v-icon>
             </v-btn>
           </template>
           <span>Logout</span>
         </v-tooltip>
+
 
           <!---
           <v-menu
@@ -100,71 +91,67 @@
         bottom
         temporary
       >
-      <v-layout column fill-height>        
-        <v-list
-          dense
-          two-line
-        >
-          <v-list-item-group
-            v-model="group"
-            active-class="secondary--text text--accent-4"
+        <v-layout column fill-height>        
+          <v-list
+            dense
+            two-line
           >
-            <v-list-item link
-              @click="text='Clienti'">
-              <v-list-item-icon>
-                <v-icon>mdi-account-multiple</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Clienti</v-list-item-title>
-            </v-list-item>
+            <v-list-item-group
+              v-model="group"
+              active-class="secondary--text text--accent-4"
+            >
+              <v-list-item link
+                @click="text='Clienti'">
+                <v-list-item-icon>
+                  <v-icon>mdi-account-multiple</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Clienti</v-list-item-title>
+              </v-list-item>
 
-            <v-list-item link
-              @click="text='Fabbriche'">
-              <v-list-item-icon>
-                <v-icon>mdi-factory</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Fabbriche</v-list-item-title>
-            </v-list-item>
+              <v-list-item link
+                @click="text='Fabbriche'">
+                <v-list-item-icon>
+                  <v-icon>mdi-factory</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Fabbriche</v-list-item-title>
+              </v-list-item>
 
-            <v-list-item link
-              @click="text='Gestisci'">
-              <v-list-item-icon>
-                <v-icon>mdi-cogs</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Gestisci</v-list-item-title>
-            </v-list-item>
+              <v-list-item link
+                @click="text='Gestisci'">
+                <v-list-item-icon>
+                  <v-icon>mdi-cogs</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Gestisci</v-list-item-title>
+              </v-list-item>
 
-          </v-list-item-group>
-        </v-list>
+            </v-list-item-group>
+          </v-list>
 
-        <v-spacer></v-spacer>
-        <v-divider></v-divider>
-
-      </v-layout>
-      
-      <template v-slot:append>
-        <div class="pl-4 mb-2">
-        <v-switch
-          class="shrink"
-          dense
-          v-model="$vuetify.theme.dark"
-          label="Tema Scuro"
-        >
-        </v-switch>
-        </div>
-      </template>
-
-           
+          <!--<template v-slot:append>-->
+            <div class="pa-3">
+            <v-switch
+              color="secondary"
+             
+              v-model="$vuetify.theme.dark"
+              label="Tema Scuro"
+            >
+            </v-switch>
+            </div>
+          <!--</template>-->
+          
+        </v-layout> 
       </v-navigation-drawer>
 
       
       <v-container  fluid>
-        <v-row dense v-if="text == 'Clienti'">
+        <v-row dense v-if="$route.params.texty == 'Clienti' || text == 'Clienti'">
           <v-col 
             v-for="item in clienti"
             :key="item.message"
             :cols="item.flex"
           >
-            <v-card>
+            <v-card
+            @click="$router.push('/fustella/'+item.message)">
               
               <v-card-title v-text="item.message"></v-card-title>
               <v-card-subtitle>info</v-card-subtitle>
@@ -187,7 +174,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row dense v-else-if="text == 'Fabbriche'">
+        <v-row dense v-else-if="$route.params.texty == 'Fabbriche' || text == 'Fabbriche'">
           <v-col 
             v-for="item in fabbriche"
             :key="item.message"
@@ -216,7 +203,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row dense v-else-if="text == 'Gestisci'">
+        <v-row dense v-else-if="$route.params.texty == 'Gestisci'||text == 'Gestisci'">
           <v-col 
             v-for="item in clienti.concat(fabbriche)"
             :key="item.message"
@@ -246,7 +233,6 @@
           </v-col>
         </v-row>
       </v-container>
-      
     </v-main>  
   </v-app>
 </template>
@@ -274,7 +260,7 @@ export default {
       group () {
         this.drawer = false
       },
-    },
+    }
 };
 </script>
 
