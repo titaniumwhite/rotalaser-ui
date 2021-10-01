@@ -175,9 +175,9 @@
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
   
-                <v-btn icon>
-                  <v-icon>mdi-share-variant</v-icon>
-                </v-btn>
+
+
+
               </v-card-actions>
             </v-card>
           </v-col>
