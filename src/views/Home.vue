@@ -1,13 +1,14 @@
 <template>
-   <v-app> 
+   <v-app>
+
      <v-main>
+
       <v-system-bar 
         color="primary darken-3"
         height="30"
         window
         dark
       >
-
       </v-system-bar>
 
       <v-app-bar
@@ -54,35 +55,6 @@
           <span>Logout</span>
         </v-tooltip>
 
-
-          <!---
-          <v-menu
-            bottom
-            left
-            :close-on-content-click="closeOnContentClick"
-            :offset-y="offset"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                dark
-                icon
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-
-            <v-list>
-              <v-list-item
-                v-for="(item, i) in items"
-                :key="i"
-              >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        --->
       </v-app-bar>
     
       <v-navigation-drawer
@@ -116,28 +88,20 @@
                 <v-list-item-title>Fabbriche</v-list-item-title>
               </v-list-item>
 
-              <v-list-item link
-                @click="text='Gestisci'">
-                <v-list-item-icon>
-                  <v-icon>mdi-cogs</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>Gestisci</v-list-item-title>
-              </v-list-item>
-
             </v-list-item-group>
           </v-list>
 
-          <!--<template v-slot:append>-->
-            <div class="pa-3">
-            <v-switch
-              color="secondary"
-             
-              v-model="$vuetify.theme.dark"
-              label="Tema Scuro"
-            >
-            </v-switch>
-            </div>
-          <!--</template>-->
+          
+          <div class="pa-3">
+          <v-switch
+            color="secondary"
+            
+            v-model="$vuetify.theme.dark"
+            label="Tema Scuro"
+          >
+          </v-switch>
+          </div>
+         
           
         </v-layout> 
       </v-navigation-drawer>
@@ -151,25 +115,25 @@
             :cols="item.flex"
           >
             <v-card
-            @click="$router.push('/fustella/'+item.message)">
+             
+            >
               
               <v-card-title v-text="item.message"></v-card-title>
               <v-card-subtitle>info</v-card-subtitle>
               <v-card-text>Cose a caso?</v-card-text>
               <v-card-actions>
+                 <v-btn
+                  text
+                  @click="$router.push('/fustelle/'+item.message)">
+                  Info
+                </v-btn>
+
                 <v-spacer></v-spacer>
   
                 <v-btn icon>
-                  <v-icon>mdi-heart</v-icon>
+                  <v-icon>mdi-pencil</v-icon>
                 </v-btn>
-  
-                <v-btn icon>
-                  <v-icon>mdi-bookmark</v-icon>
-                </v-btn>
-  
-                <v-btn icon>
-                  <v-icon>mdi-share-variant</v-icon>
-                </v-btn>
+
               </v-card-actions>
             </v-card>
           </v-col>
@@ -186,43 +150,20 @@
               <v-card-subtitle>info</v-card-subtitle>
               <v-card-text>Cose a caso?</v-card-text>
               <v-card-actions>
+
+                <v-btn
+                  text
+                  @click="$router.push('/fustelle/'+item.message)">
+                  Info
+                </v-btn>
+
+
                 <v-spacer></v-spacer>
   
-                <v-btn icon>
-                  <v-icon>mdi-heart</v-icon>
-                </v-btn>
+                
   
                 <v-btn icon>
-                  <v-icon>mdi-bookmark</v-icon>
-                </v-btn>
-  
-                <v-btn icon>
-                  <v-icon>mdi-share-variant</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-        <v-row dense v-else-if="$route.params.texty == 'Gestisci'||text == 'Gestisci'">
-          <v-col 
-            v-for="item in clienti.concat(fabbriche)"
-            :key="item.message"
-            :cols="item.flex"
-          >
-            <v-card>
-              
-              <v-card-title v-text="item.message"></v-card-title>
-              <v-card-subtitle>info</v-card-subtitle>
-              <v-card-text>Cose a caso?</v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-  
-                <v-btn icon>
-                  <v-icon>mdi-heart</v-icon>
-                </v-btn>
-  
-                <v-btn icon>
-                  <v-icon>mdi-bookmark</v-icon>
+                  <v-icon>mdi-pencil</v-icon>
                 </v-btn>
   
                 <v-btn icon>
@@ -233,7 +174,9 @@
           </v-col>
         </v-row>
       </v-container>
-    </v-main>  
+
+    </v-main> 
+
   </v-app>
 </template>
 
