@@ -29,6 +29,5 @@ export default new Vuetify({
         }
       },
       
-    },
-    sium:"sium"
+    }
 })
