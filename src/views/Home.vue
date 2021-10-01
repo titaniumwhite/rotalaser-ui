@@ -1,20 +1,29 @@
 <template>
    <v-app>
      <v-main>
-      <v-system-bar color="primary darken-3"></v-system-bar>
+      <v-system-bar 
+        color="primary darken-3"
+        height="30"
+        window
+        dark
+      >
+        <span 
+          class="white--text font-weight-bold"
+        >
+        {{text}}
+        </span>
+
+        <v-spacer></v-spacer>
+
+      </v-system-bar>
       <v-app-bar
         color="primary"
         dark
-        prominent
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-
-        <v-toolbar-title class="font-weight-bold">{{text}}</v-toolbar-title>
-
         <v-row
           no-gutters
-          :align="align"
-          style="height: 1px;"
+          style="height: 50px;"
         >
 
           <v-col></v-col>
@@ -24,7 +33,9 @@
           >
             
             <v-text-field
-              filled
+              solo
+              rounded
+              background-color="primary darken-3"
               label="Cerca"
               prepend-inner-icon="mdi-magnify"
           ></v-text-field>
@@ -39,10 +50,48 @@
           <v-icon>mdi-filter</v-icon>
         </v-btn>
 
-        <v-btn icon>
-          <v-icon>mdi-dots-vertical</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="white"
+              icon
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-logout-variant</v-icon>
+            </v-btn>
+          </template>
+          <span>Logout</span>
+        </v-tooltip>
 
+          <!---
+          <v-menu
+            bottom
+            left
+            :close-on-content-click="closeOnContentClick"
+            :offset-y="offset"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                dark
+                icon
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list>
+              <v-list-item
+                v-for="(item, i) in items"
+                :key="i"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        --->
       </v-app-bar>
     
       <v-navigation-drawer
@@ -51,9 +100,10 @@
         bottom
         temporary
       >
+      <v-layout column fill-height>        
         <v-list
-          nav
           dense
+          two-line
         >
           <v-list-item-group
             v-model="group"
@@ -83,20 +133,26 @@
               <v-list-item-title>Gestisci</v-list-item-title>
             </v-list-item>
 
-            
           </v-list-item-group>
         </v-list>
 
-        <template v-slot:append>
-          <div class="pa-2">
-          <v-switch
-            v-model="$vuetify.theme.dark"
-            label="Tema Scuro"
-          >
-          </v-switch>
-          </div>
-        </template>
-       
+        <v-spacer></v-spacer>
+        <v-divider></v-divider>
+
+      </v-layout>
+      
+      <template v-slot:append>
+        <div class="pl-4 mb-2">
+        <v-switch
+          class="shrink"
+          dense
+          v-model="$vuetify.theme.dark"
+          label="Tema Scuro"
+        >
+        </v-switch>
+        </div>
+      </template>
+
            
       </v-navigation-drawer>
 
@@ -209,6 +265,10 @@ export default {
         { message: 'Fabbrica 1',flex:4 },
         { message: 'Fabbrica 2',flex:4 }
       ],
+      items: [
+        { title: 'Logout' },
+      ],
+      offset: true,
     }),
     watch: {
       group () {
