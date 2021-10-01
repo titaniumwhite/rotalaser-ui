@@ -15,6 +15,7 @@
           dark
       >
       </v-system-bar>
+
       <v-toolbar
         color="primary"
         dark
@@ -30,22 +31,30 @@
 
         <v-spacer></v-spacer>
 
-        <v-text-field 
-            transition="slide-x-reverse-transition"
-            solo
-            dense 
-            hide-details
-            rounded
-            clearable
-            single-line
-            background-color="primary darken-3"
-            label="Cerca"
-            prepend-inner-icon="mdi-magnify"
-        > 
-        </v-text-field>
-  
+        <v-scroll-x-reverse-transition>
+          <v-text-field
+                v-show="searching" 
+                transition="slide-x-reverse-transition"
+                solo
+                dense 
+                hide-details
+                rounded
+                clearable
+                single-line
+                background-color="primary darken-3"
+                label="Cerca"
+                prepend-inner-icon="mdi-magnify"
+          > 
+          </v-text-field>
+        </v-scroll-x-reverse-transition>
+        
         <v-spacer></v-spacer>
-
+        
+        <v-btn icon 
+          @click="searching=!searching"
+          v-show="!searching">
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
         <v-btn icon>
             <v-icon>mdi-filter</v-icon>
         </v-btn>
@@ -137,6 +146,7 @@ import { mdbLineChart} from "mdbvue";
     },
     data() {
       return {
+        searching: false,
         tab: null,
         items: [
           'grafici', 'cad', 'analisi predittiva'
