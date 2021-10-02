@@ -23,17 +23,19 @@
         <v-spacer></v-spacer>
         <v-scroll-x-reverse-transition>
           <v-text-field
-                v-show="searching" 
-                transition="slide-x-reverse-transition"
-                solo
-                dense 
-                hide-details
-                rounded
-                clearable
-                single-line
-                background-color="primary darken-3"
-                label="Cerca"
-                prepend-inner-icon="mdi-magnify"
+            v-show="searching" 
+            clearable
+            transition="slide-x-reverse-transition"
+            solo
+            dense 
+            hide-details
+            rounded
+            single-line
+            autofocus
+            background-color="primary darken-3"
+            label="Cerca"
+            prepend-inner-icon="mdi-magnify"
+            @blur="is_text_empty($event, $event.target.value)"
           > 
           </v-text-field>
         </v-scroll-x-reverse-transition>
@@ -66,7 +68,6 @@
         </v-tooltip>
 
       </v-app-bar>
-    
       
       <v-container  fluid>
         <v-row dense>
@@ -123,10 +124,20 @@ export default {
         { message: 'Fustella 6',flex:4 },
       ],
     }),
+
     watch: {
       group () {
         this.drawer = false
       },
     },
+
+    methods: {
+      // when blur the searchbox, if there is no text, just make the box disappear
+      is_text_empty: function (event, value) {
+        if (event && value === '') {
+          this.searching =! this.searching
+        }
+      }
+    }
 };
 </script>

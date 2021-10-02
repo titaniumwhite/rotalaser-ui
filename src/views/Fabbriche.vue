@@ -23,20 +23,19 @@
 
         <v-scroll-x-reverse-transition>
           <v-text-field
-                v-show="searching" 
-                clearable
-                transition="slide-x-reverse-transition"
-                solo
-                dense 
-                hide-details
-                rounded
-                single-line
-                autofocus
-                background-color="primary darken-3"
-                label="Cerca"
-                prepend-inner-icon="mdi-magnify"
-                @blur="is_text_empty($event, $event.target.value)"
-
+            v-show="searching" 
+            clearable
+            transition="slide-x-reverse-transition"
+            solo
+            dense 
+            hide-details
+            rounded
+            single-line
+            autofocus
+            background-color="primary darken-3"
+            label="Cerca"
+            prepend-inner-icon="mdi-magnify"
+            @blur="is_text_empty($event, $event.target.value)"
           > 
           </v-text-field>
         </v-scroll-x-reverse-transition>
@@ -84,16 +83,14 @@
               v-model="group"
               active-class="secondary--text text--accent-4"
             >
-              <v-list-item link
-                @click="text='Clienti'">
+              <v-list-item to="/clienti">
                 <v-list-item-icon>
                   <v-icon>mdi-account-multiple</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title>Clienti</v-list-item-title>
               </v-list-item>
 
-              <v-list-item link
-                @click="text='Fabbriche'">
+              <v-list-item to="/fabbriche">
                 <v-list-item-icon>
                   <v-icon>mdi-factory</v-icon>
                 </v-list-item-icon>
@@ -198,7 +195,7 @@ export default {
       searching:false,
       drawer: false,
       group: null,
-      text: "Clienti",
+      text: "Fabbriche",
       clienti: [
         { message: 'Cliente 1',flex:4 },
         { message: 'Cliente 2',flex:4 }
@@ -222,7 +219,6 @@ export default {
     methods: {
       // when blur the searchbox, if there is no text, just make the box disappear
       is_text_empty: function (event, value) {
-        console.log('value is ' + value)
         if (event && value === '') {
           this.searching =! this.searching
         }

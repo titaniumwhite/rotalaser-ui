@@ -42,7 +42,7 @@
 
                      <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="secondary" to="/home">Accedi</v-btn>
+                        <v-btn color="secondary" to="/clienti">Accedi</v-btn>
                      </v-card-actions>
 
                      <v-fab-transition>

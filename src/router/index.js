@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
-import Home from '../views/Home.vue'
+import Clienti from '../views/Clienti.vue'
+import Fabbriche from '../views/Fabbriche.vue'
 import Fustelle from '../views/Fustelle.vue'
 import Fustella from '../views/Fustella.vue'
 
@@ -15,9 +16,14 @@ const routes = [
     component: Login
   },
   {
-    path: '/home',
-    name: 'home',
-    component: Home
+    path: '/clienti',
+    name: 'clienti',
+    component: Clienti
+  },
+  {
+    path: '/fabbriche',
+    name: 'fabbriche',
+    component: Fabbriche
   },
   {
     path: '/fustelle/:id',
@@ -36,5 +42,7 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+
 
 export default router
