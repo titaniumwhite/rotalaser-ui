@@ -197,10 +197,19 @@
                               required
                             ></v-text-field>
                           </v-col>
+
                           <v-col cols="12">
                             <v-text-field
                               label="Password"
                               type="password"
+                              required
+                            ></v-text-field>
+                          </v-col>
+
+                          <v-col cols="12">
+                            <v-text-field
+                              label="P.IVA"
+                              type="P.IVA"
                               required
                             ></v-text-field>
                           </v-col>
@@ -209,19 +218,23 @@
                       </v-container>
                     </v-card-text>
                     <v-card-actions>
+
                       <v-spacer></v-spacer>
+
                       <v-btn
                         color="blue darken-1"
                         text
-                        @click="close">
-                        Chiudi
+                        @click="reset">
+                        Reset
                       </v-btn>
+
                       <v-btn
                         color="blue darken-1"
                         text
                         @click="$router.go(1)">
                         Salva
                       </v-btn>
+
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
@@ -268,6 +281,10 @@ methods: {
           this.searching =! this.searching
         }
       },
+
+      reset: function() {
+        this.$refs.textareaform.reset()
+    },
 
     }
 };
