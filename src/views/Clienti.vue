@@ -233,7 +233,7 @@
                       <v-btn
                         color="secondary darken-1"
                         text
-                        @click="$router.go(1)">
+                        @click="$router.go()">
                         Salva
                       </v-btn>
 
