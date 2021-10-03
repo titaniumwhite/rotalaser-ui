@@ -230,41 +230,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row dense v-else-if="$route.params.texty == 'Fabbriche' || text == 'Fabbriche'">
-          <v-col 
-            v-for="item in fabbriche"
-            :key="item.message"
-            :cols="item.flex"
-          >
-            <v-card>
-              
-              <v-card-title v-text="item.message"></v-card-title>
-              <v-card-subtitle>info</v-card-subtitle>
-              <v-card-text>Cose a caso?</v-card-text>
-              <v-card-actions>
-
-                <v-btn
-                  text
-                  @click="$router.push('/fustelle/'+item.message)">
-                  Info
-                </v-btn>
-
-
-                <v-spacer></v-spacer>
-  
-                
-  
-                <v-btn icon>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-  
-
-
-
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
+        
       </v-container>
 
     </v-main> 
@@ -285,13 +251,6 @@ export default {
       clienti: [
         { message: 'Cliente 1',flex:4 },
         { message: 'Cliente 2',flex:4 }
-      ],
-      fabbriche: [
-        { message: 'Fabbrica 1',flex:4 },
-        { message: 'Fabbrica 2',flex:4 }
-      ],
-      items: [
-        { title: 'Logout' },
       ],
       offset: true,
     }),
