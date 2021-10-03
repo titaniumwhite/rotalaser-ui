@@ -1,7 +1,7 @@
 <template>
   <div id="app">
   <v-app id="inspire">
-    <v-card>
+    <v-main>
       <v-system-bar 
         color="primary darken-3"
         height="30"
@@ -135,7 +135,7 @@
         </v-layout> 
       </v-navigation-drawer>
 
-  
+      <v-card>
       <v-tabs-items v-model="tab">
         <v-tab-item
           v-for="item in items"
@@ -143,7 +143,7 @@
         >
           <v-card flat> 
             <v-card-title>
-              <span class="text-h5">{{item}}</span>
+            <span class="text-h5">{{item}}</span>
             </v-card-title>
             <v-card-text>
               <v-container>
@@ -190,23 +190,19 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="blue darken-1"
+                color="secondary darken-1"
                 text
-                @click="close">
-                Chiudi
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="$router.go(1)">
+                @click="$router.go()">
                 Salva
               </v-btn>
             </v-card-actions>
           </v-card> 
         </v-tab-item>
       </v-tabs-items>
-    </v-card>
+      </v-card>
+    </v-main>
   </v-app>
+
 </div>
 </template>
 <script>
@@ -233,7 +229,6 @@ export default{
           this.searching =! this.searching
         }
       },
-      close: function(){},
       group () {
         this.drawer = false
       },

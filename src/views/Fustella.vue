@@ -1,9 +1,3 @@
-<!-- /* PER GABBO:
-    vuetify non supporta i label sull'asse y,
-    purtoppo fondamentale per i nostri scopi.
-    Ho trovato una libreria sempre per vue che si chiama MDB (https://mdbootstrap.com/docs/vue/advanced/charts/#docsTabsOverview) 
-    */
--->
 <template>
   <div id="app">
   <v-app id="inspire">
@@ -103,10 +97,10 @@
         >
         <v-container fluid>
           <v-row>
+            <div>
             <v-col auto v-if="item=='grafici'">
               <v-card>
               <v-card-title>Grafico</v-card-title>
-
               <v-layout justify-center>
                   <mdb-line-chart
                     :data="lineChartData"
@@ -115,20 +109,21 @@
               </v-layout>
               </v-card>
             </v-col>
+            </div>
 
+            <div>
             <v-col auto>
               <v-card>
               <v-card-title>Grafico Brutto</v-card-title>
-              
               <v-layout justify-center>
-
               <mdb-line-chart
-                :data="lineChartData1"
-                :options="lineChartOptions1"
-              ></mdb-line-chart> 
+                  :data="lineChartData1"
+                  :options="lineChartOptions1"
+                ></mdb-line-chart> 
               </v-layout>
               </v-card>     
             </v-col>
+            </div>
             
           </v-row>
         

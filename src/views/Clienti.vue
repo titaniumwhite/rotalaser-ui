@@ -17,7 +17,7 @@
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title class="font-weight-bold">{{text}}</v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold">Clienti</v-toolbar-title>
           
         <v-spacer></v-spacer>
 
@@ -125,7 +125,7 @@
 
       
       <v-container  fluid>
-        <v-row dense v-if="$route.params.texty == 'Clienti' || text == 'Clienti'">
+        <v-row dense>
           <v-col 
             v-for="item in clienti"
             :key="item.message"
@@ -141,6 +141,7 @@
               <v-card-actions>
                  <v-btn
                   text
+                  color="secondary"
                   @click="$router.push('/fustelle/'+item.message)">
                   Info
                 </v-btn>
@@ -150,11 +151,12 @@
                 <v-dialog
                   v-model="dialog"
                   max-width="600px"
+                  :retain-focus="false"
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                      rounded
-                      depressed
+                      icon
+                      color="secondary"
                       v-bind="attrs"
                       v-on="on"
                     >
@@ -222,14 +224,14 @@
                       <v-spacer></v-spacer>
 
                       <v-btn
-                        color="blue darken-1"
+                        color="secondary darken-1"
                         text
-                        @click="reset">
-                        Reset
+                        @click="dialog = false">
+                        Chiudi
                       </v-btn>
 
                       <v-btn
-                        color="blue darken-1"
+                        color="secondary darken-1"
                         text
                         @click="$router.go(1)">
                         Salva
@@ -260,7 +262,7 @@ export default {
       searching:false,
       drawer: false,
       group: null,
-      text: "Clienti",
+      dialog: false,
       clienti: [
         { message: 'Cliente 1',flex:4 },
         { message: 'Cliente 2',flex:4 }

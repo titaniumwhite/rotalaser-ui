@@ -17,7 +17,7 @@
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title class="font-weight-bold">{{text}}</v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold">Fabbriche</v-toolbar-title>
           
         <v-spacer></v-spacer>
 
@@ -124,7 +124,7 @@
 
       
       <v-container  fluid>
-        <v-row dense v-if="$route.params.texty == 'Fabbriche' || text == 'Fabbriche'">
+        <v-row dense>
           <v-col 
             v-for="item in fabbriche"
             :key="item.message"
@@ -140,6 +140,7 @@
               <v-card-actions>
                  <v-btn
                   text
+                  color="secondary"
                   @click="$router.push('/fustelle/'+item.message)">
                   Info
                 </v-btn>
@@ -149,11 +150,12 @@
                 <v-dialog
                   v-model="dialog"
                   max-width="600px"
+                  :retain-focus="false"
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                      rounded
-                      depressed
+                      icon
+                      color="secondary"
                       v-bind="attrs"
                       v-on="on"
                     >
@@ -210,14 +212,16 @@
                     <v-card-actions>
                       <v-spacer></v-spacer>
                       <v-btn
-                        color="blue darken-1"
+                        color="secondary darken-1"
                         text
+                        @click="dialog = false"
                         >
                         Chiudi
                       </v-btn>
                       <v-btn
-                        color="blue darken-1"
+                        color="secondary darken-1"
                         text
+                        @click="$router.go()"
                         >
                         Salva
                       </v-btn>
@@ -243,7 +247,7 @@ export default {
       searching:false,
       drawer: false,
       group: null,
-      text: "Fabbriche",
+      dialog: false,
       fabbriche: [
         { message: 'Fabbrica 1',flex:4 },
         { message: 'Fabbrica 2',flex:4 }
