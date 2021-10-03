@@ -19,41 +19,7 @@
 
         <v-toolbar-title class="font-weight-bold">Inserisci</v-toolbar-title>
 
-        <v-spacer></v-spacer>
-
-
-
-        <v-col align="center">
-        <v-card
-          elevation="3"
-          rounded
-          color="primary darken-3"
-        >
-
-        <v-btn-toggle
-          v-model="text"
-          tile
-          color="secondary darken3-1"
-          group
-
-        >
-          <v-btn value="cliente">
-            Cliente
-          </v-btn>
-
-          <v-btn value="fabbrica">
-            Fabbrica
-          </v-btn>
-
-          <v-btn value="fustella">
-            Fustella
-          </v-btn>
-
-        </v-btn-toggle>
-        
-        </v-card>
-        </v-col>
-        
+       
         <v-spacer></v-spacer>
 
 
@@ -71,6 +37,25 @@
           </template>
           <span>Logout</span>
         </v-tooltip>
+
+        <template v-slot:extension>
+          <v-tabs
+            v-model="tab"
+            align-with-title
+          >
+            <v-tabs-slider color="secondary"></v-tabs-slider>
+  
+            <v-tab>
+              Cliente
+            </v-tab>
+            <v-tab>
+              Fabbrica
+            </v-tab>
+            <v-tab>
+              Fustella
+            </v-tab>
+          </v-tabs>
+        </template>
         
 
       </v-app-bar>
