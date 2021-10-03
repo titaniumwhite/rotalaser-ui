@@ -1,8 +1,7 @@
 <template>
-   <v-app>
-
-     <v-main>
-
+  <div id="app">
+  <v-app id="inspire">
+    <v-card>
       <v-system-bar 
         color="primary darken-3"
         height="30"
@@ -10,18 +9,46 @@
         dark
       >
       </v-system-bar>
-
-      <v-app-bar
+      <v-toolbar
         color="primary"
         dark
+        flat
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-toolbar-title>Inserisci</v-toolbar-title>
+  
+        <v-spacer></v-spacer>
+  
+        <v-scroll-x-reverse-transition>
+          <v-text-field
+            v-show="searching" 
+            clearable
+            transition="slide-x-reverse-transition"
+            solo
+            dense 
+            hide-details
+            rounded
+            single-line
+            autofocus
+            background-color="primary darken-3"
+            label="Cerca"
+            prepend-inner-icon="mdi-magnify"
+            @blur="is_text_empty($event, $event.target.value)"
+          > 
+          </v-text-field>
+        </v-scroll-x-reverse-transition>
 
-        <v-toolbar-title class="font-weight-bold">Inserisci</v-toolbar-title>
-
-       
         <v-spacer></v-spacer>
 
+        <v-btn icon 
+          @click="searching=!searching"
+          v-show="!searching">
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
+
+        <v-btn icon>
+          <v-icon>mdi-filter</v-icon>
+        </v-btn>
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -37,7 +64,7 @@
           </template>
           <span>Logout</span>
         </v-tooltip>
-
+    
         <template v-slot:extension>
           <v-tabs
             v-model="tab"
@@ -45,26 +72,20 @@
           >
             <v-tabs-slider color="secondary"></v-tabs-slider>
   
-            <v-tab>
-              Cliente
-            </v-tab>
-            <v-tab>
-              Fabbrica
-            </v-tab>
-            <v-tab>
-              Fustella
+            <v-tab
+              v-for="item in items"
+              :key="item"
+            >
+              {{ item }}
             </v-tab>
           </v-tabs>
         </template>
-        
+      </v-toolbar>
 
-      </v-app-bar>
-    
       <v-navigation-drawer
         v-model="drawer"
         absolute
         temporary
-        
       >
         <v-layout column fill-height>        
           <v-list
@@ -114,106 +135,117 @@
         </v-layout> 
       </v-navigation-drawer>
 
-      
-      <v-container  fluid>
-        <v-row dense v-if="$route.params.texty == 'Clienti' || text == 'Clienti'">
-          <v-col 
-            v-for="item in clienti"
-            :key="item.message"
-            :cols="item.flex"
-          >
-            <v-card
-             
-            >
-              
-              <v-card-title v-text="item.message"></v-card-title>
-              <v-card-subtitle>info</v-card-subtitle>
-              <v-card-text>Cose a caso?</v-card-text>
-              <v-card-actions>
-                 <v-btn
-                  text
-                  @click="$router.push('/fustelle/'+item.message)">
-                  Info
-                </v-btn>
-
-                <v-spacer></v-spacer>
-                
-
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-        <v-row dense v-else-if="$route.params.texty == 'Fabbriche' || text == 'Fabbriche'">
-          <v-col 
-            v-for="item in fabbriche"
-            :key="item.message"
-            :cols="item.flex"
-          >
-            <v-card>
-              
-              <v-card-title v-text="item.message"></v-card-title>
-              <v-card-subtitle>info</v-card-subtitle>
-              <v-card-text>Cose a caso?</v-card-text>
-              <v-card-actions>
-
-                <v-btn
-                  text
-                  @click="$router.push('/fustelle/'+item.message)">
-                  Info
-                </v-btn>
-
-
-                <v-spacer></v-spacer>
   
-                
-  
-                <v-btn icon>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-  
+      <v-tabs-items v-model="tab">
+        <v-tab-item
+          v-for="item in items"
+          :key="item"
+        >
+          <v-card flat> 
+            <v-card-title>
+              <span class="text-h5">{{item}}</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      label="Nome"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      label="Cognome"
+                      hint
+                      required
+                    ></v-text-field>
+                  </v-col>
 
-
-
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-
-    </v-main> 
-
+                  <v-col cols="12">
+                    <v-text-field
+                      label="Email"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="Password"
+                      type="password"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="close">
+                Chiudi
+              </v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="$router.go(1)">
+                Salva
+              </v-btn>
+            </v-card-actions>
+          </v-card> 
+        </v-tab-item>
+      </v-tabs-items>
+    </v-card>
   </v-app>
-  
+</div>
 </template>
-
-
-
 <script>
-export default {
-   data: () => ({
+export default{
+  data() {
+    return {
       searching:false,
       drawer: false,
-      group: null,
-      text: "Inserisci",
-    }),
-
-    watch: {
+      tab: null,
+      items: [
+        'Cliente', 'Fabbrica', 'Fustella'
+      ],
+    }
+  },
+  watch: {
       group () {
         this.drawer = false
       },
-    },
-
-methods: {
+  },
+  methods: {
       // when blur the searchbox, if there is no text, just make the box disappear
       is_text_empty: function (event, value) {
         if (event && value === '') {
           this.searching =! this.searching
         }
       },
-
+      close: function(){},
+      group () {
+        this.drawer = false
+      },
     }
-};
+}
 </script>
 
+<style>
+/* Fixing selected tab invisible in dark mode */
+.v-tabs-slider-wrapper, .v-tab--active {
+  color: #fff !important;
+}
+</style>
 
 
