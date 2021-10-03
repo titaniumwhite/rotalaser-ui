@@ -97,6 +97,13 @@
                 <v-list-item-title>Fabbriche</v-list-item-title>
               </v-list-item>
 
+              <v-list-item to="/inserisci">
+                <v-list-item-icon>
+                  <v-icon>mdi-plus-thick</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Inserisci</v-list-item-title>
+              </v-list-item>
+
             </v-list-item-group>
           </v-list>
 
@@ -139,9 +146,84 @@
 
                 <v-spacer></v-spacer>
   
-                <v-btn icon>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
+                <v-dialog
+                  v-model="dialog"
+                  max-width="600px"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      rounded
+                      depressed
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                    <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title>
+                      <span class="text-h5">Fabbrica</span>
+                    </v-card-title>
+                    <v-card-text>
+                      <v-container>
+                        <v-row>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="4"
+                          >
+                            <v-text-field
+                              label="Nome"
+                              required
+                            ></v-text-field>
+                          </v-col>
+                          
+                          <v-col
+                            cols="12"
+                            sm="6"
+                            md="4"
+                          >
+                            <v-text-field
+                              label="Cognome"
+                              hint
+                              required
+                            ></v-text-field>
+                          </v-col>
+
+                          <v-col cols="12">
+                            <v-text-field
+                              label="Email"
+                              required
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="12">
+                            <v-text-field
+                              label="Password"
+                              type="password"
+                              required
+                            ></v-text-field>
+                          </v-col>
+                          
+                        </v-row>
+                      </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        >
+                        Chiudi
+                      </v-btn>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        >
+                        Salva
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
 
               </v-card-actions>
             </v-card>

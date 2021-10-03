@@ -5,6 +5,8 @@ import Clienti from '../views/Clienti.vue'
 import Fabbriche from '../views/Fabbriche.vue'
 import Fustelle from '../views/Fustelle.vue'
 import Fustella from '../views/Fustella.vue'
+import Inserisci from '../views/Inserisci.vue'
+
 
 
 Vue.use(VueRouter)
@@ -24,6 +26,11 @@ const routes = [
     path: '/fabbriche',
     name: 'fabbriche',
     component: Fabbriche
+  },
+  {
+    path: '/inserisci',
+    name: 'inserisci',
+    component: Inserisci
   },
   {
     path: '/fustelle/:id',

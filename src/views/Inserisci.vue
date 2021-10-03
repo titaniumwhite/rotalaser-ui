@@ -17,40 +17,45 @@
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title class="font-weight-bold">{{text}}</v-toolbar-title>
-          
+        <v-toolbar-title class="font-weight-bold">Inserisci</v-toolbar-title>
+
         <v-spacer></v-spacer>
 
-        <v-scroll-x-reverse-transition>
-          <v-text-field
-            v-show="searching" 
-            clearable
-            transition="slide-x-reverse-transition"
-            solo
-            dense 
-            hide-details
-            rounded
-            single-line
-            autofocus
-            background-color="primary darken-3"
-            label="Cerca"
-            prepend-inner-icon="mdi-magnify"
-            @blur="is_text_empty($event, $event.target.value)"
-          > 
-          </v-text-field>
-        </v-scroll-x-reverse-transition>
+
+
+        <v-col align="center">
+        <v-card
+          elevation="3"
+          rounded
+          color="primary darken-3"
+        >
+
+        <v-btn-toggle
+          v-model="text"
+          tile
+          color="secondary darken3-1"
+          group
+
+        >
+          <v-btn value="cliente">
+            Cliente
+          </v-btn>
+
+          <v-btn value="fabbrica">
+            Fabbrica
+          </v-btn>
+
+          <v-btn value="fustella">
+            Fustella
+          </v-btn>
+
+        </v-btn-toggle>
+        
+        </v-card>
+        </v-col>
         
         <v-spacer></v-spacer>
-        
-        <v-btn icon 
-          @click="searching=!searching"
-          v-show="!searching">
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
 
-        <v-btn icon>
-          <v-icon>mdi-filter</v-icon>
-        </v-btn>
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -66,6 +71,7 @@
           </template>
           <span>Logout</span>
         </v-tooltip>
+        
 
       </v-app-bar>
     
@@ -146,85 +152,7 @@
                 </v-btn>
 
                 <v-spacer></v-spacer>
-  
-                <v-dialog
-                  v-model="dialog"
-                  max-width="600px"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      rounded
-                      depressed
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                    <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-card>
-                    <v-card-title>
-                      <span class="text-h5">Cliente</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                          >
-                            <v-text-field
-                              label="Nome"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          
-                          <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                          >
-                            <v-text-field
-                              label="Cognome"
-                              hint
-                              required
-                            ></v-text-field>
-                          </v-col>
-
-                          <v-col cols="12">
-                            <v-text-field
-                              label="Email"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12">
-                            <v-text-field
-                              label="Password"
-                              type="password"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="close">
-                        Chiudi
-                      </v-btn>
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="$router.go(1)">
-                        Salva
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+                
 
               </v-card-actions>
             </v-card>
@@ -281,19 +209,7 @@ export default {
       searching:false,
       drawer: false,
       group: null,
-      text: "Clienti",
-      clienti: [
-        { message: 'Cliente 1',flex:4 },
-        { message: 'Cliente 2',flex:4 }
-      ],
-      fabbriche: [
-        { message: 'Fabbrica 1',flex:4 },
-        { message: 'Fabbrica 2',flex:4 }
-      ],
-      items: [
-        { title: 'Logout' },
-      ],
-      offset: true,
+      text: "Inserisci",
     }),
 
     watch: {
