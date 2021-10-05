@@ -17,7 +17,7 @@
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title class="font-weight-bold">Clienti</v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold"></v-toolbar-title>
           
         <v-spacer></v-spacer>
 
@@ -125,6 +125,8 @@
 
       
       <v-container  fluid>
+        <v-card>
+        <v-card-title class="font-weight-bold">Clienti ++ {{this.$root.key}}</v-card-title>
         <v-row dense>
           <v-col 
             v-for="item in clienti"
@@ -245,7 +247,7 @@
             </v-card>
           </v-col>
         </v-row>
-        
+      </v-card>
       </v-container>
 
     </v-main> 

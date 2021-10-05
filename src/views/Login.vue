@@ -42,7 +42,8 @@
 
                      <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="secondary" to="/clienti">Accedi</v-btn>
+                        <v-btn color="secondary" 
+                        to="/clienti">Accedi</v-btn>
                      </v-card-actions>
 
                      <v-fab-transition>
@@ -71,6 +72,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
    name: 'Login',
    data: () => ({
@@ -87,6 +89,10 @@ export default {
          return{ color: 'success', icon: 'mdi-white-balance-sunny'}
          }
       },
+   },
+   mounted(){
+      const creds = JSON.parse('{"username": "123", "password": "ciao"}')
+      axios.post('https://foiadev.diag.uniroma1.it:5002/v1/login/',creds,{}).then(response =>( this.$root.key  = response.data.token ))
    },
 };
 </script>

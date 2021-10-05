@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-  <v-app id="inspire">
+  <v-app>
     <v-main>
       <v-system-bar 
         color="primary darken-3"

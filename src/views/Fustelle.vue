@@ -120,9 +120,17 @@
       </v-navigation-drawer>
       
       <v-container  fluid>
+        <div class="text-center">
+        <v-progress-circular
+        v-if="loading"
+        :size="50"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+        </div>
         <v-row dense>
-          <v-col 
-            v-for="item in fustelle"
+          <v-col auto
+            v-for="item in secret"
             :key="item.message"
             :cols="item.flex"
           >
@@ -130,14 +138,14 @@
             
              >
               
-              <v-card-title v-text="item.message"></v-card-title>
+              <v-card-title v-text="item.id"></v-card-title>
               <v-card-subtitle>info fustella</v-card-subtitle>
               <v-card-text>Cose a caso?</v-card-text>
               <v-card-actions>
                  <v-btn
                   text
                   color="secondary"
-                  @click="$router.push('/fustella/'+item.message)">
+                  @click="$router.push('/fustella/'+item.id)">
                   Info
                 </v-btn>
 
@@ -236,12 +244,14 @@
 
 
 <script>
+import axios from 'axios'
 export default {
    data: () => ({
       searching: false,
       drawer: false,
       dialog: false,
       group: null,
+      loading: true,
       text: "Clienti",
       fustelle: [
         { message: 'Fustella 1',flex:4 },
@@ -251,6 +261,7 @@ export default {
         { message: 'Fustella 5',flex:4 },
         { message: 'Fustella 6',flex:4 },
       ],
+      secret: null
     }),
 
     watch: {
@@ -258,7 +269,17 @@ export default {
         this.drawer = false
       },
     },
+    mounted(){
+        axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/',{
+          headers:{
+            'key':this.$root.key
+          }
+        }).then(response =>{
+                            this.secret = response.data 
+                            this.loading= false
+                          })
 
+    },
     methods: {
       // when blur the searchbox, if there is no text, just make the box disappear
       is_text_empty: function (event, value) {

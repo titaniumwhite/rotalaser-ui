@@ -96,9 +96,18 @@
           :key="item"
         >
         <v-container fluid>
-          <v-row>
+          <h1>{{got[0]}}</h1>
+          <div class="text-center">
+          <v-progress-circular
+          v-if="loading"
+          :size="50"
+          color="primary"
+          indeterminate
+        ></v-progress-circular>
+          </div>
+          <v-row v-if="!loading">
             <div>
-            <v-col auto v-if="item=='grafici'">
+            <v-col auto >
               <v-card>
               <v-card-title>Grafico</v-card-title>
               <v-layout justify-center>
@@ -112,7 +121,7 @@
             </div>
 
             <div>
-            <v-col auto>
+            <v-col auto v-if="item==!'grafici'">
               <v-card>
               <v-card-title>Grafico Brutto</v-card-title>
               <v-layout justify-center>
@@ -137,6 +146,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { mdbLineChart} from "mdbvue";
   export default {
     name: "ChartPage",
@@ -145,21 +155,15 @@ import { mdbLineChart} from "mdbvue";
     },
     data() {
       return {
+        loading:true,
+        got: '',
         searching: false,
         tab: null,
         items: [
           'grafici', 'cad', 'analisi predittiva'
         ],
         lineChartData: {
-          labels: [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July"
-          ],
+          labels: [],
           datasets: [
             {
               label: "Grafico Rosso",
@@ -167,15 +171,7 @@ import { mdbLineChart} from "mdbvue";
               borderColor: this.$vuetify.theme.themes.light.primary ,
               pointBorderColor: "rgba(255, 255, 255, 0)",
               borderWidth: 0.7,
-              data: [65, 59, 80, 81, 56, 55, 40]
-            },
-            {
-              label: "grafico Blu",
-              backgroundColor: "rgba(151,187,205,0)",
-              borderColor: this.$vuetify.theme.themes.light.secondary,
-              pointBorderColor: "rgba(255, 255, 255, 0)",
-              borderWidth: 0.8,
-              data: [28, 48, 40, 19, 86, 27, 90]
+              data: []
             }
           ]
         },
@@ -202,17 +198,7 @@ import { mdbLineChart} from "mdbvue";
           }
         },
         lineChartData1: {
-          labels: [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "Sept",
-            "Oct"
-          ],
+          labels: [],
           datasets: [
             {
               label: "Linea Rossa",
@@ -247,7 +233,21 @@ import { mdbLineChart} from "mdbvue";
         }
       };
     },
+    mounted(){
+      axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
+          headers:{
+            'key':this.$root.key
+          }
+        }).then(response =>{
+                            this.got = response.data 
+                            for(let i=0; i<15;i++){
+                              this.lineChartData.labels.push(this.got[i].id);
+                              this.lineChartData.datasets[0].data.push(this.got[i].rotations);
+                            }
+                            this.loading=false
+                          })
 
+    },
     methods: {
       // when blur the searchbox, if there is no text, just make the box disappear
       is_text_empty: function (event, value) {
