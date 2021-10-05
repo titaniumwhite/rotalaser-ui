@@ -98,27 +98,31 @@
         <v-container fluid>
           <h1>{{got[0]}}</h1>
           <div class="text-center">
-          <v-progress-circular
-          v-if="loading"
-          :size="50"
-          color="primary"
-          indeterminate
-        ></v-progress-circular>
+              <v-progress-circular
+              v-if="loading"
+              :size="50"
+              color="primary"
+              indeterminate
+            ></v-progress-circular>
           </div>
+          <v-fade-transition>
           <v-row v-if="!loading">
-            <div>
-            <v-col auto >
+            <!--<div>-->
+            <v-col :cols=12 >
               <v-card>
               <v-card-title>Grafico</v-card-title>
               <v-layout justify-center>
-                  <mdb-line-chart
+                  <!--<mdb-line-chart
                     :data="lineChartData"
-                    :options="lineChartOptions"   
-                    ></mdb-line-chart>
+                    :options="lineChartOptions" 
+                    ></mdb-line-chart>-->
+                    <template>
+                    <line-chart :chart-data="datacollection"></line-chart>
+                    </template>
               </v-layout>
               </v-card>
             </v-col>
-            </div>
+           <!-- </div> -->
 
             <div>
             <v-col auto v-if="item==!'grafici'">
@@ -128,6 +132,7 @@
               <mdb-line-chart
                   :data="lineChartData1"
                   :options="lineChartOptions1"
+              
                 ></mdb-line-chart> 
               </v-layout>
               </v-card>     
@@ -135,7 +140,7 @@
             </div>
             
           </v-row>
-        
+          </v-fade-transition>
           </v-container>
         </v-tab-item>
       </v-tabs-items>
@@ -147,10 +152,13 @@
 
 <script>
 import axios from 'axios'
-import { mdbLineChart} from "mdbvue";
+import { mdbLineChart} from "mdbvue"
+import LineChart from './LineChart.js'
+
   export default {
     name: "ChartPage",
     components: {
+      LineChart,
       mdbLineChart
     },
     data() {
@@ -159,6 +167,7 @@ import { mdbLineChart} from "mdbvue";
         got: '',
         searching: false,
         tab: null,
+        datacollection: null,
         items: [
           'grafici', 'cad', 'analisi predittiva'
         ],
@@ -234,7 +243,7 @@ import { mdbLineChart} from "mdbvue";
       };
     },
     mounted(){
-      axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
+          axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
           headers:{
             'key':this.$root.key
           }
@@ -245,6 +254,7 @@ import { mdbLineChart} from "mdbvue";
                               this.lineChartData.datasets[0].data.push(this.got[i].rotations);
                             }
                             this.loading=false
+                            this.fillData()
                           })
 
     },
@@ -254,6 +264,21 @@ import { mdbLineChart} from "mdbvue";
         if (event && value === '') {
           this.searching =! this.searching
         }
+      },
+      fillData () {
+        this.datacollection = {
+          labels: this.lineChartData.labels,
+          datasets: [
+            {
+              label: 'Data One',
+              backgroundColor: '#f87979',
+              data: this.lineChartData.datasets[0].data
+            }
+          ]
+        }
+      },
+      getRandomInt () {
+        return Math.floor(Math.random() * (50 - 5 + 1)) + 5
       }
     }
   };

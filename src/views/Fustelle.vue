@@ -128,11 +128,12 @@
         indeterminate
       ></v-progress-circular>
         </div>
-        <v-row dense>
-          <v-col auto
+        <v-fade-transition>
+        <v-row dense v-if="!loading">
+          <v-col 
             v-for="item in secret"
             :key="item.message"
-            :cols="item.flex"
+            :cols=4
           >
             <v-card
             
@@ -235,6 +236,7 @@
             </v-card>
           </v-col>
         </v-row>
+        </v-fade-transition>
       </v-container>
     </v-main>  
   </v-app>
