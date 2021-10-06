@@ -73,6 +73,8 @@
 
 <script>
 import axios from 'axios'
+
+
 export default {
    name: 'Login',
    data: () => ({
@@ -92,8 +94,14 @@ export default {
    },
    mounted(){
       const creds = JSON.parse('{"username": "123", "password": "ciao"}')
-      axios.post('https://foiadev.diag.uniroma1.it:5002/v1/login/',creds,{}).then(response =>( this.$root.key  = response.data.token ))
-   },
+      axios.post('https://foiadev.diag.uniroma1.it:5002/v1/login/',creds,{}).then(
+         response =>{
+            let k;
+            k = response.data.token
+            this.$root.key = k
+            this.$session.set("key", k);
+      })
+   }
 };
 </script>
 
