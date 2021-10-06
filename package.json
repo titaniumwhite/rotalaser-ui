@@ -15,7 +15,9 @@
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
     "vue-sessionstorage": "^1.0.0",
-    "vuetify": "^2.5.8"
+    "vuetify": "^2.5.8",
+    "zingchart": "^2.9.7",
+    "zingchart-vue": "^2.0.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

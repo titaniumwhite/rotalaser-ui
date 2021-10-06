@@ -117,27 +117,14 @@
                     :options="lineChartOptions" 
                     ></mdb-line-chart>-->
                     <template>
-                    <line-chart :chart-data="datacollection"></line-chart>
                     </template>
               </v-layout>
               </v-card>
             </v-col>
            <!-- </div> -->
 
-            <div>
-            <v-col auto v-if="item==!'grafici'">
-              <v-card>
-              <v-card-title>Grafico Brutto</v-card-title>
-              <v-layout justify-center>
-              <mdb-line-chart
-                  :data="lineChartData1"
-                  :options="lineChartOptions1"
-              
-                ></mdb-line-chart> 
-              </v-layout>
-              </v-card>     
-            </v-col>
-            </div>
+           <zingchart id ="myChart" :data="datacollection" ref="chart"></zingchart>
+
             
           </v-row>
           </v-fade-transition>
@@ -152,14 +139,13 @@
 
 <script>
 import axios from 'axios'
-import { mdbLineChart} from "mdbvue"
-import LineChart from './LineChart.js'
+import 'zingchart/es6';
+import zingchartVue from 'zingchart-vue';
 
   export default {
     name: "ChartPage",
     components: {
-      LineChart,
-      mdbLineChart
+      zingchart: zingchartVue,
     },
     data() {
       return {
@@ -171,75 +157,12 @@ import LineChart from './LineChart.js'
         items: [
           'grafici', 'cad', 'analisi predittiva'
         ],
-        lineChartData: {
-          labels: [],
-          datasets: [
-            {
-              label: "Grafico Rosso",
-              backgroundColor: "rgba(255, 99, 132, 0)",
-              borderColor: this.$vuetify.theme.themes.light.primary ,
-              pointBorderColor: "rgba(255, 255, 255, 0)",
-              borderWidth: 0.7,
-              data: []
-            }
-          ]
+        chartData: {
+          type: 'line',
+          series: [{
+            values: [4,5,3,3,4,4]
+          }]
         },
-        lineChartOptions: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            xAxes: [
-              {
-                gridLines: {
-                  display: false,
-                  color: "rgba(0, 0, 0, 0.1)"
-                }
-              }
-            ],
-            yAxes: [
-              {
-                gridLines: {
-                  display: false,
-                  color: "rgba(0, 0, 0, 0.1)"
-                }
-              }
-            ]
-          }
-        },
-        lineChartData1: {
-          labels: [],
-          datasets: [
-            {
-              label: "Linea Rossa",
-              backgroundColor: "rgba(255, 99, 132, 0)",
-              borderColor: this.$vuetify.theme.themes.light.secondary,
-              borderWidth: 0.7,
-              data: [199, 69, 420, 81, 56, 55, 40,50,99]
-            },
-          ]
-        },
-        lineChartOptions1: {
-          responsive: true,
-          maintainAspectRatio: true,
-          scales: {
-            xAxes: [
-              {
-                gridLines: {
-                  display: false,
-                  color: "rgba(0, 0, 0, 0.1)"
-                }
-              }
-            ],
-            yAxes: [
-              {
-                gridLines: {
-                  display: false,
-                  color: "rgba(0, 0, 0, 0.1)"
-                }
-              }
-            ]
-          }
-        }
       };
     },
     mounted(){
@@ -249,13 +172,16 @@ import LineChart from './LineChart.js'
           }
         }).then(response =>{
                             this.got = response.data 
-                            for(let i=0; i<15;i++){
-                              this.lineChartData.labels.push(this.got[i].id);
-                              this.lineChartData.datasets[0].data.push(this.got[i].rotations);
+                            for(let i=0; i<1555;i++){
+                              zingchart.exec('myChart', 'addplot', {
+                              plotindex: 1,
+                              data: this.got[i].rotations
+                              });
                             }
+                            
                             this.loading=false
-                            this.fillData()
                           })
+
 
     },
     methods: {
@@ -265,18 +191,7 @@ import LineChart from './LineChart.js'
           this.searching =! this.searching
         }
       },
-      fillData () {
-        this.datacollection = {
-          labels: this.lineChartData.labels,
-          datasets: [
-            {
-              label: 'Data One',
-              backgroundColor: '#f87979',
-              data: this.lineChartData.datasets[0].data
-            }
-          ]
-        }
-      },
+
       getRandomInt () {
         return Math.floor(Math.random() * (50 - 5 + 1)) + 5
       }

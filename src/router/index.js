@@ -6,9 +6,7 @@ import Fabbriche from '../views/Fabbriche.vue'
 import Fustelle from '../views/Fustelle.vue'
 import Fustella from '../views/Fustella.vue'
 import Inserisci from '../views/Inserisci.vue'
-import VueSessionStorage from "vue-sessionstorage";
 
-Vue.use(VueSessionStorage);
 Vue.use(VueRouter)
 
 const routes = [
