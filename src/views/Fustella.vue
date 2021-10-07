@@ -109,12 +109,21 @@
           <v-row v-if="!loading" >
             
             
-            <v-col :cols=12 >
+            <v-col :cols=6 >
               <div>
               <v-card>
               <v-card-title>Grafico Rotazioni</v-card-title>
-              <div>
-               <apexchart  type="line" :options="options" :series="series"></apexchart>
+
+              <div id="wrapper">
+                <div id="chart-line">
+                <apexchart type="area" :options="chartOptionsArea" :series="seriesArea"></apexchart>
+              </div>
+                <div id="chart-line2">
+                <apexchart type="line" :options="chartOptionsArea2" :series="seriesArea2"></apexchart>
+              </div>
+                <div id="chart-area">
+                <apexchart type="area" :options="chartOptionsArea3" :series="seriesArea3"></apexchart>
+              </div>
               </div>
               </v-card>
               </div>
@@ -145,10 +154,14 @@ import axios from 'axios'
         items: [
           'grafici', 'cad', 'analisi predittiva'
         ],
-        options: {
+        seriesArea: [{
+          name: 'rotazioni',
+        }],
+        chartOptionsArea: {
           chart: {
-            id: 'vuechart-example',
+            id: 'rotazioni',
             width: '100%',
+            type: 'area',
             animations: {
               enabled: true,
               easing: 'easeinout',
@@ -163,14 +176,18 @@ import axios from 'axios'
               }
             }
           },
-          responsive: [{
-            breakpoint: 1000,
-            options: {
-              dataLabels: {
-                enabled: false
-              },
-            },
-          }],
+          dataLabels: {
+              enabled: false
+          },
+          fill: {
+            type: "gradient",
+            gradient: {
+              shadeIntensity: 1,
+              opacityFrom: 0.7,
+              opacityTo: 0.9,
+              stops: [0, 90, 100]
+            }
+          },
           title: {
               text: "Rotazioni",
               align: 'left',
@@ -179,15 +196,118 @@ import axios from 'axios'
               offsetY: 0,
               floating: false,
               style: {
-                fontSize:  '14px',
-                fontWeight:  'bold',
-                fontFamily:  undefined,
-                color:  '#263238'
-              },
+              fontSize:  '14px',
+              fontWeight:  'bold',
+              fontFamily:  undefined,
+              color:  '#263238'
           },
-          series: [{
-            name: 'rotazioni',
-          }],
+          
+          },
+        },
+
+        seriesArea2: [{
+          name: 'velocità',
+        }],
+        chartOptionsArea2: {
+          chart: {
+            id: 'velocità',
+            width: '100%',
+            type: 'area',
+            animations: {
+              enabled: true,
+              easing: 'easeinout',
+              speed: 800,
+              animateGradually: {
+                  enabled: true,
+                  delay: 150
+              },
+              dynamicAnimation: {
+                  enabled: true,
+                  speed: 350
+              }
+            }
+          },
+          colors: ["#00b359"],
+          dataLabels: {
+              enabled: false
+          },
+          fill: {
+            type: "gradient",
+            gradient: {
+              shadeIntensity: 1,
+              opacityFrom: 0.7,
+              opacityTo: 0.9,
+              stops: [0, 50, 80]
+            }
+          },
+          title: {
+              text: "Velocità",
+              align: 'left',
+              margin: 10,
+              offsetX: 0,
+              offsetY: 0,
+              floating: false,
+              style: {
+              fontSize:  '14px',
+              fontWeight:  'bold',
+              fontFamily:  undefined,
+              color:  '#263238'
+          },
+          
+          },
+        },
+
+        seriesArea3: [{
+          name: 'Sessione',
+        }],
+        chartOptionsArea3: {
+          chart: {
+            id: 'sessione',
+            width: '100%',
+            type: 'area',
+            animations: {
+              enabled: true,
+              easing: 'easeinout',
+              speed: 800,
+              animateGradually: {
+                  enabled: true,
+                  delay: 150
+              },
+              dynamicAnimation: {
+                  enabled: true,
+                  speed: 350
+              }
+            }
+          },
+          colors: ["#7E36AF"],
+          dataLabels: {
+              enabled: false
+          },
+          fill: {
+            colors: ["#7E36AF"],
+            type: "gradient",
+            gradient: {
+              shadeIntensity: 1,
+              opacityFrom: 0.7,
+              opacityTo: 0.9,
+              stops: [0, 90, 100]
+            }
+          },
+          title: {
+              text: "Sessione",
+              align: 'left',
+              margin: 10,
+              offsetX: 0,
+              offsetY: 0,
+              floating: false,
+              style: {
+              fontSize:  '14px',
+              fontWeight:  'bold',
+              fontFamily:  undefined,
+              color:  '#263238'
+          },
+          
+          },
         },
       };
     },
@@ -210,23 +330,44 @@ import axios from 'axios'
             'key':this.$session.get("key")
           }
         }).then(response =>{
-                            let newData = []
+                            let rotationData = []
+                            let speedData = []
+                            let sessionData = []
                             this.got = response.data 
+
                             for(let i=0; i<1555;i++){
-                              let couple = "{"
-
-                              couple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
+                              let rotationCouple;
+                              let speedCouple;    
+                              let sessionCouple;                              
+                                                       
+                              let timeCouple = "{"
                               
-                              //this.date=couple[0]
-                              couple += ' "y": ' + this.got[i].rotations+"\n"
+                              timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
+                              rotationCouple = timeCouple + ' "y": ' + this.got[i].rotations+"\n" + "}"
+                              speedCouple = timeCouple + ' "y": ' + this.got[i].speed+"\n" + "}"
+                              sessionCouple = timeCouple + ' "y": ' + this.got[i].session_id+"\n" + "}"
 
-                              couple += "}"
-                              newData.push(JSON.parse(couple))
+                              rotationData.push(JSON.parse(rotationCouple))
+                              speedData.push(JSON.parse(speedCouple))
+                              sessionData.push(JSON.parse(sessionCouple))
+
                             }
                             //newData = "]"
                             //this.date=newData
-                            this.series = [{
-                              data: newData
+                            this.seriesArea = [{
+                              data: rotationData
+                            }]
+
+                            this.seriesArea = [{
+                              data: rotationData
+                            }]
+
+                            this.seriesArea2 = [{
+                              data: speedData
+                            }]
+
+                            this.seriesArea3 = [{
+                              data: sessionData
                             }]
                           
                             this.loading=false                        
