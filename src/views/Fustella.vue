@@ -334,8 +334,8 @@ import axios from 'axios'
                             let speedData = []
                             let sessionData = []
                             this.got = response.data 
+                            for(let i=this.got.length-1000; i<this.got.length-1;i++){
 
-                            for(let i=0; i<1555;i++){
                               let rotationCouple;
                               let speedCouple;    
                               let sessionCouple;                              
