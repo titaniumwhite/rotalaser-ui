@@ -274,7 +274,7 @@ export default {
     mounted(){
         axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/',{
           headers:{
-            'key':this.$root.key
+            'key':this.$session.get("key")
           }
         }).then(response =>{
                             this.secret = response.data 

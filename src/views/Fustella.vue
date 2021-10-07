@@ -95,8 +95,7 @@
           v-for="item in items"
           :key="item"
         >
-        <v-container fluid>
-          <h1>{{got[0]}}</h1>
+        <v-container fluid >
           <div class="text-center">
               <v-progress-circular
               v-if="loading"
@@ -105,25 +104,21 @@
               indeterminate
             ></v-progress-circular>
           </div>
-          <v-fade-transition>
-          <v-row v-if="!loading">
-            <!--<div>-->
-            <v-col :cols=12 >
-              <v-card>
-              <v-card-title>Grafico</v-card-title>
-              <v-layout justify-center>
-                  <!--<mdb-line-chart
-                    :data="lineChartData"
-                    :options="lineChartOptions" 
-                    ></mdb-line-chart>-->
-                    <template>
-                    </template>
-              </v-layout>
-              </v-card>
-            </v-col>
-           <!-- </div> -->
-            <apexchart width="500" type="line" :options="options" :series="series"></apexchart>
 
+          <v-fade-transition>
+          <v-row v-if="!loading" >
+            
+            
+            <v-col :cols=12 >
+              <div>
+              <v-card>
+              <v-card-title>Grafico Rotazioni</v-card-title>
+              <div>
+               <apexchart  type="line" :options="options" :series="series"></apexchart>
+              </div>
+              </v-card>
+              </div>
+            </v-col>
           </v-row>
           </v-fade-transition>
           </v-container>
@@ -137,14 +132,13 @@
 
 <script>
 import axios from 'axios'
-
-
   export default {
     name: "ChartPage",
     data() {
       return {
         loading:true,
         got: '',
+        date: '',
         searching: false,
         tab: null,
         datacollection: null,
@@ -152,37 +146,93 @@ import axios from 'axios'
           'grafici', 'cad', 'analisi predittiva'
         ],
         options: {
-        chart: {
-          id: 'vuechart-example'
+          chart: {
+            id: 'vuechart-example',
+            width: '100%',
+            animations: {
+              enabled: true,
+              easing: 'easeinout',
+              speed: 800,
+              animateGradually: {
+                  enabled: true,
+                  delay: 150
+              },
+              dynamicAnimation: {
+                  enabled: true,
+                  speed: 350
+              }
+            }
+          },
+          responsive: [{
+            breakpoint: 1000,
+            options: {
+              dataLabels: {
+                enabled: false
+              },
+            },
+          }],
+          title: {
+              text: "Rotazioni",
+              align: 'left',
+              margin: 10,
+              offsetX: 0,
+              offsetY: 0,
+              floating: false,
+              style: {
+                fontSize:  '14px',
+                fontWeight:  'bold',
+                fontFamily:  undefined,
+                color:  '#263238'
+              },
+          },
+          series: [{
+            name: 'rotazioni',
+          }],
         },
-      },
-      series: [{
-        name: 'series-1',
-      }]
       };
     },
     mounted(){
+          function timeConverter(UNIX_timestamp){
+            var a = new Date(UNIX_timestamp * 1000);
+            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            var year = a.getFullYear();
+            var month = months[a.getMonth()];
+            var date = a.getDate();
+            var hour = a.getHours();
+            var min = a.getMinutes();
+            var sec = a.getSeconds();
+            var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+            return time;
+          }
+
           axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
           headers:{
-            'key':this.$root.key
+            'key':this.$session.get("key")
           }
         }).then(response =>{
-          let newData = [];
+                            let newData = []
                             this.got = response.data 
                             for(let i=0; i<1555;i++){
-                              newData[i] = this.got[i].rotations
+                              let couple = "{"
 
-                             // data: this.got[i].rotations
+                              couple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
+                              
+                              //this.date=couple[0]
+                              couple += ' "y": ' + this.got[i].rotations+"\n"
 
+                              couple += "}"
+                              newData.push(JSON.parse(couple))
                             }
+                            //newData = "]"
+                            //this.date=newData
                             this.series = [{
-    data: newData
-   }]
+                              data: newData
+                            }]
+                          
+                            this.loading=false                        
                             
-                            
-                            this.loading=false
-                          })
-
+                          }
+                )
 
     },
     methods: {
