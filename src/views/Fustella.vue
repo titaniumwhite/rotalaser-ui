@@ -212,7 +212,7 @@ import axios from 'axios'
         }).then(response =>{
                             let newData = []
                             this.got = response.data 
-                            for(let i=0; i<1555;i++){
+                            for(let i=this.got.length-1000; i<this.got.length-1;i++){
                               let couple = "{"
 
                               couple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
