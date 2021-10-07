@@ -189,20 +189,22 @@ import axios from 'axios'
             }
           },
           title: {
-              text: "Rotazioni",
-              align: 'left',
-              margin: 10,
-              offsetX: 0,
-              offsetY: 0,
-              floating: false,
-              style: {
+            text: "Rotazioni",
+            align: 'left',
+            margin: 10,
+            offsetX: 0,
+            offsetY: 0,
+            floating: false,
+            style: {
               fontSize:  '14px',
               fontWeight:  'bold',
               fontFamily:  undefined,
               color:  '#263238'
+            },
           },
-          
-          },
+          xaxis: {
+            type: 'datetime'
+          }
         },
 
         seriesArea2: [{
@@ -241,20 +243,22 @@ import axios from 'axios'
             }
           },
           title: {
-              text: "Velocità",
-              align: 'left',
-              margin: 10,
-              offsetX: 0,
-              offsetY: 0,
-              floating: false,
-              style: {
+            text: "Velocità",
+            align: 'left',
+            margin: 10,
+            offsetX: 0,
+            offsetY: 0,
+            floating: false,
+            style: {
               fontSize:  '14px',
               fontWeight:  'bold',
               fontFamily:  undefined,
               color:  '#263238'
+            },
           },
-          
-          },
+          xaxis: {
+            type: 'datetime'
+          }
         },
 
         seriesArea3: [{
@@ -301,18 +305,21 @@ import axios from 'axios'
               offsetY: 0,
               floating: false,
               style: {
-              fontSize:  '14px',
-              fontWeight:  'bold',
-              fontFamily:  undefined,
-              color:  '#263238'
-          },
-          
-          },
-        },
+                fontSize:  '14px',
+                fontWeight:  'bold',
+                fontFamily:  undefined,
+                color:  '#263238'
+              },
+            },
+          xaxis: {
+            type: 'datetime'
+          }
+        }, 
+        
       };
     },
     mounted(){
-          function timeConverter(UNIX_timestamp){
+         /* function timeConverter(UNIX_timestamp){
             var a = new Date(UNIX_timestamp * 1000);
             var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
             var year = a.getFullYear();
@@ -323,7 +330,7 @@ import axios from 'axios'
             var sec = a.getSeconds();
             var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
             return time;
-          }
+          }*/
 
           axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
           headers:{
@@ -334,18 +341,20 @@ import axios from 'axios'
                             let speedData = []
                             let sessionData = []
                             this.got = response.data 
-                            for(let i=this.got.length-1000; i<this.got.length-1;i++){
+                            for(let i=this.got.length-1555; i<this.got.length-1;i++){
 
                               let rotationCouple;
                               let speedCouple;    
                               let sessionCouple;                              
                                                        
-                              let timeCouple = "{"
+                              let timeCouple = "["
                               
-                              timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
-                              rotationCouple = timeCouple + ' "y": ' + this.got[i].rotations+"\n" + "}"
-                              speedCouple = timeCouple + ' "y": ' + this.got[i].speed+"\n" + "}"
-                              sessionCouple = timeCouple + ' "y": ' + this.got[i].session_id+"\n" + "}"
+                            //  timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
+                              timeCouple += Date.parse(this.got[i].id.slice(0,-9)) + ','
+                              console.log(timeCouple)
+                              rotationCouple = timeCouple + this.got[i].rotations+"\n" + "]"
+                              speedCouple = timeCouple + this.got[i].speed+"\n" + "]"
+                              sessionCouple = timeCouple + this.got[i].session_id+"\n" + "]"
 
                               rotationData.push(JSON.parse(rotationCouple))
                               speedData.push(JSON.parse(speedCouple))
