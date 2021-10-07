@@ -122,10 +122,8 @@
               </v-card>
             </v-col>
            <!-- </div> -->
+            <apexchart width="500" type="line" :options="options" :series="series"></apexchart>
 
-           <zingchart id ="myChart" :data="datacollection" ref="chart"></zingchart>
-
-            
           </v-row>
           </v-fade-transition>
           </v-container>
@@ -139,14 +137,10 @@
 
 <script>
 import axios from 'axios'
-import 'zingchart/es6';
-import zingchartVue from 'zingchart-vue';
+
 
   export default {
     name: "ChartPage",
-    components: {
-      zingchart: zingchartVue,
-    },
     data() {
       return {
         loading:true,
@@ -157,12 +151,14 @@ import zingchartVue from 'zingchart-vue';
         items: [
           'grafici', 'cad', 'analisi predittiva'
         ],
-        chartData: {
-          type: 'line',
-          series: [{
-            values: [4,5,3,3,4,4]
-          }]
+        options: {
+        chart: {
+          id: 'vuechart-example'
         },
+      },
+      series: [{
+        name: 'series-1',
+      }]
       };
     },
     mounted(){
@@ -171,13 +167,18 @@ import zingchartVue from 'zingchart-vue';
             'key':this.$root.key
           }
         }).then(response =>{
+          let newData = [];
                             this.got = response.data 
                             for(let i=0; i<1555;i++){
-                              zingchart.exec('myChart', 'addplot', {
-                              plotindex: 1,
-                              data: this.got[i].rotations
-                              });
+                              newData[i] = this.got[i].rotations
+
+                             // data: this.got[i].rotations
+
                             }
+                            this.series = [{
+    data: newData
+   }]
+                            
                             
                             this.loading=false
                           })
