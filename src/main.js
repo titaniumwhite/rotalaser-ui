@@ -6,8 +6,6 @@ import VueSessionStorage from "vue-sessionstorage";
 import VueApexCharts from 'vue-apexcharts'
 
 Vue.config.productionTip = false
-Vue.prototype.$key = {value: "black"};
-Vue.prototype.$sium = "???"
 
 Vue.use(VueSessionStorage);
 Vue.use(VueApexCharts);

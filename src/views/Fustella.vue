@@ -106,7 +106,7 @@
           </div>
 
           <v-fade-transition>
-          <v-card v-if="!loading && !err">
+          <v-card v-if="!loading && !err && item=='grafici'">
           <v-card-title>Fustella {{$route.params.id}}</v-card-title>
             <v-row>
                   
@@ -155,6 +155,22 @@
             </v-layout>
           </v-card>
 
+          <v-col v-if="item=='cad'" 
+            lg="6"
+            md="12" 
+            sm="12" 
+            cols="12"
+          >
+          <v-card >
+            <v-card-title>Cad</v-card-title>
+            
+            <v-img
+                v-bind:src="'data:image/jpeg;base64,'+cad"
+                max-height="1000px"
+              >
+            </v-img>
+          </v-card>
+          </v-col>
           </v-fade-transition>
           </v-container>
         </v-tab-item>
@@ -171,6 +187,7 @@ import axios from 'axios'
     name: "ChartPage",
     data() {
       return {
+        true: true,
         err: false,
         loading:true,
         got: '',
@@ -178,6 +195,7 @@ import axios from 'axios'
         searching: false,
         tab: null,
         datacollection: null,
+        cad: undefined,
         items: [
           'grafici', 'cad', 'analisi predittiva'
         ],
@@ -424,7 +442,7 @@ import axios from 'axios'
             return time;
           }*/
           
-          if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
+          if(/*!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)*/this.true){
             console.log(this.$route.params.id)
             axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
               headers:{
@@ -490,6 +508,19 @@ import axios from 'axios'
                                 
                               }
               )
+            
+            /* get the effin CAD */
+            axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id,{
+              headers:{
+                'key':this.$session.get("key")
+              }
+            }).then(response =>{
+                
+                console.log(response.data.cadimage)
+                
+                this.cad = response.data.cadimage
+
+            })
           }else{
               console.log(this.$route.params.id)
               this.seriesArea = [{
