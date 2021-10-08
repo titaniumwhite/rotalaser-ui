@@ -135,8 +135,8 @@
             >
               
               <v-card-title v-text="item.message"></v-card-title>
-              <v-card-subtitle>info</v-card-subtitle>
-              <v-card-text>Cose a caso?</v-card-text>
+              <v-card-subtitle></v-card-subtitle>
+              <v-card-text></v-card-text>
               <v-card-actions>
                  <v-btn
                   text

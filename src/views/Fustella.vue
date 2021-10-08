@@ -106,52 +106,55 @@
           </div>
 
           <v-fade-transition>
-          <v-card v-if="!loading">
+          <v-card v-if="!loading && !err">
           <v-card-title>Fustella {{$route.params.id}}</v-card-title>
-          <v-row  >
-            
-            
-            <v-col lg="6"
-            md="12"
-            sm="12"
-            >
-              <div>
-              <v-card>
-              <v-card-title>Stato della Fustella</v-card-title>
-
-              <div id="synced-charts">
-                <div id="chart-line">
-                  <apexchart type="area" :options="chartOptionsArea" :series="seriesArea"></apexchart>
-                </div>
-                
-                <div id="chart-area">
-                  <apexchart type="area" :options="chartOptionsArea3" :series="seriesArea3"></apexchart>
-                </div>
-              </div>
+            <v-row>
+                  
+              <v-col 
               
-              </v-card>
-              </div>
-            </v-col>
-            <v-col lg="6"
-            md="12"
-            sm="12" >
-              <div>
-              <v-card>
-              <v-card-title></v-card-title>
-
-              <div id="synced-charts2">
+              lg="6"
+              md="12"
+              sm="12"
+              cols="12"
+              >
                
-                <div id="chart-line2">
-                  <apexchart type="line" :options="chartOptionsArea2" :series="seriesArea2"></apexchart>
-                </div>
+                  <div>
+                    <div id="synced-charts">
+                      <div id="chart-line">
+                        <apexchart type="area" :options="chartOptionsArea" :series="seriesArea"></apexchart>
+                      </div>
+                      
+                      <div id="chart-area">
+                        <apexchart type="area" :options="chartOptionsArea3" :series="seriesArea3"></apexchart>
+                      </div>
+                    </div>
+                  
+                  </div>
+              </v-col>
+              <v-col lg="6"
+              md="12"
+              sm="12"
+              cols="12" >
+                <div>
                 
-              </div>
+                  <div id="synced-charts2">
+                    <div id="chart-line2">
+                      <apexchart type="line" :options="chartOptionsArea2" :series="seriesArea2"></apexchart>
+                    </div>
+                  </div>
+                
+                </div>
+              </v-col>
               
-              </v-card>
-              </div>
-            </v-col>
-          </v-row>
+            </v-row>
           </v-card>
+
+          <v-card v-if="err">
+            <v-layout align-center>
+              <h2>Nessun dato recente da mostrare</h2>
+            </v-layout>
+          </v-card>
+
           </v-fade-transition>
           </v-container>
         </v-tab-item>
@@ -168,6 +171,7 @@ import axios from 'axios'
     name: "ChartPage",
     data() {
       return {
+        err: false,
         loading:true,
         got: '',
         date: '',
@@ -215,7 +219,10 @@ import axios from 'axios'
             },
           }],
           dataLabels: {
-              enabled: false
+              enabled: false,
+              style:{
+                color:"#000000"
+              }
           },
           fill: {
             type: "gradient",
@@ -241,7 +248,10 @@ import axios from 'axios'
             },
           },
           xaxis: {
-            type: 'datetime'
+            type: 'datetime',
+            style:{
+              color:"#FFFFFF",
+            }
           },
           yaxis: {
             labels: {
@@ -389,6 +399,7 @@ import axios from 'axios'
             },
           xaxis: {
             type: 'datetime'
+
           },
           yaxis: {
             labels: {
@@ -400,7 +411,7 @@ import axios from 'axios'
       };
     },
     mounted(){
-          function timeConverter(UNIX_timestamp){
+          /*function timeConverter(UNIX_timestamp){
             var a = new Date(UNIX_timestamp * 1000);
             var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
             var year = a.getFullYear();
@@ -411,7 +422,8 @@ import axios from 'axios'
             var sec = a.getSeconds();
             var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
             return time;
-          }
+          }*/
+          
           if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
             console.log(this.$route.params.id)
             axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
@@ -423,6 +435,11 @@ import axios from 'axios'
                                 let speedData = []
                                 let sessionData = []
                                 this.got = response.data 
+                                if(this.got.length<1){
+                                  this.loading = false
+                                  this.err=true
+                                  return
+                                }
                                 for(let i=this.got.length-1000; i<this.got.length-1;i++){
 
                                   let rotationCouple;
@@ -433,7 +450,7 @@ import axios from 'axios'
                                   
                                 //  timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
                                   timeCouple += '"x": ' + Date.parse(this.got[i].id.slice(0,-9)) + ', '
-                                  console.log( timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000))
+                                  //console.log( timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000))
                                   rotationCouple = timeCouple + '"y": '+ this.got[i].rotations+"\n" + "}"
                                   speedCouple = timeCouple + '"y": '   + this.got[i].speed+"\n" + "}"
                                   sessionCouple = timeCouple + '"y": ' + this.got[i].session_id+"\n" + "}"
@@ -449,6 +466,10 @@ import axios from 'axios'
                                 this.$session.set("id",this.$route.params.id)
                                 //newData = "]"
                                 //this.date=newData
+
+                                if(this.$vuetify.theme.dark){
+                                  this.seriesArea.xaxis.style.colors=["#FFFFFF","#FFFFFF","#FFFFFF"]
+                                }
 
                                 this.seriesArea = [{
                                   name: "Rotazioni",

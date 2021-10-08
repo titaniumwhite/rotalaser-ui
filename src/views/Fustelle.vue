@@ -282,14 +282,27 @@ export default {
               'key':this.$session.get("key")
             }
           }).then(response =>{
-                              this.secret = response.data 
+                              let filtered = []
+                              
+                              for(let i = 0;i<response.data.length;i++){
+                                  if(response.data[i].id != "00:00:00:00:00:10"){
+                                    let str = "{ "
+                                    str += '"id": "'     + response.data[i].id + '" , '
+                                    str += '"active": "' + response.data[i].active + '", '
+                                    str += '"status": "' + response.data[i].status + '" '
+                                    str+= " }"
+                                    console.log(str)
+                                    filtered.push(JSON.parse(str))
+                                  }
+                              }
+                              this.secret = filtered
                               this.loading= false
-                              console.log(response.data[0])
-                              //this.$session.set("fustelle",response.data)
+                              console.log(filtered)
+                              this.$session.set("fustelle",filtered)
                               
                             })
         }else{
-          //this.secret = this.$session.get("fustelle")
+          this.secret = this.$session.get("fustelle")
           this.loading= false 
         }
 
