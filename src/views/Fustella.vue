@@ -111,7 +111,10 @@
           <v-row  >
             
             
-            <v-col :cols=6 >
+            <v-col lg="6"
+            md="12"
+            sm="12"
+            >
               <div>
               <v-card>
               <v-card-title>Stato della Fustella</v-card-title>
@@ -129,7 +132,9 @@
               </v-card>
               </div>
             </v-col>
-            <v-col :cols=6 >
+            <v-col lg="6"
+            md="12"
+            sm="12" >
               <div>
               <v-card>
               <v-card-title></v-card-title>
