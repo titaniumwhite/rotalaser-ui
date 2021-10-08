@@ -515,11 +515,8 @@ import axios from 'axios'
                 'key':this.$session.get("key")
               }
             }).then(response =>{
-                
-                console.log(response.data.cadimage)
-                
+            
                 this.cad = response.data.cadimage
-
                 this.$session.set("cad",response.data.cadimage)
 
             })
