@@ -469,13 +469,18 @@ import axios from 'axios'
                                 //  timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
                                   timeCouple += '"x": ' + Date.parse(this.got[i].id.slice(0,-9)) + ', '
                                   //console.log( timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000))
-                                  rotationCouple = timeCouple + '"y": '+ this.got[i].rotations+"\n" + "}"
-                                  speedCouple = timeCouple + '"y": '   + this.got[i].speed+"\n" + "}"
-                                  sessionCouple = timeCouple + '"y": ' + this.got[i].session_id+"\n" + "}"
+                                  console.log(this.got[i].rotations)
+                                  if(!isNaN(Date.parse(this.got[i].id.slice(0,-9)))){
+                                    rotationCouple = timeCouple + ' "y": '+ this.got[i].rotations + " }"
+                                    speedCouple = timeCouple + ' "y": '   + this.got[i].speed + " }"
+                                    sessionCouple = timeCouple + ' "y": ' + this.got[i].session_id + " }"
 
-                                  rotationData.push(JSON.parse(rotationCouple))
-                                  speedData.push(JSON.parse(speedCouple))
-                                  sessionData.push(JSON.parse(sessionCouple))
+
+                                    console.log(rotationCouple)
+                                    rotationData.push(JSON.parse(rotationCouple))
+                                    speedData.push(JSON.parse(speedCouple))
+                                    sessionData.push(JSON.parse(sessionCouple))
+                                  }
 
                                 }
                                 this.$session.set("fustellaR",rotationData)
