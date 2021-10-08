@@ -126,7 +126,7 @@
       
       <v-container  fluid>
         <v-card>
-        <v-card-title class="font-weight-bold">Clienti ++ {{this.$root.key}}</v-card-title>
+        <v-card-title class="font-weight-bold">Clienti</v-card-title>
         <v-row dense>
           <v-col 
             v-for="item in clienti"
@@ -266,8 +266,8 @@ export default {
       group: null,
       dialog: false,
       clienti: [
-        { message: 'Cliente 1',flex:4 },
-        { message: 'Cliente 2',flex:4 }
+        { message: 'Rotalaser',flex:4 },
+        //{ message: 'Cliente 2',flex:4 }
       ],
       offset: true,
     }),

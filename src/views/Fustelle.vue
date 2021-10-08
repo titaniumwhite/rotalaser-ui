@@ -15,7 +15,7 @@
         flat
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <v-toolbar-title>Fustelle di {{$route.params.id}}</v-toolbar-title>
+        <v-toolbar-title></v-toolbar-title>
   
         <v-spacer></v-spacer>
   
@@ -129,7 +129,9 @@
       ></v-progress-circular>
         </div>
         <v-fade-transition>
-        <v-row dense v-if="!loading">
+        <v-card v-if="!loading">
+        <v-card-title>Fustelle di {{$route.params.id}}</v-card-title>
+        <v-row dense >
           <v-col 
             v-for="item in secret"
             :key="item.message"
@@ -140,8 +142,8 @@
              >
               
               <v-card-title v-text="item.id"></v-card-title>
-              <v-card-subtitle>info fustella</v-card-subtitle>
-              <v-card-text>Cose a caso?</v-card-text>
+              <v-card-subtitle>Fustella attiva? {{item.active}}</v-card-subtitle>
+              <v-card-text>Status: {{item.status}}</v-card-text>
               <v-card-actions>
                  <v-btn
                   text
@@ -212,6 +214,7 @@
                           </v-col>
                           
                         </v-row>
+                        
                       </v-container>
                     </v-card-text>
                     <v-card-actions>
@@ -236,6 +239,7 @@
             </v-card>
           </v-col>
         </v-row>
+        </v-card>
         </v-fade-transition>
       </v-container>
     </v-main>  
@@ -272,14 +276,22 @@ export default {
       },
     },
     mounted(){
-        axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/',{
-          headers:{
-            'key':this.$session.get("key")
-          }
-        }).then(response =>{
-                            this.secret = response.data 
-                            this.loading= false
-                          })
+        if(!this.$session.exists("fustelle")){
+          axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/',{
+            headers:{
+              'key':this.$session.get("key")
+            }
+          }).then(response =>{
+                              this.secret = response.data 
+                              this.loading= false
+                              console.log(response.data[0])
+                              //this.$session.set("fustelle",response.data)
+                              
+                            })
+        }else{
+          //this.secret = this.$session.get("fustelle")
+          this.loading= false 
+        }
 
     },
     methods: {

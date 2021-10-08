@@ -21,7 +21,7 @@
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
   
-        <v-toolbar-title class="font-weight-bold">Fustella {{$route.params.id}}</v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold"></v-toolbar-title>
 
         <v-spacer></v-spacer>
 
@@ -106,29 +106,47 @@
           </div>
 
           <v-fade-transition>
-          <v-row v-if="!loading" >
+          <v-card v-if="!loading">
+          <v-card-title>Fustella {{$route.params.id}}</v-card-title>
+          <v-row  >
             
             
             <v-col :cols=6 >
               <div>
               <v-card>
-              <v-card-title>Grafico Rotazioni</v-card-title>
+              <v-card-title>Stato della Fustella</v-card-title>
 
-              <div id="wrapper">
+              <div id="synced-charts">
                 <div id="chart-line">
-                <apexchart type="area" :options="chartOptionsArea" :series="seriesArea"></apexchart>
-              </div>
-                <div id="chart-line2">
-                <apexchart type="line" :options="chartOptionsArea2" :series="seriesArea2"></apexchart>
-              </div>
+                  <apexchart type="area" :options="chartOptionsArea" :series="seriesArea"></apexchart>
+                </div>
+                
                 <div id="chart-area">
-                <apexchart type="area" :options="chartOptionsArea3" :series="seriesArea3"></apexchart>
+                  <apexchart type="area" :options="chartOptionsArea3" :series="seriesArea3"></apexchart>
+                </div>
               </div>
+              
+              </v-card>
               </div>
+            </v-col>
+            <v-col :cols=6 >
+              <div>
+              <v-card>
+              <v-card-title></v-card-title>
+
+              <div id="synced-charts2">
+               
+                <div id="chart-line2">
+                  <apexchart type="line" :options="chartOptionsArea2" :series="seriesArea2"></apexchart>
+                </div>
+                
+              </div>
+              
               </v-card>
               </div>
             </v-col>
           </v-row>
+          </v-card>
           </v-fade-transition>
           </v-container>
         </v-tab-item>
@@ -160,8 +178,17 @@ import axios from 'axios'
         chartOptionsArea: {
           chart: {
             id: 'rotazioni',
-            width: '100%',
+            height: 160,
             type: 'area',
+            group: 'social',
+            zoom: {
+              type: 'x',
+              enabled: true,
+              autoScaleYaxis: true
+            },
+            toolbar: {
+              autoSelected: 'zoom'
+            },
             animations: {
               enabled: true,
               easing: 'easeinout',
@@ -176,6 +203,12 @@ import axios from 'axios'
               }
             }
           },
+          responsive: [{
+            breakpoint: 1000,
+            options: {
+
+            },
+          }],
           dataLabels: {
               enabled: false
           },
@@ -204,7 +237,12 @@ import axios from 'axios'
           },
           xaxis: {
             type: 'datetime'
-          }
+          },
+          yaxis: {
+            labels: {
+              minWidth: 40
+            }
+          },
         },
 
         seriesArea2: [{
@@ -213,8 +251,17 @@ import axios from 'axios'
         chartOptionsArea2: {
           chart: {
             id: 'velocità',
-            width: '100%',
+            height: 160,
             type: 'area',
+            group: 'social',
+            zoom: {
+              type: 'x',
+              enabled: true,
+              autoScaleYaxis: true
+            },
+            toolbar: {
+              autoSelected: 'zoom'
+            },
             animations: {
               enabled: true,
               easing: 'easeinout',
@@ -229,6 +276,12 @@ import axios from 'axios'
               }
             }
           },
+          responsive: [{
+            breakpoint: 1000,
+            options: {
+
+            },
+          }],
           colors: ["#00b359"],
           dataLabels: {
               enabled: false
@@ -258,7 +311,12 @@ import axios from 'axios'
           },
           xaxis: {
             type: 'datetime'
-          }
+          },
+          yaxis: {
+            labels: {
+              minWidth: 40
+            }
+          },
         },
 
         seriesArea3: [{
@@ -267,8 +325,17 @@ import axios from 'axios'
         chartOptionsArea3: {
           chart: {
             id: 'sessione',
-            width: '100%',
+            height: 160,
             type: 'area',
+            group: 'social',
+            zoom: {
+              type: 'x',
+              enabled: true,
+              autoScaleYaxis: true
+            },
+            toolbar: {
+              autoSelected: 'zoom'
+            },
             animations: {
               enabled: true,
               easing: 'easeinout',
@@ -283,6 +350,10 @@ import axios from 'axios'
               }
             }
           },
+          responsive: [{
+            breakpoint: 1000,
+            options: {},
+          }],
           colors: ["#7E36AF"],
           dataLabels: {
               enabled: false
@@ -313,13 +384,18 @@ import axios from 'axios'
             },
           xaxis: {
             type: 'datetime'
+          },
+          yaxis: {
+            labels: {
+              minWidth: 40
+            }
           }
         }, 
         
       };
     },
     mounted(){
-         /* function timeConverter(UNIX_timestamp){
+          function timeConverter(UNIX_timestamp){
             var a = new Date(UNIX_timestamp * 1000);
             var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
             var year = a.getFullYear();
@@ -330,59 +406,83 @@ import axios from 'axios'
             var sec = a.getSeconds();
             var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
             return time;
-          }*/
-
-          axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
-          headers:{
-            'key':this.$session.get("key")
           }
-        }).then(response =>{
-                            let rotationData = []
-                            let speedData = []
-                            let sessionData = []
-                            this.got = response.data 
-                            for(let i=this.got.length-1555; i<this.got.length-1;i++){
+          if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
+            console.log(this.$route.params.id)
+            axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
+              headers:{
+                'key':this.$session.get("key")
+              }
+            }).then(response =>{
+                                let rotationData = []
+                                let speedData = []
+                                let sessionData = []
+                                this.got = response.data 
+                                for(let i=this.got.length-1000; i<this.got.length-1;i++){
 
-                              let rotationCouple;
-                              let speedCouple;    
-                              let sessionCouple;                              
-                                                       
-                              let timeCouple = "["
+                                  let rotationCouple;
+                                  let speedCouple;    
+                                  let sessionCouple;                              
+                                                          
+                                  let timeCouple = "{ "
+                                  
+                                //  timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
+                                  timeCouple += '"x": ' + Date.parse(this.got[i].id.slice(0,-9)) + ', '
+                                  console.log( timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000))
+                                  rotationCouple = timeCouple + '"y": '+ this.got[i].rotations+"\n" + "}"
+                                  speedCouple = timeCouple + '"y": '   + this.got[i].speed+"\n" + "}"
+                                  sessionCouple = timeCouple + '"y": ' + this.got[i].session_id+"\n" + "}"
+
+                                  rotationData.push(JSON.parse(rotationCouple))
+                                  speedData.push(JSON.parse(speedCouple))
+                                  sessionData.push(JSON.parse(sessionCouple))
+
+                                }
+                                this.$session.set("fustellaR",rotationData)
+                                this.$session.set("fustellaSpe",speedData)
+                                this.$session.set("fustellaSes",sessionData)
+                                this.$session.set("id",this.$route.params.id)
+                                //newData = "]"
+                                //this.date=newData
+
+                                this.seriesArea = [{
+                                  name: "Rotazioni",
+                                  data: rotationData
+                                }]
+
+                                this.seriesArea2 = [{
+                                  name: "Velocità",
+                                  data: speedData
+                                }]
+
+                                this.seriesArea3 = [{
+                                  name: "Sessioni",
+                                  data: sessionData
+                                }]
                               
-                            //  timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
-                              timeCouple += Date.parse(this.got[i].id.slice(0,-9)) + ','
-                              console.log(timeCouple)
-                              rotationCouple = timeCouple + this.got[i].rotations+"\n" + "]"
-                              speedCouple = timeCouple + this.got[i].speed+"\n" + "]"
-                              sessionCouple = timeCouple + this.got[i].session_id+"\n" + "]"
+                                this.loading=false                        
+                                
+                              }
+              )
+          }else{
+              console.log(this.$route.params.id)
+              this.seriesArea = [{
+                name: "Rotazioni",
+                data: this.$session.get("fustellaR")
+              }]
 
-                              rotationData.push(JSON.parse(rotationCouple))
-                              speedData.push(JSON.parse(speedCouple))
-                              sessionData.push(JSON.parse(sessionCouple))
+              this.seriesArea2 = [{
+                name: "Velocità",
+                data: this.$session.get("fustellaSpe")
+              }]
 
-                            }
-                            //newData = "]"
-                            //this.date=newData
-                            this.seriesArea = [{
-                              data: rotationData
-                            }]
-
-                            this.seriesArea = [{
-                              data: rotationData
-                            }]
-
-                            this.seriesArea2 = [{
-                              data: speedData
-                            }]
-
-                            this.seriesArea3 = [{
-                              data: sessionData
-                            }]
-                          
-                            this.loading=false                        
-                            
-                          }
-                )
+              this.seriesArea3 = [{
+                name: "Sessioni",
+                data: this.$session.get("fustellaSes")
+              }]
+            
+              this.loading=false 
+          }
 
     },
     methods: {
@@ -405,4 +505,11 @@ import axios from 'axios'
 .v-tabs-slider-wrapper, .v-tab--active {
   color: #fff !important;
 }
+#synced-charts {
+  max-width: 760px;
+  min-height: 300px;
+  margin: 35px auto;
+  opacity: 0.9;
+}
+
 </style>

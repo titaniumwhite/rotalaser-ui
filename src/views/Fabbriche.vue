@@ -249,8 +249,8 @@ export default {
       group: null,
       dialog: false,
       fabbriche: [
-        { message: 'Fabbrica 1',flex:4 },
-        { message: 'Fabbrica 2',flex:4 }
+        { message: 'International Paper',flex:4 },
+        //{ message: 'Fabbrica 2',flex:4 }
       ],
       items: [
         { title: 'Logout' },
