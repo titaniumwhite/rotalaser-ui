@@ -230,6 +230,9 @@ import axios from 'axios'
               }
             }
           },
+          stroke: {
+            curve: 'straight'
+          },
           responsive: [{
             breakpoint: 1000,
             options: {
@@ -309,6 +312,9 @@ import axios from 'axios'
               }
             }
           },
+          stroke: {
+            curve: 'stepline'
+          },
           responsive: [{
             breakpoint: 1000,
             options: {
@@ -382,6 +388,9 @@ import axios from 'axios'
                   speed: 350
               }
             }
+          },
+          stroke: {
+            curve: 'stepline'
           },
           responsive: [{
             breakpoint: 1000,
