@@ -442,7 +442,7 @@ import axios from 'axios'
             return time;
           }*/
           
-          if(/*!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)*/this.true){
+          if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
             console.log(this.$route.params.id)
             axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
               headers:{
@@ -520,9 +520,12 @@ import axios from 'axios'
                 
                 this.cad = response.data.cadimage
 
+                this.$session.set("cad",response.data.cadimage)
+
             })
           }else{
-              console.log(this.$route.params.id)
+              this.cad =this.$session.get("cad")
+              
               this.seriesArea = [{
                 name: "Rotazioni",
                 data: this.$session.get("fustellaR")
