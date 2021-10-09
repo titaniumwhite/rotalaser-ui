@@ -123,12 +123,10 @@
                       <div id="chart-line">
                         <apexchart type="area" :options="chartOptionsArea" :series="seriesArea"></apexchart>
                       </div>
-                      
-                      <div id="chart-area">
-                        <apexchart type="area" :options="chartOptionsArea3" :series="seriesArea3"></apexchart>
-                      </div>
                     </div>
-                  
+                     <div id="chart-line">
+                        <apexchart type="area" :options="chartOptionsLine" :series="seriesLine"></apexchart>
+                      </div>
                   </div>
               </v-col>
               <v-col lg="6"
@@ -136,8 +134,12 @@
               sm="12"
               cols="12" >
                 <div>
-                
                   <div id="synced-charts2">
+
+                    <div id="chart-area">
+                      <apexchart type="area" :options="chartOptionsArea3" :series="seriesArea3"></apexchart>
+                    </div>
+                  
                     <div id="chart-line2">
                       <apexchart type="line" :options="chartOptionsArea2" :series="seriesArea2"></apexchart>
                     </div>
@@ -192,6 +194,8 @@ import axios from 'axios'
         loading:true,
         got: '',
         date: '',
+        initialTime: '',
+        finalTime: '',
         searching: false,
         tab: null,
         datacollection: null,
@@ -200,7 +204,7 @@ import axios from 'axios'
           'grafici', 'cad', 'analisi predittiva'
         ],
         seriesArea: [{
-          name: 'rotazioni',
+          name: 'Rotazioni',
         }],
         chartOptionsArea: {
           chart: {
@@ -208,43 +212,20 @@ import axios from 'axios'
             height: 160,
             type: 'area',
             group: 'social',
-            zoom: {
-              type: 'x',
-              enabled: true,
-              autoScaleYaxis: true
-            },
             toolbar: {
-              autoSelected: 'zoom'
-            },
-            animations: {
-              enabled: true,
-              easing: 'easeinout',
-              speed: 800,
-              animateGradually: {
-                  enabled: true,
-                  delay: 150
-              },
-              dynamicAnimation: {
-                  enabled: true,
-                  speed: 350
-              }
+                autoSelected: 'pan',
+                show: false
             }
           },
           stroke: {
-            curve: 'straight'
+            width: 3
           },
-          responsive: [{
-            breakpoint: 1000,
-            options: {
-
-            },
-          }],
           dataLabels: {
-              enabled: false,
-              style:{
-                color:"#000000"
-              }
-          },
+              enabled: false
+            },
+            markers: {
+              size: 0
+            },
           fill: {
             type: "gradient",
             gradient: {
@@ -270,9 +251,6 @@ import axios from 'axios'
           },
           xaxis: {
             type: 'datetime',
-            style:{
-              color:"#FFFFFF",
-            }
           },
           yaxis: {
             labels: {
@@ -280,6 +258,47 @@ import axios from 'axios'
             }
           },
         },
+
+        seriesLine: [{
+            name: 'RotazioniBrush'
+          }],
+          chartOptionsLine: {
+            chart: {
+              id: 'chart1',
+              height: 60,
+              type: 'area',
+              brush:{
+                target: 'rotazioni',
+                enabled: true
+              },
+              
+            
+              selection: {
+                enabled: true,
+                xaxis: {
+                  min: new Date('1 Jun 2021').getTime(),
+              max: new Date('14 Sep 2021').getTime()
+                }
+              },
+            },
+            colors: ['#008FFB'],
+            fill: {
+              type: 'gradient',
+              gradient: {
+                opacityFrom: 0.91,
+                opacityTo: 0.1,
+              }
+            },
+            xaxis: {
+              type: 'datetime',
+              tooltip: {
+                enabled: false
+              }
+            },
+            yaxis: {
+              tickAmount: 2
+            } 
+          },
 
         seriesArea2: [{
           name: 'velocità',
@@ -472,14 +491,18 @@ import axios from 'axios'
                                   let rotationCouple;
                                   let speedCouple;    
                                   let sessionCouple;                              
-                                                          
-                                  let timeCouple = "{ "
+                                  let time = Date.parse(this.got[i].id.slice(0,-9))
+                                  if(!isNaN(time)){
+                                    if (i == this.got.length-1000) this.setInitialTime(this.time.getTime())
+                                    else if (i == this.got.length-2) this.setFinalTime(this.time.getTime())
+
+                                    let timeCouple = "{ "
+                                    
+                                  //  timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
+                                    timeCouple += '"x": ' + time + ', '
+                                    //console.log( timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000))
                                   
-                                //  timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
-                                  timeCouple += '"x": ' + Date.parse(this.got[i].id.slice(0,-9)) + ', '
-                                  //console.log( timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000))
                                   
-                                  if(!isNaN(Date.parse(this.got[i].id.slice(0,-9)))){
                                     rotationCouple = timeCouple + ' "y": '+ this.got[i].rotations + " }"
                                     speedCouple = timeCouple + ' "y": '   + this.got[i].speed + " }"
                                     sessionCouple = timeCouple + ' "y": ' + this.got[i].session_id + " }"
@@ -501,6 +524,11 @@ import axios from 'axios'
                                   this.seriesArea.xaxis.style.colors=["#FFFFFF","#FFFFFF","#FFFFFF"]
                                 }
 
+                                this.seriesLine = [{
+                                  name: "RotazioniBrush",
+                                  data: rotationData
+                                }]
+
                                 this.seriesArea = [{
                                   name: "Rotazioni",
                                   data: rotationData
@@ -512,7 +540,7 @@ import axios from 'axios'
                                 }]
 
                                 this.seriesArea3 = [{
-                                  name: "Sessioni",
+                                  name: "Sessione",
                                   data: sessionData
                                 }]
                               
@@ -546,7 +574,7 @@ import axios from 'axios'
               }]
 
               this.seriesArea3 = [{
-                name: "Sessioni",
+                name: "Sessione",
                 data: this.$session.get("fustellaSes")
               }]
             
@@ -564,6 +592,21 @@ import axios from 'axios'
 
       getRandomInt () {
         return Math.floor(Math.random() * (50 - 5 + 1)) + 5
+      }
+    },
+    watch: {
+      setInitialTime(t) {
+        this.initialTime = t;
+      },
+      setFinalTime(t) {
+        this.finalTime = t;
+      },
+      getInitialTime() {
+        console.log("here")
+        if (this.initialTime != '') return this.initialTime
+      },
+      getFinalTime() {
+        if (this.finalTime != '') return this.finalTime
       }
     }
   };
