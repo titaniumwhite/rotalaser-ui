@@ -108,47 +108,63 @@
           <v-fade-transition>
           <v-card v-if="!loading && !err && item=='grafici'">
           <v-card-title>Fustella {{$route.params.id}}</v-card-title>
-            <v-row>
+            <v-row centered>
+
+              <v-col
+                lg="2"
+                md="2"
+                sm="2"
+                cols="2"
+              > </v-col>
                   
               <v-col 
-              
-              lg="6"
-              md="6"
-              sm="12"
-              cols="12"
+              lg="8"
+              md="8"
+              sm="8"
+              cols="8"
               >
-               
                   <div>
-                    <div id="synced-charts">
                       <div id="chart-line">
-                        <apexchart type="area" :options="chartOptionsArea" :series="seriesArea"></apexchart>
+                        <apexchart width='100%' height="300" type="area" :options="chartOptionsArea" :series="seriesArea"></apexchart>
                       </div>
-                    </div>
                      <div id="chart-line">
-                        <apexchart type="area" :options="chartOptionsLine" :series="seriesLine"></apexchart>
+                        <apexchart width='100%' height="100" type="area" :options="chartOptionsLine" :series="seriesLine"></apexchart>
                       </div>
                   </div>
               </v-col>
+
+              <v-col 
+                lg="2"
+                md="2"
+                sm="2"
+                cols="2"
+              > </v-col>
+
+            </v-row>
+
+            <v-row>
               <v-col lg="6"
               md="6"
               sm="12"
               cols="12" >
-                <div>
-                  <div id="synced-charts2">
 
-                    <div id="chart-area">
-                      <apexchart type="area" :options="chartOptionsArea3" :series="seriesArea3"></apexchart>
+
+                    <div id="chart-line">
+                      <apexchart width='100%' height="300" type="area" :options="chartOptionsArea3" :series="seriesArea3"></apexchart>
                     </div>
-                  
-                    <div id="chart-line2">
-                      <apexchart type="line" :options="chartOptionsArea2" :series="seriesArea2"></apexchart>
-                    </div>
-                  </div>
-                
-                </div>
               </v-col>
-              
+              <v-col lg="6"
+                md="6"
+                sm="12"
+                cols="12" 
+              >
+                    <div id="chart-line">
+                      <apexchart width='100%' height="300" type="area" :options="chartOptionsArea2" :series="seriesArea2"></apexchart>
+                    </div>
+                
+              </v-col>
             </v-row>
+
           </v-card>
 
           <v-card v-if="err">
@@ -209,11 +225,25 @@ import axios from 'axios'
         chartOptionsArea: {
           chart: {
             id: 'rotazioni',
-            height: 160,
+            height: 100,
             type: 'area',
+            group: 'sync',
             toolbar: {
-                autoSelected: 'pan',
-                show: true
+              autoSelected: 'pan',
+              show: true
+            },
+            animations: {
+              enabled: true,
+              easing: 'easeinout',
+              speed: 800,
+              animateGradually: {
+                  enabled: true,
+                  delay: 150
+              },
+              dynamicAnimation: {
+                  enabled: true,
+                  speed: 350
+              }
             }
           },
           stroke: {
@@ -222,9 +252,9 @@ import axios from 'axios'
           dataLabels: {
               enabled: false
             },
-            markers: {
-              size: 0
-            },
+          markers: {
+            size: 0
+          },
           fill: {
             type: "gradient",
             gradient: {
@@ -263,11 +293,11 @@ import axios from 'axios'
           }],
           chartOptionsLine: {
             chart: {
-              id: 'chart1',
-              height: 20,
+              id: 'brushChart',
+              height: 120,
               type: 'area',
               brush:{
-                target: 'rotazioni',
+                targets: ['rotazioni', 'velocità', 'sessione'],
                 enabled: true
               }, 
             },
@@ -302,41 +332,23 @@ import axios from 'axios'
             id: 'velocità',
             height: 160,
             type: 'area',
-            group: 'social',
-            zoom: {
-              type: 'x',
-              enabled: true,
-              autoScaleYaxis: true
-            },
+            group: 'sync',
             toolbar: {
-              autoSelected: 'zoom'
+              autoSelected: 'pan',
+              show: true
             },
-            animations: {
-              enabled: true,
-              easing: 'easeinout',
-              speed: 800,
-              animateGradually: {
-                  enabled: true,
-                  delay: 150
-              },
-              dynamicAnimation: {
-                  enabled: true,
-                  speed: 350
-              }
-            }
+    
           },
           stroke: {
             curve: 'stepline'
           },
-          responsive: [{
-            breakpoint: 1000,
-            options: {
-
-            },
-          }],
+          
           colors: ["#00b359"],
           dataLabels: {
               enabled: false
+          },
+          markers: {
+            size: 0
           },
           fill: {
             type: "gradient",
@@ -379,14 +391,10 @@ import axios from 'axios'
             id: 'sessione',
             height: 160,
             type: 'area',
-            group: 'social',
-            zoom: {
-              type: 'x',
-              enabled: true,
-              autoScaleYaxis: true
-            },
+            group: 'sync',
             toolbar: {
-              autoSelected: 'zoom'
+              autoSelected: 'pan',
+              show: true
             },
             animations: {
               enabled: true,
@@ -405,13 +413,12 @@ import axios from 'axios'
           stroke: {
             curve: 'stepline'
           },
-          responsive: [{
-            breakpoint: 1000,
-            options: {},
-          }],
           colors: ["#7E36AF"],
           dataLabels: {
               enabled: false
+          },
+          markers: {
+            size: 0
           },
           fill: {
             colors: ["#7E36AF"],
@@ -536,14 +543,14 @@ import axios from 'axios'
                                 console.log(this.chartOptionsLine)
                                 this.chartOptionsLine = {...this.chartOptionsLine, 
                                 chart: {
-                                  id: 'chart1',
-                                  height: 20,
+                                  id: 'brushChart',
+                                  height: 120,
                                   type: 'area',
                                   brush:{
-                                    target: 'rotazioni',
+                                    targets: ['rotazioni', 'velocità', 'sessione'],
                                     enabled: true
                                   }, 
-          
+                                  
                                   selection:{
                                       enabled: true,
                                       xaxis: {
