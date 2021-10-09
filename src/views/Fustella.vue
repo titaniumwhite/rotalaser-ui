@@ -487,7 +487,6 @@ import axios from 'axios'
                                   let speedCouple;    
                                   let sessionCouple;                              
                                   let time = Date.parse(this.got[i].id.slice(0,-9))
-                                  //let siumpera = new Date(this.got[i].id.slice(0,-9))
                                   
                                   if(!isNaN(time)){
                                     if (i == this.got.length-500){ 
@@ -526,14 +525,25 @@ import axios from 'axios'
                                 }
 
                               
-                              this.set_sht(my_min,my_max)
+                               
 
                                 this.seriesLine = [{
                                   name: "RotazioniBrush",
                                   data: rotationData
                                 }]
 
-                                
+                                console.log(this.chartOptionsLine)
+                                this.chartOptionsLine = {...this.chartOptionsLine, 
+                                  selection:{
+                                      enabled: true,
+                                      xaxis: {
+                                        min: my_min,
+                                        max: my_max
+                                      }
+                                  }
+                                }
+
+                                console.log(this.chartOptionsLine)
                                 
                                 this.seriesArea = [{
                                   name: "Rotazioni",
@@ -606,20 +616,6 @@ import axios from 'axios'
           this.searching =! this.searching
         }
       },
-      set_sht(my_min,my_max){
-        console.log(this.chartOptionsLine)
-        this.chartOptionsLine = {...this.chartOptionsLine, 
-          selection:{
-              enabled: true,
-              xaxis: {
-                min: my_min,
-                max: my_max
-              }
-          }
-        }
-
-        console.log(this.chartOptionsLine)
-      }
     }
   };
 </script>
