@@ -113,15 +113,15 @@
               <v-col
                 lg="2"
                 md="2"
-                sm="2"
-                cols="2"
+                sm="1"
+                cols="1"
               > </v-col>
                   
               <v-col 
               lg="8"
               md="8"
-              sm="8"
-              cols="8"
+              sm="12"
+              cols="12"
               >
                   <div>
                       <div id="chart-line">
@@ -136,8 +136,8 @@
               <v-col 
                 lg="2"
                 md="2"
-                sm="2"
-                cols="2"
+                sm="1"
+                cols="1"
               > </v-col>
 
             </v-row>
@@ -471,7 +471,7 @@ import axios from 'axios'
             return time;
           }*/
           
-          if(/*!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)*/ this.true){
+          if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
             console.log(this.$route.params.id)
             axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
               headers:{
@@ -499,15 +499,15 @@ import axios from 'axios'
                                   if(!isNaN(time)){
                                     if (i == this.got.length-500){ 
                                       my_min = time
-                                      console.log("min"+ my_min)
+                                      //console.log("min"+ my_min)
                                     }
                                     else if (i == this.got.length-2){
                                        my_max=time
-                                       console.log("max"+my_max)
+                                       //console.log("max"+my_max)
                                     }
                                     let timeCouple = "{ "
                                     
-                                  //  timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
+                                    //timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
                                     timeCouple += '"x": ' + time + ', '
                                     //console.log( timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000))
                                   
@@ -527,42 +527,34 @@ import axios from 'axios'
                                 this.$session.set("fustellaSpe",speedData)
                                 this.$session.set("fustellaSes",sessionData)
                                 this.$session.set("id",this.$route.params.id)
+                                this.$session.set("min",my_min)
+                                this.$session.set("max",my_max)
                                 
+                                /*
                                 if(this.$vuetify.theme.dark){
                                   this.seriesArea.xaxis.style.colors=["#FFFFFF","#FFFFFF","#FFFFFF"]
                                 }
+                                */
 
-                              
-                               
-
-                                this.seriesLine = [{
-                                  name: "RotazioniBrush",
-                                  data: rotationData
-                                }]
-
-                                console.log(this.chartOptionsLine)
                                 this.chartOptionsLine = {...this.chartOptionsLine, 
-                                chart: {
-                                  id: 'brushChart',
-                                  height: 120,
-                                  type: 'area',
-                                  brush:{
-                                    targets: ['rotazioni', 'velocità', 'sessione'],
-                                    enabled: true
-                                  }, 
-                                  
-                                  selection:{
-                                      enabled: true,
-                                      xaxis: {
-                                        min: my_min,
-                                        max: my_max
-                                      }
+                                  chart: {
+                                    id: 'brushChart',
+                                    height: 120,
+                                    type: 'area',
+                                    brush:{
+                                      target: 'rotazioni',
+                                      enabled: true
+                                    }, 
+                                    
+                                    selection:{
+                                        enabled: true,
+                                        xaxis: {
+                                          min: this.$session.get("min"),
+                                          max: this.$session.get("max")
+                                        }
+                                    }
                                   }
                                 }
-                                }
-
-                                console.log(this.chartOptionsLine)
-                                
                                 this.seriesArea = [{
                                   name: "Rotazioni",
                                   data: rotationData
@@ -577,6 +569,13 @@ import axios from 'axios'
                                   name: "Sessione",
                                   data: sessionData
                                 }]
+
+                                this.seriesLine = [{
+                                  name: "RotazioniBrush",
+                                  data: rotationData
+                                }]
+
+                                
                               
                                 this.loading=false                        
                                 
@@ -602,6 +601,7 @@ import axios from 'axios'
               })
           }else{
               this.cad =this.$session.get("cad")
+            
               
               this.seriesLine = [{
                 name: "RotazioniBrush",
@@ -611,7 +611,27 @@ import axios from 'axios'
               this.seriesArea = [{
                 name: "Rotazioni",
                 data: this.$session.get("fustellaR")
-              }]
+              }]  
+
+                this.chartOptionsLine = {...this.chartOptionsLine, 
+                  chart: {
+                    id: 'brushChart',
+                    height: 120,
+                    type: 'area',
+                    brush:{
+                      target: 'rotazioni',
+                      enabled: true
+                    }, 
+                    
+                    selection:{
+                        enabled: true,
+                        xaxis: {
+                          min: this.$session.get("min"),
+                          max: this.$session.get("max")
+                        }
+                    }
+                  }
+                }
 
               this.seriesArea2 = [{
                 name: "Velocità",
