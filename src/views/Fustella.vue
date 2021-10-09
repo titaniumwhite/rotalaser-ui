@@ -271,6 +271,7 @@ import axios from 'axios'
                 enabled: true
               }, 
             },
+
             colors: ['#008FFB'],
             fill: {
               type: 'gradient',
@@ -534,6 +535,15 @@ import axios from 'axios'
 
                                 console.log(this.chartOptionsLine)
                                 this.chartOptionsLine = {...this.chartOptionsLine, 
+                                chart: {
+                                  id: 'chart1',
+                                  height: 20,
+                                  type: 'area',
+                                  brush:{
+                                    target: 'rotazioni',
+                                    enabled: true
+                                  }, 
+          
                                   selection:{
                                       enabled: true,
                                       xaxis: {
@@ -541,6 +551,7 @@ import axios from 'axios'
                                         max: my_max
                                       }
                                   }
+                                }
                                 }
 
                                 console.log(this.chartOptionsLine)
