@@ -194,8 +194,8 @@ import axios from 'axios'
         loading:true,
         got: '',
         date: '',
-        initialTime: '',
-        finalTime: '',
+        initialTime: undefined,
+        finalTime: undefined,
         searching: false,
         tab: null,
         datacollection: null,
@@ -211,10 +211,9 @@ import axios from 'axios'
             id: 'rotazioni',
             height: 160,
             type: 'area',
-            group: 'social',
             toolbar: {
                 autoSelected: 'pan',
-                show: false
+                show: true
             }
           },
           stroke: {
@@ -265,21 +264,12 @@ import axios from 'axios'
           chartOptionsLine: {
             chart: {
               id: 'chart1',
-              height: 60,
+              height: 20,
               type: 'area',
               brush:{
                 target: 'rotazioni',
                 enabled: true
-              },
-              
-            
-              selection: {
-                enabled: true,
-                xaxis: {
-                  min: new Date('1 Jun 2021').getTime(),
-              max: new Date('14 Sep 2021').getTime()
-                }
-              },
+              }, 
             },
             colors: ['#008FFB'],
             fill: {
@@ -296,7 +286,10 @@ import axios from 'axios'
               }
             },
             yaxis: {
-              tickAmount: 2
+              tickAmount: 2,
+              labels: {
+                minWidth: 40
+              }
             } 
           },
 
@@ -470,7 +463,7 @@ import axios from 'axios'
             return time;
           }*/
           
-          if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
+          if(/*!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)*/ this.true){
             console.log(this.$route.params.id)
             axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
               headers:{
@@ -486,16 +479,25 @@ import axios from 'axios'
                                   this.err=true
                                   return
                                 }
+                                let my_min = 0
+                                let my_max = 0
                                 for(let i=this.got.length-1000; i<this.got.length-1;i++){
 
                                   let rotationCouple;
                                   let speedCouple;    
                                   let sessionCouple;                              
                                   let time = Date.parse(this.got[i].id.slice(0,-9))
+                                  //let siumpera = new Date(this.got[i].id.slice(0,-9))
+                                  
                                   if(!isNaN(time)){
-                                    if (i == this.got.length-1000) this.setInitialTime(this.time.getTime())
-                                    else if (i == this.got.length-2) this.setFinalTime(this.time.getTime())
-
+                                    if (i == this.got.length-500){ 
+                                      my_min = time
+                                      console.log("min"+ my_min)
+                                    }
+                                    else if (i == this.got.length-2){
+                                       my_max=time
+                                       console.log("max"+my_max)
+                                    }
                                     let timeCouple = "{ "
                                     
                                   //  timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
@@ -513,22 +515,26 @@ import axios from 'axios'
                                   }
 
                                 }
+                                
                                 this.$session.set("fustellaR",rotationData)
                                 this.$session.set("fustellaSpe",speedData)
                                 this.$session.set("fustellaSes",sessionData)
                                 this.$session.set("id",this.$route.params.id)
-                                //newData = "]"
-                                //this.date=newData
-
+                                
                                 if(this.$vuetify.theme.dark){
                                   this.seriesArea.xaxis.style.colors=["#FFFFFF","#FFFFFF","#FFFFFF"]
                                 }
+
+                              
+                              this.set_sht(my_min,my_max)
 
                                 this.seriesLine = [{
                                   name: "RotazioniBrush",
                                   data: rotationData
                                 }]
 
+                                
+                                
                                 this.seriesArea = [{
                                   name: "Rotazioni",
                                   data: rotationData
@@ -547,7 +553,10 @@ import axios from 'axios'
                                 this.loading=false                        
                                 
                               }
-              )
+              ).catch( (error) => {
+                console.log(error)
+                this.$router.push("/")
+              })
             
             /* get the effin CAD */
             axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id,{
@@ -559,10 +568,18 @@ import axios from 'axios'
                 this.cad = response.data.cadimage
                 this.$session.set("cad",response.data.cadimage)
 
-            })
+            }).catch( (error) => {
+                console.log(error)
+                this.$router.push("/")
+              })
           }else{
               this.cad =this.$session.get("cad")
               
+              this.seriesLine = [{
+                name: "RotazioniBrush",
+                data: this.$session.get("fustellaR")
+              }]
+
               this.seriesArea = [{
                 name: "Rotazioni",
                 data: this.$session.get("fustellaR")
@@ -589,24 +606,19 @@ import axios from 'axios'
           this.searching =! this.searching
         }
       },
+      set_sht(my_min,my_max){
+        console.log(this.chartOptionsLine)
+        this.chartOptionsLine = {...this.chartOptionsLine, 
+          selection:{
+              enabled: true,
+              xaxis: {
+                min: my_min,
+                max: my_max
+              }
+          }
+        }
 
-      getRandomInt () {
-        return Math.floor(Math.random() * (50 - 5 + 1)) + 5
-      }
-    },
-    watch: {
-      setInitialTime(t) {
-        this.initialTime = t;
-      },
-      setFinalTime(t) {
-        this.finalTime = t;
-      },
-      getInitialTime() {
-        console.log("here")
-        if (this.initialTime != '') return this.initialTime
-      },
-      getFinalTime() {
-        if (this.finalTime != '') return this.finalTime
+        console.log(this.chartOptionsLine)
       }
     }
   };

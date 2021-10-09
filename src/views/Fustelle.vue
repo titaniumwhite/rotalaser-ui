@@ -287,8 +287,6 @@ export default {
                               for(let i = 0;i<response.data.length;i++){
                                   if(response.data[i].id != "00:00:00:00:00:10"){
                                     
-                                    console.log(response.data[i].cadfile)
-                                    console.log(response.data[i].cadimage)
                                     let str = "{ "
                                     str += '"id": "'     + response.data[i].id + '" , '
                                     str += '"active": "' + response.data[i].active + '", '
@@ -303,6 +301,9 @@ export default {
                               
                               this.$session.set("fustelle",filtered)
                               
+                            }).catch( (error) => {
+                              console.log(error)
+                              this.$router.push("/")
                             })
         }else{
           this.secret = this.$session.get("fustelle")
