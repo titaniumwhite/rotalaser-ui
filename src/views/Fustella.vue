@@ -541,7 +541,7 @@ import axios from 'axios'
                                   height: 120,
                                   type: 'area',
                                   brush:{
-                                    targets: ['rotazioni', 'velocità', 'sessione'],
+                                    target: 'rotazioni',
                                     enabled: true,
                                     autoScaleYaxis: false 
                                   }, 
