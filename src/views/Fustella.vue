@@ -298,7 +298,8 @@ import axios from 'axios'
               type: 'area',
               brush:{
                 targets: ['rotazioni', 'velocità', 'sessione'],
-                enabled: true
+                enabled: true,
+                autoScaleYaxis: false 
               }, 
             },
 
@@ -548,7 +549,8 @@ import axios from 'axios'
                                   type: 'area',
                                   brush:{
                                     targets: ['rotazioni', 'velocità', 'sessione'],
-                                    enabled: true
+                                    enabled: true,
+                                    autoScaleYaxis: false 
                                   }, 
                                   
                                   selection:{
@@ -560,7 +562,7 @@ import axios from 'axios'
                                   }
                                 }
                                 }
-
+                              
                                 console.log(this.chartOptionsLine)
                                 
                                 this.seriesArea = [{
