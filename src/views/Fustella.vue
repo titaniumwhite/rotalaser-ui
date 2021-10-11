@@ -521,7 +521,6 @@ import axios from 'axios'
                                     speedData.push(JSON.parse(speedCouple))
                                     sessionData.push(JSON.parse(sessionCouple))
                                   }
-
                                 }
                                 
                                 this.$session.set("fustellaR",rotationData)
@@ -536,9 +535,7 @@ import axios from 'axios'
                                   this.seriesArea.xaxis.style.colors=["#FFFFFF","#FFFFFF","#FFFFFF"]
                                 }
                                 */
-
                                 this.chartOptionsLine = {...this.chartOptionsLine, 
-<<<<<<< HEAD
                                 chart: {
                                   id: 'brushChart',
                                   height: 120,
@@ -558,29 +555,9 @@ import axios from 'axios'
                                   }
                                 }
                                 }
-                              
-                                console.log(this.chartOptionsLine)
                                 
-=======
-                                  chart: {
-                                    id: 'brushChart',
-                                    height: 120,
-                                    type: 'area',
-                                    brush:{
-                                      target: 'rotazioni',
-                                      enabled: true
-                                    }, 
-                                    
-                                    selection:{
-                                        enabled: true,
-                                        xaxis: {
-                                          min: this.$session.get("min"),
-                                          max: this.$session.get("max")
-                                        }
-                                    }
-                                  }
-                                }
->>>>>>> 9ad8b38c3dec8547567ea0f8c5a7ced459bcecce
+            
+                              
                                 this.seriesArea = [{
                                   name: "Rotazioni",
                                   data: rotationData
