@@ -288,13 +288,8 @@ import axios from 'axios'
       return {
         true: true,
         err: false,
-<<<<<<< Updated upstream:src/views/Fustella_post.vue
-        loading: true,
-        got: '',
-=======
         loading:true,
         got: false,
->>>>>>> Stashed changes:src/views/Fustella.vue
         date: '',
         initialTime: undefined,
         finalTime: undefined,
@@ -560,11 +555,8 @@ import axios from 'axios'
       };
     },
     mounted(){
-<<<<<<< Updated upstream:src/views/Fustella_post.vue
  
-=======
         
->>>>>>> Stashed changes:src/views/Fustella.vue
           if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
             console.log(this.$route.params.id)
             axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
@@ -583,17 +575,14 @@ import axios from 'axios'
                                 }
                                 let my_min = 0
                                 let my_max = 0
-<<<<<<< Updated upstream:src/views/Fustella_post.vue
                                 let total_errors = 0;
                                 let total_rotations = 0;
                                 let total_sessions = 0;
                                 total_sessions = this.got[this.got.length-2].session_id;
-=======
                                 let annotation_text = '{ "xaxis": ['  
 
                                 let lastSession = -1
                                 let incrementalSession = 0
->>>>>>> Stashed changes:src/views/Fustella.vue
 
 
                                 for(let i=this.got.length-1000; i<this.got.length-1;i++){
@@ -602,11 +591,8 @@ import axios from 'axios'
                                   let speedCouple;    
                                   let sessionCouple;                              
                                   let time = Date.parse(this.got[i].id.slice(0,-9))
-<<<<<<< Updated upstream:src/views/Fustella_post.vue
                                   total_errors += this.got[i].errors
                                   total_rotations += this.got[i].rotations
-=======
->>>>>>> Stashed changes:src/views/Fustella.vue
 
                                   if(!isNaN(time)){
                                     if (i == this.got.length-500){ 
@@ -627,10 +613,8 @@ import axios from 'axios'
                                     rotationData.push(JSON.parse(rotationCouple))
                                     speedData.push(JSON.parse(speedCouple))
                                     sessionData.push(JSON.parse(sessionCouple))
-<<<<<<< Updated upstream:src/views/Fustella_post.vue
                                                                     
 
-=======
 
                                     if(parseInt(this.got[i].session_id) != lastSession){
 
@@ -652,7 +636,6 @@ import axios from 'axios'
                                     }
                                     
                                     
->>>>>>> Stashed changes:src/views/Fustella.vue
                                   }
                                 }
                                 
@@ -714,13 +697,10 @@ import axios from 'axios'
                                   data: rotationData
                                 }]
 
-<<<<<<< Updated upstream:src/views/Fustella_post.vue
                                 this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
                                 this.total_sessions = total_sessions;
 
-=======
->>>>>>> Stashed changes:src/views/Fustella.vue
                                 this.loading=false                        
                                 
                               }
