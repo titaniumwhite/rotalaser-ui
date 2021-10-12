@@ -548,12 +548,7 @@ import axios from 'axios'
                                 let total_errors = 0;
                                 let total_rotations = 0;
                                 let total_sessions = this.got[this.got.length-2].errors;
-                                let annotation_text = '{ "xaxis": ['  
-
-                                let lastSession = -1
-                                let incrementalSession = 0
-
-
+                               
                                 for(let i=this.got.length-1000; i<this.got.length-1;i++){
 
                                   let rotationCouple;
@@ -582,38 +577,12 @@ import axios from 'axios'
                                     rotationData.push(JSON.parse(rotationCouple))
                                     speedData.push(JSON.parse(speedCouple))
                                     sessionData.push(JSON.parse(sessionCouple))
-                                                                    
-
-
-                                    if(parseInt(this.got[i].session_id) != lastSession){
-
-
-                                      console.log("ls: " + lastSession)
-                                      console.log("sid: "+ this.got[i].session_id)
-                                      incrementalSession+=1
-                                      console.log("is: "+incrementalSession)
-                                      lastSession = parseInt(this.got[i].session_id)
-                                      
-                                      annotation_text += '{'+
-                                                          '"x": '+ time +
-                                                          ',"strokeDashArray": 0,"borderColor": "#775DD0",'+
-                                                          '"label": ' +
-                                                          '{ "borderColor": "#775DD0", "style":' +
-                                                          '{ "color": "#fff", "background": "#775DD0" },' +
-                                                          '"text":"'+ "Sessione " + incrementalSession +'"}'
-                                                          +'},'
-                                    }
-                                    
+                                                                  
                                     
                                   }
                                 }
                                 
-                                annotation_text += '] }'
-
-                                console.log(annotation_text)
-
-                                annotation_text = JSON.parse(annotation_text)
-
+                                
                                 this.$session.set("fustellaR",rotationData)
                                 this.$session.set("fustellaSpe",speedData)
                                 this.$session.set("fustellaSes",sessionData)

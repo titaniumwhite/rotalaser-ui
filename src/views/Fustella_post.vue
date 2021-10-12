@@ -67,7 +67,7 @@
             ></v-progress-circular>
           </div>
 
-<!-- PAGINA INFORMAZIONI -->
+          <!-- PAGINA INFORMAZIONI -->
           <v-fade-transition>
 
               <v-form v-if="!loading && !err && item=='informazioni'">
@@ -77,7 +77,7 @@
                       cols="12"
                       sm="6"
                     >
-                      {{total_rotations}}
+                      
                       <v-text-field
                         :value="$route.params.id"
                         label="Nome fustella"
@@ -150,7 +150,7 @@
                 </v-container>
               </v-form>
 
-<!-- PAGINA GRAFICI -->
+          <!-- PAGINA GRAFICI -->
           <v-card v-if="!loading && !err && item=='grafici'">
           <v-card-title>Fustella {{$route.params.id}}</v-card-title>
             <v-row centered>
@@ -167,15 +167,29 @@
               md="8"
               sm="12"
               cols="12"
-              >
+              >   <v-card>
                   <div>
-                      <div id="chart-line">
+                      <div id="chart-line" v-if="!totali">
                         <apexchart width='100%' height="300" type="area" :options="chartOptionsArea" :series="seriesArea"></apexchart>
                       </div>
-                     <div id="chart-line">
+                      <div id="chart-line" v-if="totali">
+                        <apexchart width='100%' height="300" type="area" :options="chartOptionsArea4" :series="seriesArea4"></apexchart>
+                      </div>
+                     <div id="chart-line" v-if="slider">
                         <apexchart width='100%' height="100" type="area" :options="chartOptionsLine" :series="seriesLine"></apexchart>
                       </div>
                   </div>
+                  <v-card-actions>
+                    <v-btn v-if="!totali"
+                    @click="create_slider()">
+                      Slider
+                    </v-btn>
+                     <v-btn
+                    @click="create_totali()">
+                      Rotazioni Complessive
+                    </v-btn>
+                  </v-card-actions>
+                  </v-card>
               </v-col>
 
               <v-col 
@@ -218,7 +232,7 @@
             </v-layout>
           </v-card>
 
-<!-- PAGINA CAD -->
+          <!-- PAGINA CAD -->
           <v-col v-if="item=='cad'" 
             lg="6"
             md="12" 
@@ -288,8 +302,10 @@ import axios from 'axios'
       return {
         true: true,
         err: false,
+        slider: false,
         loading:true,
         got: false,
+        totali: false,
         date: '',
         initialTime: undefined,
         finalTime: undefined,
@@ -300,6 +316,10 @@ import axios from 'axios'
         session_id: 0,
         total_errors: 0,
         total_rotations: 0,
+        total_sessions: 0,
+        my_min:0,
+        my_max:0,
+        created: false,
         customers: null,
         customer_factories: null,
         items: [
@@ -383,6 +403,85 @@ import axios from 'axios'
             }
           },
         },
+        seriesArea4: [{
+          name: 'RotazioniTotali',
+        }],
+        chartOptionsArea4: {
+          chart: {
+            id: 'rotazioniTotali',
+            height: 100,
+            type: 'area',
+            /*
+            events: {
+                click: (event, chartContext, config) => {
+                    console.log(config.config.series[config.seriesIndex])
+                    console.log(config.config.series[config.seriesIndex].name)
+                    console.log(config.config.series[config.seriesIndex].data[config.dataPointIndex])
+                    this.got = !this.got
+                    console.log(this.got)
+                }
+            },*/
+            group: 'sync',
+            toolbar: {
+              autoSelected: 'pan',
+              show: true
+            },
+            animations: {
+              enabled: true,
+              easing: 'easeinout',
+              speed: 800,
+              animateGradually: {
+                  enabled: true,
+                  delay: 150
+              },
+              dynamicAnimation: {
+                  enabled: true,
+                  speed: 350
+              }
+            }
+          },
+          stroke: {
+            width: 3
+          },
+          dataLabels: {
+              enabled: false
+            },
+          markers: {
+            size: 0
+          },
+          fill: {
+            type: "gradient",
+            gradient: {
+              shadeIntensity: 1,
+              opacityFrom: 0.7,
+              opacityTo: 0.9,
+              stops: [0, 90, 100]
+            }
+          },
+          title: {
+            text: "Rotazioni",
+            align: 'left',
+            margin: 10,
+            offsetX: 0,
+            offsetY: 0,
+            floating: false,
+            style: {
+              fontSize:  '14px',
+              fontWeight:  'bold',
+              fontFamily:  undefined,
+              color:  '#263238'
+            },
+          },
+          xaxis: {
+            type: 'datetime',
+          },
+          yaxis: {
+            labels: {
+              minWidth: 40
+            }
+          },
+        },
+
 
         seriesLine: [{
             name: 'RotazioniBrush'
@@ -565,8 +664,10 @@ import axios from 'axios'
               }
             }).then(response =>{
                                 let rotationData = []
+                                let totalRotationData = []
                                 let speedData = []
                                 let sessionData = []
+
                                 this.got = response.data 
                                 if(this.got.length<1){
                                   this.loading = false
@@ -578,21 +679,25 @@ import axios from 'axios'
                                 let total_errors = 0;
                                 let total_rotations = 0;
                                 let total_sessions = 0;
-                                total_sessions = this.got[this.got.length-2].session_id;
-                                let annotation_text = '{ "xaxis": ['  
+                               
+                                
+                                
+                                let annotation_text = []
 
-                                let lastSession = -1
-                                let incrementalSession = 0
 
+                                let last_session = -1
+                                let total_session = 0
 
+                                
                                 for(let i=this.got.length-1000; i<this.got.length-1;i++){
 
                                   let rotationCouple;
+                                  let totalRotationCouple;
                                   let speedCouple;    
                                   let sessionCouple;                              
                                   let time = Date.parse(this.got[i].id.slice(0,-9))
-                                  total_errors += this.got[i].errors
-                                  total_rotations += this.got[i].rotations
+
+                                
 
                                   if(!isNaN(time)){
                                     if (i == this.got.length-500){ 
@@ -607,48 +712,47 @@ import axios from 'axios'
                                     timeCouple += '"x": ' + time + ', '
                                     
                                     rotationCouple = timeCouple + ' "y": '+ this.got[i].rotations + " }"
+                                    totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"
                                     speedCouple = timeCouple + ' "y": '   + this.got[i].speed + " }"
                                     sessionCouple = timeCouple + ' "y": ' + this.got[i].session_id + " }"
 
                                     rotationData.push(JSON.parse(rotationCouple))
+                                    totalRotationData.push(JSON.parse(totalRotationCouple))
                                     speedData.push(JSON.parse(speedCouple))
                                     sessionData.push(JSON.parse(sessionCouple))
                                                                     
+                                    total_errors += this.got[i].errors
+                                    total_rotations += this.got[i].rotations
 
+                                    if(parseInt(this.got[i].session_id) != last_session){
 
-                                    if(parseInt(this.got[i].session_id) != lastSession){
-
-
-                                      console.log("ls: " + lastSession)
-                                      console.log("sid: "+ this.got[i].session_id)
-                                      incrementalSession+=1
-                                      console.log("is: "+incrementalSession)
-                                      lastSession = parseInt(this.got[i].session_id)
                                       
-                                      annotation_text += '{'+
-                                                          '"x": '+ time +
-                                                          ',"strokeDashArray": 0,"borderColor": "#775DD0",'+
-                                                          '"label": ' +
-                                                          '{ "borderColor": "#775DD0", "style":' +
-                                                          '{ "color": "#fff", "background": "#775DD0" },' +
-                                                          '"text":"'+ "Sessione " + incrementalSession +'"}'
-                                                          +'},'
-                                    }
-                                    
-                                    
+                                      total_session+=1
+                                      last_session = parseInt(this.got[i].session_id)
+                                      
+                                      let curr_text =     '{'+
+                                                            '"x": '+ time +
+                                                            ',"strokeDashArray": 0,"borderColor": "#775DD0",'+
+                                                            '"label": {' +
+                                                              '"borderColor": "#775DD0", "style":{' +
+                                                                '"color": "#fff", "background": "#775DD0"' +
+                                                                '},'+
+                                                              '"text":"'+ "Sessione " + total_session 
+                                                            +'"}'
+                                                          +'}'
+                                      annotation_text.push(JSON.parse(curr_text))
+                                      
+                                    } 
+  
                                   }
                                 }
                                 
-                                annotation_text += '] }'
-
-                                console.log(annotation_text)
-
-                                annotation_text = JSON.parse(annotation_text)
-
                                 this.$session.set("fustellaR",rotationData)
+                                this.$session.set("fustellaRT",totalRotationData)
                                 this.$session.set("fustellaSpe",speedData)
                                 this.$session.set("fustellaSes",sessionData)
                                 this.$session.set("id",this.$route.params.id)
+                                this.$session.set("text",annotation_text)
                                 this.$session.set("min",my_min)
                                 this.$session.set("max",my_max)
                                 this.$session.set("total_errors",total_errors)
@@ -656,24 +760,10 @@ import axios from 'axios'
                                 this.$session.set("total_rotations",total_rotations)
 
                                 
-                              
-                                this.chartOptionsLine = {...this.chartOptionsLine, 
-                                  chart: {
-                                    id: 'brushChart',
-                                    height: 120,
-                                    type: 'area',
-                                    brush:{
-                                      target: 'rotazioni',
-                                      enabled: true,
-                                      autoScaleYaxis: false 
-                                    }, 
-                                    selection:{
-                                        enabled: true,
-                                        xaxis: {
-                                          min: my_min,
-                                          max: my_max
-                                        }
-                                    }
+
+                                this.chartOptionsArea ={...this.chartOptionsArea,
+                                  annotations: {
+                                    xaxis: annotation_text
                                   }
                                 }
                                                               
@@ -681,6 +771,12 @@ import axios from 'axios'
                                   name: "Rotazioni",
                                   data: rotationData
                                 }]
+                                
+                                this.seriesArea4 = [{
+                                  name: "RotazioniTotali",
+                                  data: totalRotationData
+                                }]
+
 
                                 this.seriesArea2 = [{
                                   name: "Velocità",
@@ -699,7 +795,9 @@ import axios from 'axios'
 
                                 this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
-                                this.total_sessions = total_sessions;
+                                this.total_sessions = total_session;
+                                this.my_min = my_min
+                                this.my_max = my_max
 
                                 this.loading=false                        
                                 
@@ -736,26 +834,6 @@ import axios from 'axios'
                 data: this.$session.get("fustellaR")
               }]  
 
-                this.chartOptionsLine = {...this.chartOptionsLine, 
-                  chart: {
-                    id: 'brushChart',
-                    height: 120,
-                    type: 'area',
-                    brush:{
-                      target: 'rotazioni',
-                      enabled: true
-                    }, 
-                    
-                    selection:{
-                        enabled: true,
-                        xaxis: {
-                          min: this.$session.get("min"),
-                          max: this.$session.get("max")
-                        }
-                    }
-                  }
-                }
-
               this.seriesArea2 = [{
                 name: "Velocità",
                 data: this.$session.get("fustellaSpe")
@@ -765,6 +843,17 @@ import axios from 'axios'
                 name: "Sessione",
                 data: this.$session.get("fustellaSes")
               }]
+
+              this.seriesArea4 = [{
+                name: "RotazioniTotali",
+                data: this.$session.get("fustellaRT")
+              }]
+
+              this.chartOptionsArea ={...this.chartOptionsArea,
+                                  annotations: {
+                                    xaxis: this.$session.get("text")
+                                  }
+                                }
 
               this.total_errors = this.$session.get("errors")
               this.total_rotations = this.$session.get("rotations")
@@ -800,7 +889,36 @@ import axios from 'axios'
 
     },
     methods: {
-      
+      create_slider(){
+        if(!this.created){
+          console.log("creation")
+          this.created = this.true
+          this.chartOptionsLine = {...this.chartOptionsLine, 
+                                    chart: {
+                                      id: 'brushChart',
+                                      height: 120,
+                                      type: 'area',
+                                      brush:{
+                                        targets: ['rotazioni','velocità','sessione'],
+                                        enabled: true,
+                                        autoScaleYaxis: false 
+                                      }, 
+                                      selection:{
+                                          enabled: true,
+                                          xaxis: {
+                                            min: this.$session.get("min"),
+                                            max: this.$session.get("max")
+                                          }
+                                      }
+                                    }
+                                  }
+        }
+        this.slider = !this.slider
+      },
+      create_totali(){
+        this.totali = !this.totali
+        this.slider =false
+      }
     }
   };
 </script>
