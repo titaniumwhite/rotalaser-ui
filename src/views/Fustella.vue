@@ -2,13 +2,6 @@
   <div id="app">
   <v-app id="inspire">
     <v-card>
-       <v-system-bar 
-          color="primary darken-3"
-          height="30"
-          window
-          dark
-      >
-      </v-system-bar>
 
       <v-toolbar
         color="primary"
@@ -24,37 +17,22 @@
         <v-toolbar-title class="font-weight-bold"></v-toolbar-title>
 
         <v-spacer></v-spacer>
-
-        <v-scroll-x-reverse-transition>
-          <v-text-field
-            v-show="searching" 
-            clearable
-            transition="slide-x-reverse-transition"
-            solo
-            dense 
-            hide-details
-            rounded
-            single-line
-            autofocus
-            background-color="primary darken-3"
-            label="Cerca"
-            prepend-inner-icon="mdi-magnify"
-            @blur="is_text_empty($event, $event.target.value)"
-          > 
-          </v-text-field>
-        </v-scroll-x-reverse-transition>
+        <v-tabs
+            v-model="tab"
+            align-with-title
+          >
+            <v-tabs-slider color="secondary"></v-tabs-slider>
+  
+            <v-tab
+              dark
+              v-for="item in items"
+              :key="item"
+            >
+              {{ item }}
+            </v-tab>
+          </v-tabs>
         
         <v-spacer></v-spacer>
-        
-        <v-btn icon 
-          @click="searching=!searching"
-          v-show="!searching">
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
-
-        <v-btn icon>
-            <v-icon>mdi-filter</v-icon>
-        </v-btn>
 
         <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -70,23 +48,7 @@
             </template>
             <span>Logout</span>
         </v-tooltip>
-  
-        <template v-slot:extension>
-          <v-tabs
-            v-model="tab"
-            align-with-title
-          >
-            <v-tabs-slider color="secondary"></v-tabs-slider>
-  
-            <v-tab
-              dark
-              v-for="item in items"
-              :key="item"
-            >
-              {{ item }}
-            </v-tab>
-          </v-tabs>
-        </template>
+
       </v-toolbar>
   
 
@@ -106,6 +68,12 @@
           </div>
 
           <v-fade-transition>
+            <v-card v-if="!loading && !err && item=='informazioni'">
+              {{total_rotations}}
+              {{total_errors}}
+
+            </v-card>
+
           <v-card v-if="!loading && !err && item=='grafici'">
           <v-card-title>Fustella {{$route.params.id}}</v-card-title>
             <v-row centered>
@@ -216,8 +184,11 @@ import axios from 'axios'
         tab: null,
         datacollection: null,
         cad: undefined,
+        session_id: undefined,
+        total_errors: 0,
+        total_rotations: 0,
         items: [
-          'grafici', 'cad', 'analisi predittiva'
+          'informazioni', 'grafici', 'cad'
         ],
         seriesArea: [{
           name: 'Rotazioni',
@@ -490,13 +461,18 @@ import axios from 'axios'
                                 }
                                 let my_min = 0
                                 let my_max = 0
+                                let total_errors = 0;
+                                let total_rotations = 0;
+
                                 for(let i=this.got.length-1000; i<this.got.length-1;i++){
 
                                   let rotationCouple;
                                   let speedCouple;    
                                   let sessionCouple;                              
                                   let time = Date.parse(this.got[i].id.slice(0,-9))
-                                  
+                                  total_errors += this.got[i].errors
+                                  total_rotations += this.got[i].rotations
+
                                   if(!isNaN(time)){
                                     if (i == this.got.length-500){ 
                                       my_min = time
@@ -529,6 +505,8 @@ import axios from 'axios'
                                 this.$session.set("id",this.$route.params.id)
                                 this.$session.set("min",my_min)
                                 this.$session.set("max",my_max)
+                                this.$session.set("errors",total_errors)
+                                this.$session.set("sessions",total_rotations)
                                 
                                 /*
                                 if(this.$vuetify.theme.dark){
@@ -578,7 +556,8 @@ import axios from 'axios'
                                   data: rotationData
                                 }]
 
-                                
+                                this.total_errors = total_errors;
+                                this.total_rotations = total_rotations;
                               
                                 this.loading=false                        
                                 
@@ -604,8 +583,7 @@ import axios from 'axios'
               })
           }else{
               this.cad =this.$session.get("cad")
-            
-              
+
               this.seriesLine = [{
                 name: "RotazioniBrush",
                 data: this.$session.get("fustellaR")
@@ -645,18 +623,16 @@ import axios from 'axios'
                 name: "Sessione",
                 data: this.$session.get("fustellaSes")
               }]
-            
+
+              this.total_errors = this.$session.get("errors")
+              this.total_rotations = this.$session.get("rotations")
+
               this.loading=false 
           }
 
     },
     methods: {
-      // when blur the searchbox, if there is no text, just make the box disappear
-      is_text_empty: function (event, value) {
-        if (event && value === '') {
-          this.searching =! this.searching
-        }
-      },
+      
     }
   };
 </script>

@@ -1,13 +1,6 @@
 <template>
    <v-app>
      <v-main>
-      <v-system-bar 
-        color="primary darken-3"
-        height="30"
-        window
-        dark
-      >
-      </v-system-bar>
 
       <v-toolbar
         color="primary"

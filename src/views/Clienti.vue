@@ -3,14 +3,6 @@
 
      <v-main>
 
-      <v-system-bar 
-        color="primary darken-3"
-        height="30"
-        window
-        dark
-      >
-      </v-system-bar>
-
       <v-app-bar
         color="primary"
         dark
