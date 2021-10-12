@@ -69,9 +69,7 @@
 
 <!-- PAGINA INFORMAZIONI -->
           <v-fade-transition>
-     
-              
-              
+
               <v-form v-if="!loading && !err && item=='informazioni'">
                 <v-container>
                   <v-row>
@@ -79,6 +77,7 @@
                       cols="12"
                       sm="6"
                     >
+                      {{total_rotations}}
                       <v-text-field
                         :value="$route.params.id"
                         label="Nome fustella"
@@ -151,8 +150,6 @@
                 </v-container>
               </v-form>
 
-     
-
 <!-- PAGINA GRAFICI -->
           <v-card v-if="!loading && !err && item=='grafici'">
           <v-card-title>Fustella {{$route.params.id}}</v-card-title>
@@ -221,6 +218,7 @@
             </v-layout>
           </v-card>
 
+<!-- PAGINA CAD -->
           <v-col v-if="item=='cad'" 
             lg="6"
             md="12" 
@@ -237,6 +235,41 @@
             </v-img>
           </v-card>
           </v-col>
+
+          <!-- PAGINA MODIFICA -->
+              <v-form v-if="!loading && !err && item=='modifica'">
+                <v-container>
+                  <v-row>
+                      <v-col
+                      cols="12"
+                      sm="12"
+                    >
+                      <v-text-field
+                        :value="$route.params.id"
+                        label="Nome fustella"
+                        dense
+                        outlined
+                      ></v-text-field>
+
+                      <v-overflow-btn
+                        class="my-2"
+                        :items="items"
+                        label="Cliente"
+                        dense
+                        filled
+                      ></v-overflow-btn>
+
+                      <v-overflow-btn
+                        class="my-2"
+                        :items="items"
+                        label="Fabbrica"
+                        dense
+                        filled
+                      ></v-overflow-btn>
+                      </v-col>
+                  </v-row>
+                </v-container>
+              </v-form>     
           </v-fade-transition>
           </v-container>
         </v-tab-item>
@@ -264,11 +297,13 @@ import axios from 'axios'
         tab: null,
         datacollection: null,
         cad: undefined,
-        session_id: undefined,
+        session_id: 0,
         total_errors: 0,
         total_rotations: 0,
+        customers: null,
+        customer_factories: null,
         items: [
-          'informazioni', 'grafici', 'cad'
+          'informazioni', 'grafici', 'cad', 'modifica'
         ],
         seriesArea: [{
           name: 'Rotazioni',
@@ -531,7 +566,8 @@ import axios from 'axios'
                                 let my_max = 0
                                 let total_errors = 0;
                                 let total_rotations = 0;
-                                let total_sessions = this.got[this.got.length-2].errors;
+                                let total_sessions = 0;
+                                total_sessions = this.got[this.got.length-2].session_id;
 
 
                                 for(let i=this.got.length-1000; i<this.got.length-1;i++){
@@ -704,6 +740,32 @@ import axios from 'axios'
 
               this.loading=false 
           }
+/* CHIAMATE API PER MODIFICA */
+          axios.get('https://foiadev.diag.uniroma1.it:5002/v1/customers/'+this.$route.params.id,{
+              headers:{
+                'key':this.$session.get("key")
+              }
+            }).then(response =>{
+            
+              this.customers = response.data.name
+
+            }).catch( (error) => {
+                console.log(error)
+                this.$router.push("/")
+            })
+
+          axios.get('https://foiadev.diag.uniroma1.it:5002/v1/customers/'+this.$route.params.id+'/factories',{
+              headers:{
+                'key':this.$session.get("key")
+              }
+            }).then(response =>{
+            
+              this.customer_factories = response.data.location
+
+            }).catch( (error) => {
+                console.log(error)
+                this.$router.push("/")
+            })
 
     },
     methods: {
