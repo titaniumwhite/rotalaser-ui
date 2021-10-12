@@ -67,13 +67,116 @@
             ></v-progress-circular>
           </div>
 
+<!-- PAGINA INFORMAZIONI -->
           <v-fade-transition>
-            <v-card v-if="!loading && !err && item=='informazioni'">
-              {{total_rotations}}
-              {{total_errors}}
+     
+              
+              
+              <v-form v-if="!loading && !err && item=='informazioni'">
+                <v-container>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        value="John Doe"
+                        label="Regular"
+                        outlined
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+            
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        value="John Doe"
+                        label="Regular"
+                        outlined
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+            
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        value="John Doe"
+                        label="Solo"
+                        outlined
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+            
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        value="John Doe"
+                        label="Solo"
+                        outlined
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+            
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        value="John Doe"
+                        label="Filled"
+                        outlined
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+            
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        value="John Doe"
+                        label="Filled"
+                        outlined
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+            
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        value="John Doe"
+                        label="Outlined"
+                        outlined
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+            
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        value="John Doe"
+                        label="Outlined"
+                        outlined
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-form>
 
-            </v-card>
+     
 
+<!-- PAGINA GRAFICI -->
           <v-card v-if="!loading && !err && item=='grafici'">
           <v-card-title>Fustella {{$route.params.id}}</v-card-title>
             <v-row centered>
@@ -175,7 +278,7 @@ import axios from 'axios'
       return {
         true: true,
         err: false,
-        loading:true,
+        loading: true,
         got: '',
         date: '',
         initialTime: undefined,
