@@ -288,8 +288,13 @@ import axios from 'axios'
       return {
         true: true,
         err: false,
+<<<<<<< Updated upstream:src/views/Fustella_post.vue
         loading: true,
         got: '',
+=======
+        loading:true,
+        got: false,
+>>>>>>> Stashed changes:src/views/Fustella.vue
         date: '',
         initialTime: undefined,
         finalTime: undefined,
@@ -313,6 +318,16 @@ import axios from 'axios'
             id: 'rotazioni',
             height: 100,
             type: 'area',
+            /*
+            events: {
+                click: (event, chartContext, config) => {
+                    console.log(config.config.series[config.seriesIndex])
+                    console.log(config.config.series[config.seriesIndex].name)
+                    console.log(config.config.series[config.seriesIndex].data[config.dataPointIndex])
+                    this.got = !this.got
+                    console.log(this.got)
+                }
+            },*/
             group: 'sync',
             toolbar: {
               autoSelected: 'pan',
@@ -545,7 +560,11 @@ import axios from 'axios'
       };
     },
     mounted(){
+<<<<<<< Updated upstream:src/views/Fustella_post.vue
  
+=======
+        
+>>>>>>> Stashed changes:src/views/Fustella.vue
           if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
             console.log(this.$route.params.id)
             axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
@@ -564,10 +583,17 @@ import axios from 'axios'
                                 }
                                 let my_min = 0
                                 let my_max = 0
+<<<<<<< Updated upstream:src/views/Fustella_post.vue
                                 let total_errors = 0;
                                 let total_rotations = 0;
                                 let total_sessions = 0;
                                 total_sessions = this.got[this.got.length-2].session_id;
+=======
+                                let annotation_text = '{ "xaxis": ['  
+
+                                let lastSession = -1
+                                let incrementalSession = 0
+>>>>>>> Stashed changes:src/views/Fustella.vue
 
 
                                 for(let i=this.got.length-1000; i<this.got.length-1;i++){
@@ -576,37 +602,66 @@ import axios from 'axios'
                                   let speedCouple;    
                                   let sessionCouple;                              
                                   let time = Date.parse(this.got[i].id.slice(0,-9))
+<<<<<<< Updated upstream:src/views/Fustella_post.vue
                                   total_errors += this.got[i].errors
                                   total_rotations += this.got[i].rotations
+=======
+>>>>>>> Stashed changes:src/views/Fustella.vue
 
                                   if(!isNaN(time)){
                                     if (i == this.got.length-500){ 
-                                      my_min = time
-                                      //console.log("min"+ my_min)
+                                      my_min = time 
                                     }
                                     else if (i == this.got.length-2){
-                                       my_max=time
-                                       //console.log("max"+my_max)
+                                      my_max=time
                                     }
                                     let timeCouple = "{ "
                                     
-                                    //timeCouple += ' "x": "' + timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000) + '",'
+                                    
                                     timeCouple += '"x": ' + time + ', '
-                                    //console.log( timeConverter(Date.parse(this.got[i].id.slice(0,-9))/1000))
-                                  
-                                  
+                                    
                                     rotationCouple = timeCouple + ' "y": '+ this.got[i].rotations + " }"
                                     speedCouple = timeCouple + ' "y": '   + this.got[i].speed + " }"
                                     sessionCouple = timeCouple + ' "y": ' + this.got[i].session_id + " }"
-                                    
+
                                     rotationData.push(JSON.parse(rotationCouple))
                                     speedData.push(JSON.parse(speedCouple))
                                     sessionData.push(JSON.parse(sessionCouple))
+<<<<<<< Updated upstream:src/views/Fustella_post.vue
                                                                     
 
+=======
+
+                                    if(parseInt(this.got[i].session_id) != lastSession){
+
+
+                                      console.log("ls: " + lastSession)
+                                      console.log("sid: "+ this.got[i].session_id)
+                                      incrementalSession+=1
+                                      console.log("is: "+incrementalSession)
+                                      lastSession = parseInt(this.got[i].session_id)
+                                      
+                                      annotation_text += '{'+
+                                                          '"x": '+ time +
+                                                          ',"strokeDashArray": 0,"borderColor": "#775DD0",'+
+                                                          '"label": ' +
+                                                          '{ "borderColor": "#775DD0", "style":' +
+                                                          '{ "color": "#fff", "background": "#775DD0" },' +
+                                                          '"text":"'+ "Sessione " + incrementalSession +'"}'
+                                                          +'},'
+                                    }
+                                    
+                                    
+>>>>>>> Stashed changes:src/views/Fustella.vue
                                   }
                                 }
                                 
+                                annotation_text += '] }'
+
+                                console.log(annotation_text)
+
+                                annotation_text = JSON.parse(annotation_text)
+
                                 this.$session.set("fustellaR",rotationData)
                                 this.$session.set("fustellaSpe",speedData)
                                 this.$session.set("fustellaSes",sessionData)
@@ -618,34 +673,27 @@ import axios from 'axios'
                                 this.$session.set("total_rotations",total_rotations)
 
                                 
-                                /*
-                                if(this.$vuetify.theme.dark){
-                                  this.seriesArea.xaxis.style.colors=["#FFFFFF","#FFFFFF","#FFFFFF"]
-                                }
-                                */
+                              
                                 this.chartOptionsLine = {...this.chartOptionsLine, 
-                                chart: {
-                                  id: 'brushChart',
-                                  height: 120,
-                                  type: 'area',
-                                  brush:{
-                                    target: 'rotazioni',
-                                    enabled: true,
-                                    autoScaleYaxis: false 
-                                  }, 
-                                  
-                                  selection:{
+                                  chart: {
+                                    id: 'brushChart',
+                                    height: 120,
+                                    type: 'area',
+                                    brush:{
+                                      target: 'rotazioni',
                                       enabled: true,
-                                      xaxis: {
-                                        min: my_min,
-                                        max: my_max
-                                      }
+                                      autoScaleYaxis: false 
+                                    }, 
+                                    selection:{
+                                        enabled: true,
+                                        xaxis: {
+                                          min: my_min,
+                                          max: my_max
+                                        }
+                                    }
                                   }
                                 }
-                                }
-                                
-            
-                              
+                                                              
                                 this.seriesArea = [{
                                   name: "Rotazioni",
                                   data: rotationData
@@ -666,10 +714,13 @@ import axios from 'axios'
                                   data: rotationData
                                 }]
 
+<<<<<<< Updated upstream:src/views/Fustella_post.vue
                                 this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
                                 this.total_sessions = total_sessions;
 
+=======
+>>>>>>> Stashed changes:src/views/Fustella.vue
                                 this.loading=false                        
                                 
                               }
