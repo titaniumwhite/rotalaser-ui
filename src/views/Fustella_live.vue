@@ -16,7 +16,6 @@
   
         <v-toolbar-title class="font-weight-bold"></v-toolbar-title>
 
-        <v-spacer></v-spacer>
         <v-tabs
             v-model="tab"
             align-with-title
@@ -30,9 +29,16 @@
             >
               {{ item }}
             </v-tab>
-          </v-tabs>
-        
-        <v-spacer></v-spacer>
+        </v-tabs>
+        <div>
+        <v-chip
+            class="ma-2"
+            color="#E53935"
+            text-color="white"
+            >
+            Fustella non attiva
+        </v-chip>
+        </div>
 
         <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -48,7 +54,7 @@
             </template>
             <span>Logout</span>
         </v-tooltip>
-
+        
       </v-toolbar>
   
 
