@@ -141,27 +141,24 @@
                  <v-btn
                   text
                   color="secondary"
-                  @click="$router.push('/fustella/'+item.id)">
-                  Info
+                  @click="$router.push('/fustella/postanalisi/'+item.id)">
+                  Postanalisi
                 </v-btn>
 
                 <v-spacer></v-spacer>
+                <v-btn
+                  text
+                  color="secondary"
+                  @click="$router.push('/fustella/live/'+item.id)">
+                  Live
+                </v-btn>
     
                 <v-dialog
                   v-model="dialog"
                   max-width="600px"
                   :retain-focus="false"
                 >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      color="secondary"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                  </template>
+
                   <v-card>
                     <v-card-title>
                     <span class="text-h5">Fustella</span>

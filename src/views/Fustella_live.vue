@@ -80,8 +80,8 @@
                       sm="6"
                     >
                       <v-text-field
-                        value="John Doe"
-                        label="Regular"
+                        :value="$route.params.id"
+                        label="Nome fustella"
                         outlined
                         readonly
                       ></v-text-field>
@@ -92,8 +92,8 @@
                       sm="6"
                     >
                       <v-text-field
-                        value="John Doe"
-                        label="Regular"
+                        :value="total_sessions"
+                        label="Sessioni totali"
                         outlined
                         readonly
                       ></v-text-field>
@@ -104,8 +104,8 @@
                       sm="6"
                     >
                       <v-text-field
-                        value="John Doe"
-                        label="Solo"
+                        value="IN ATTESA DI API"
+                        label="Cliente"
                         outlined
                         readonly
                       ></v-text-field>
@@ -116,8 +116,8 @@
                       sm="6"
                     >
                       <v-text-field
-                        value="John Doe"
-                        label="Solo"
+                        :value="total_rotations"
+                        label="Rotazioni totali"
                         outlined
                         readonly
                       ></v-text-field>
@@ -128,8 +128,8 @@
                       sm="6"
                     >
                       <v-text-field
-                        value="John Doe"
-                        label="Filled"
+                        value="IN ATTESA DI API"
+                        label="Fabbrica"
                         outlined
                         readonly
                       ></v-text-field>
@@ -140,36 +140,13 @@
                       sm="6"
                     >
                       <v-text-field
-                        value="John Doe"
-                        label="Filled"
+                        :value="total_errors"
+                        label="Errori totali"
                         outlined
                         readonly
                       ></v-text-field>
                     </v-col>
             
-                    <v-col
-                      cols="12"
-                      sm="6"
-                    >
-                      <v-text-field
-                        value="John Doe"
-                        label="Outlined"
-                        outlined
-                        readonly
-                      ></v-text-field>
-                    </v-col>
-            
-                    <v-col
-                      cols="12"
-                      sm="6"
-                    >
-                      <v-text-field
-                        value="John Doe"
-                        label="Outlined"
-                        outlined
-                        readonly
-                      ></v-text-field>
-                    </v-col>
                   </v-row>
                 </v-container>
               </v-form>
@@ -533,19 +510,7 @@ import axios from 'axios'
       };
     },
     mounted(){
-          /*function timeConverter(UNIX_timestamp){
-            var a = new Date(UNIX_timestamp * 1000);
-            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            var year = a.getFullYear();
-            var month = months[a.getMonth()];
-            var date = a.getDate();
-            var hour = a.getHours();
-            var min = a.getMinutes();
-            var sec = a.getSeconds();
-            var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
-            return time;
-          }*/
-          
+ 
           if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
             console.log(this.$route.params.id)
             axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
@@ -566,6 +531,8 @@ import axios from 'axios'
                                 let my_max = 0
                                 let total_errors = 0;
                                 let total_rotations = 0;
+                                let total_sessions = this.got[this.got.length-2].errors;
+
 
                                 for(let i=this.got.length-1000; i<this.got.length-1;i++){
 
@@ -599,6 +566,8 @@ import axios from 'axios'
                                     rotationData.push(JSON.parse(rotationCouple))
                                     speedData.push(JSON.parse(speedCouple))
                                     sessionData.push(JSON.parse(sessionCouple))
+                                                                    
+
                                   }
                                 }
                                 
@@ -608,8 +577,10 @@ import axios from 'axios'
                                 this.$session.set("id",this.$route.params.id)
                                 this.$session.set("min",my_min)
                                 this.$session.set("max",my_max)
-                                this.$session.set("errors",total_errors)
-                                this.$session.set("sessions",total_rotations)
+                                this.$session.set("total_errors",total_errors)
+                                this.$session.set("total_sessions",total_sessions)
+                                this.$session.set("total_rotations",total_rotations)
+
                                 
                                 /*
                                 if(this.$vuetify.theme.dark){
@@ -661,7 +632,8 @@ import axios from 'axios'
 
                                 this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
-                              
+                                this.total_sessions = total_sessions;
+
                                 this.loading=false                        
                                 
                               }
