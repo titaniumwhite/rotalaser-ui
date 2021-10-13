@@ -170,13 +170,13 @@
               >   <v-card>
                   <div>
                       <div id="chart-line" v-if="!totali">
-                        <apexchart width='100%' height="300" type="area" :options="chartOptionsArea" :series="seriesArea"></apexchart>
+                        <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaRotation" :series="seriesAreaRotation"></apexchart>
                       </div>
                       <div id="chart-line" v-if="totali">
-                        <apexchart width='100%' height="300" type="area" :options="chartOptionsArea4" :series="seriesArea4"></apexchart>
+                        <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaTotalRotation" :series="seriesAreaTotalRotation"></apexchart>
                       </div>
                      <div id="chart-line" v-if="slider">
-                        <apexchart width='100%' height="100" type="area" :options="chartOptionsLine" :series="seriesLine"></apexchart>
+                        <apexchart width='100%' height="100" type="area" :options="chartOptionsLineBrush" :series="seriesLineBrush"></apexchart>
                       </div>
                   </div>
                   <v-card-actions>
@@ -206,10 +206,8 @@
               md="6"
               sm="12"
               cols="12" >
-
-
                     <div id="chart-line">
-                      <apexchart width='100%' height="300" type="area" :options="chartOptionsArea3" :series="seriesArea3"></apexchart>
+                      <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaSession" :series="seriesAreaSession"></apexchart>
                     </div>
               </v-col>
               <v-col lg="6"
@@ -218,7 +216,28 @@
                 cols="12" 
               >
                     <div id="chart-line">
-                      <apexchart width='100%' height="300" type="area" :options="chartOptionsArea2" :series="seriesArea2"></apexchart>
+                      <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaSpeed" :series="seriesAreaSpeed"></apexchart>
+                    </div>
+                
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col lg="6"
+              md="6"
+              sm="12"
+              cols="12" >
+                    <div id="chart-line">
+                      <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaHumidity" :series="seriesAreaHumidity"></apexchart>
+                    </div>
+              </v-col>
+              <v-col lg="6"
+                md="6"
+                sm="12"
+                cols="12" 
+              >
+                    <div id="chart-line">
+                      <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaTemperature" :series="seriesAreaTemperature"></apexchart>
                     </div>
                 
               </v-col>
@@ -325,10 +344,10 @@ import axios from 'axios'
         items: [
           'informazioni', 'grafici', 'cad', 'modifica'
         ],
-        seriesArea: [{
+        seriesAreaRotation: [{
           name: 'Rotazioni',
         }],
-        chartOptionsArea: {
+        chartOptionsAreaRotation: {
           chart: {
             id: 'rotazioni',
             height: 100,
@@ -403,10 +422,10 @@ import axios from 'axios'
             }
           },
         },
-        seriesArea4: [{
+        seriesAreaTotalRotation: [{
           name: 'RotazioniTotali',
         }],
-        chartOptionsArea4: {
+        chartOptionsAreaTotalRotation: {
           chart: {
             id: 'rotazioniTotali',
             height: 100,
@@ -483,16 +502,16 @@ import axios from 'axios'
         },
 
 
-        seriesLine: [{
+        seriesLineBrush: [{
             name: 'RotazioniBrush'
           }],
-          chartOptionsLine: {
+          chartOptionsLineBrush: {
             chart: {
               id: 'brushChart',
               height: 120,
               type: 'area',
               brush:{
-                targets: ['rotazioni', 'velocità', 'sessione'],
+                targets: ['rotazioni', 'velocità', 'sessione', 'temperatura', 'umidità'],
                 enabled: true,
                 autoScaleYaxis: false 
               }, 
@@ -520,10 +539,10 @@ import axios from 'axios'
             } 
           },
 
-        seriesArea2: [{
-          name: 'velocità',
+        seriesAreaSpeed: [{
+          name: 'Velocità',
         }],
-        chartOptionsArea2: {
+        chartOptionsAreaSpeed: {
           chart: {
             id: 'velocità',
             height: 160,
@@ -579,10 +598,10 @@ import axios from 'axios'
           },
         },
 
-        seriesArea3: [{
+        seriesAreaSession: [{
           name: 'Sessione',
         }],
-        chartOptionsArea3: {
+        chartOptionsAreaSession: {
           chart: {
             id: 'sessione',
             height: 160,
@@ -650,6 +669,150 @@ import axios from 'axios'
             }
           }
         }, 
+
+        seriesAreaHumidity: [{
+          name: 'Umidità',
+        }],
+        chartOptionsAreaHumidity: {
+          chart: {
+            id: 'umidità',
+            height: 160,
+            type: 'area',
+            group: 'sync',
+            toolbar: {
+              autoSelected: 'pan',
+              show: true
+            },
+            animations: {
+              enabled: true,
+              easing: 'easeinout',
+              speed: 800,
+              animateGradually: {
+                  enabled: true,
+                  delay: 150
+              },
+              dynamicAnimation: {
+                  enabled: true,
+                  speed: 350
+              }
+            }
+          },
+          stroke: {
+            curve: 'stepline'
+          },
+          colors: ["#7E36AF"],
+          dataLabels: {
+              enabled: false
+          },
+          markers: {
+            size: 0
+          },
+          fill: {
+            colors: ["#7E36AF"],
+            type: "gradient",
+            gradient: {
+              shadeIntensity: 1,
+              opacityFrom: 0.7,
+              opacityTo: 0.9,
+              stops: [0, 90, 100]
+            }
+          },
+          title: {
+              text: "Umidità",
+              align: 'left',
+              margin: 10,
+              offsetX: 0,
+              offsetY: 0,
+              floating: false,
+              style: {
+                fontSize:  '14px',
+                fontWeight:  'bold',
+                fontFamily:  undefined,
+                color:  '#263238'
+              },
+            },
+          xaxis: {
+            type: 'datetime'
+
+          },
+          yaxis: {
+            labels: {
+              minWidth: 40
+            }
+          }
+        }, 
+
+        seriesAreaTemperature: [{
+          name: 'Temperatura',
+        }],
+        chartOptionsAreaTemperature: {
+          chart: {
+            id: 'temperatura',
+            height: 160,
+            type: 'area',
+            group: 'sync',
+            toolbar: {
+              autoSelected: 'pan',
+              show: true
+            },
+            animations: {
+              enabled: true,
+              easing: 'easeinout',
+              speed: 800,
+              animateGradually: {
+                  enabled: true,
+                  delay: 150
+              },
+              dynamicAnimation: {
+                  enabled: true,
+                  speed: 350
+              }
+            }
+          },
+          stroke: {
+            curve: 'stepline'
+          },
+          colors: ["#7E36AF"],
+          dataLabels: {
+              enabled: false
+          },
+          markers: {
+            size: 0
+          },
+          fill: {
+            colors: ["#7E36AF"],
+            type: "gradient",
+            gradient: {
+              shadeIntensity: 1,
+              opacityFrom: 0.7,
+              opacityTo: 0.9,
+              stops: [0, 90, 100]
+            }
+          },
+          title: {
+              text: "Temperatura",
+              align: 'left',
+              margin: 10,
+              offsetX: 0,
+              offsetY: 0,
+              floating: false,
+              style: {
+                fontSize:  '14px',
+                fontWeight:  'bold',
+                fontFamily:  undefined,
+                color:  '#263238'
+              },
+            },
+          xaxis: {
+            type: 'datetime'
+
+          },
+          yaxis: {
+            labels: {
+              minWidth: 40
+            }
+          }
+        }, 
         
       };
     },
@@ -667,6 +830,8 @@ import axios from 'axios'
                                 let totalRotationData = []
                                 let speedData = []
                                 let sessionData = []
+                                let temperatureData = []
+                                let humidityData = []
 
                                 this.got = response.data 
                                 if(this.got.length<1){
@@ -679,7 +844,7 @@ import axios from 'axios'
                                 let total_errors = 0;
                                 let total_rotations = 0;
                                 let total_sessions = 0;
-                               
+
                                 
                                 
                                 let annotation_text = []
@@ -715,12 +880,17 @@ import axios from 'axios'
                                     totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"
                                     speedCouple = timeCouple + ' "y": '   + this.got[i].speed + " }"
                                     sessionCouple = timeCouple + ' "y": ' + this.got[i].session_id + " }"
+                                    temperatureCouple = timeCouple + ' "y": ' + this.got[i].temperature + " }"
+                                    humidityCouple = timeCouple + ' "y": ' + this.got[i].humidity + " }"
 
                                     rotationData.push(JSON.parse(rotationCouple))
                                     totalRotationData.push(JSON.parse(totalRotationCouple))
                                     speedData.push(JSON.parse(speedCouple))
                                     sessionData.push(JSON.parse(sessionCouple))
-                                                                    
+                                    temperatureData.push(JSON.parse(temperatureCouple))
+                                    humidityData.push(JSON.parse(humidityCouple))
+                                                         
+
                                     total_errors += this.got[i].errors
                                     total_rotations += this.got[i].rotations
 
@@ -751,6 +921,8 @@ import axios from 'axios'
                                 this.$session.set("fustellaRT",totalRotationData)
                                 this.$session.set("fustellaSpe",speedData)
                                 this.$session.set("fustellaSes",sessionData)
+                                this.$session.set("temperature",temperatureData)
+                                this.$session.set("humidity",humidityData)
                                 this.$session.set("id",this.$route.params.id)
                                 this.$session.set("text",annotation_text)
                                 this.$session.set("min",my_min)
@@ -759,36 +931,44 @@ import axios from 'axios'
                                 this.$session.set("total_sessions",total_sessions)
                                 this.$session.set("total_rotations",total_rotations)
 
-                                
-
                                 this.chartOptionsArea ={...this.chartOptionsArea,
                                   annotations: {
                                     xaxis: annotation_text
                                   }
                                 }
                                                               
-                                this.seriesArea = [{
+                                this.seriesAreaRotation = [{
                                   name: "Rotazioni",
                                   data: rotationData
                                 }]
                                 
-                                this.seriesArea4 = [{
+                                this.seriesAreaTotalRotation = [{
                                   name: "RotazioniTotali",
                                   data: totalRotationData
                                 }]
 
 
-                                this.seriesArea2 = [{
+                                this.seriesAreaSpeed = [{
                                   name: "Velocità",
                                   data: speedData
                                 }]
 
-                                this.seriesArea3 = [{
+                                this.seriesAreaSession = [{
                                   name: "Sessione",
                                   data: sessionData
                                 }]
 
-                                this.seriesLine = [{
+                                this.seriesAreaHumidity = [{
+                                  name: "Umidità",
+                                  data: humidityData
+                                }]
+
+                                this.seriesAreaTemperature = [{
+                                  name: "Temperatura",
+                                  data: temperatureData
+                                }]
+
+                                this.seriesLineBrush = [{
                                   name: "RotazioniBrush",
                                   data: rotationData
                                 }]
@@ -824,29 +1004,39 @@ import axios from 'axios'
           }else{
               this.cad =this.$session.get("cad")
 
-              this.seriesLine = [{
+              this.seriesLineBrush = [{
                 name: "RotazioniBrush",
                 data: this.$session.get("fustellaR")
               }]
 
-              this.seriesArea = [{
+              this.seriesAreaRotation = [{
                 name: "Rotazioni",
                 data: this.$session.get("fustellaR")
               }]  
 
-              this.seriesArea2 = [{
+              this.seriesAreaSpeed = [{
                 name: "Velocità",
                 data: this.$session.get("fustellaSpe")
               }]
 
-              this.seriesArea3 = [{
+              this.seriesAreaSession = [{
                 name: "Sessione",
                 data: this.$session.get("fustellaSes")
               }]
 
-              this.seriesArea4 = [{
+              this.seriesAreaTotalRotation = [{
                 name: "RotazioniTotali",
                 data: this.$session.get("fustellaRT")
+              }]
+
+              this.seriesAreaHumidity = [{
+                name: "Umidità",
+                data: this.$session.get("humidity")
+              }]
+                                
+              this.seriesAreaTemperature = [{
+                name: "Temperatura",
+                data: this.$session.get("temperature")
               }]
 
               this.chartOptionsArea ={...this.chartOptionsArea,
@@ -899,7 +1089,7 @@ import axios from 'axios'
                                       height: 120,
                                       type: 'area',
                                       brush:{
-                                        targets: ['rotazioni','velocità','sessione'],
+                                        targets: ['rotazioni','velocità','sessione', 'temperatura', 'umidità'],
                                         enabled: true,
                                         autoScaleYaxis: false 
                                       }, 
