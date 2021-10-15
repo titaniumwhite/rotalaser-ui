@@ -569,11 +569,6 @@ import axios from 'axios'
                                       
                                       total_rotations += prev_rotations                                      
                                       
-                                      /*
-                                      console.log("curr " + this.got[i].rotations)
-                                      console.log("prev " + prev_rotations)
-                                      console.log("ttl " + total_rotations)
-                                      */
                                     }
                                     
                                     prev_rotations = this.got[i].rotations
@@ -600,7 +595,7 @@ import axios from 'axios'
                                     }
 
                                     /* Settaggio window slider, ultimo quarto di dati  */
-                                    if (i == ((this.got.length)-(500))){ 
+                                    if (i == ((this.got.length*3)/4)){ 
                                       my_min = time 
                                     }
                                     else if (i == this.got.length-2){
