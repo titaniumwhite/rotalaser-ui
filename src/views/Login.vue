@@ -93,8 +93,8 @@ export default {
       },
    },
    mounted(){
-      const creds = JSON.parse('{"username": "123", "password": "ciao"}')
-      axios.post('https://foiadev.diag.uniroma1.it:5002/v1/login/',creds,{}).then(
+      const creds = JSON.parse('{"username": "rotalaser.software@gmail.com", "password": "mGnvxjZTdi89BM8sgcH2UjrJm"}')
+      axios.post('http://195.231.3.173:5002/v1/login/',creds,{}).then(
          response =>{
             let k;
             k = response.data.token

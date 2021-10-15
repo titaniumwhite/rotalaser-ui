@@ -116,24 +116,27 @@
 
       
       <v-container  fluid>
+        <v-fade-transition>
+        <v-card v-if="!loading">
+        <v-card-title class="font-weight-bold">Fabbriche</v-card-title>
         <v-row dense>
           <v-col 
-            v-for="item in fabbriche"
-            :key="item.message"
-            :cols="item.flex"
+            v-for="item in real_fabbriche"
+            :key="item.name"
+            :cols="4"
           >
             <v-card
              
             >
               
-              <v-card-title v-text="item.message"></v-card-title>
-              <v-card-subtitle></v-card-subtitle>
-              <v-card-text></v-card-text>
+              <v-card-title v-text="item.name"></v-card-title>
+              <v-card-subtitle>P.IVA {{item.piva}}</v-card-subtitle>
+              <v-card-text>{{item.location}}</v-card-text>
               <v-card-actions>
                  <v-btn
                   text
                   color="secondary"
-                  @click="$router.push('/fustelle/'+item.message)">
+                  @click="$router.push('/fustelle/'+item.name)">
                   Info
                 </v-btn>
 
@@ -225,7 +228,8 @@
             </v-card>
           </v-col>
         </v-row>
-        
+        </v-card>
+        </v-fade-transition>
       </v-container>
 
     </v-main> 
@@ -234,12 +238,16 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
    data: () => ({
       searching:false,
       drawer: false,
       group: null,
       dialog: false,
+      loading: true,
+      true: true,
+      real_fabbriche: [],
       fabbriche: [
         { message: 'International Paper',flex:4 },
         //{ message: 'Fabbrica 2',flex:4 }
@@ -255,6 +263,43 @@ export default {
         this.drawer = false
       },
     },
+
+    mounted(){
+    if(!this.$session.exists("fabbriche")){
+      axios.get('http://195.231.3.173:5002/v1/factories/',{
+        headers:{
+          'key':this.$session.get("key")
+        }
+      }).then(response =>{
+          
+          
+          for(let i = 0;i<response.data.length;i++){
+            console.log(response.data)
+              //if(response.data[i].name != "prova"){
+              let str = "{ "
+              str += '"name": "'     + response.data[i].id + '" , '
+              str += '"location": "' + response.data[i].location + '", '
+              str += '"piva": "' + response.data[i].CustomerPiva + '" '
+              str+= " }"
+              
+              this.real_fabbriche.push(JSON.parse(str))
+              //}  
+          }
+          
+          this.loading= false
+          
+          this.$session.set("fabbriche",this.real_fabbriche)
+          
+        }).catch( (error) => {
+          console.log(error)
+          this.$router.push("/")
+        })
+    }else{
+      this.real_fabbriche = this.$session.get("fabbriche")
+      this.loading= false 
+    }
+
+  },
 
     methods: {
       // when blur the searchbox, if there is no text, just make the box disappear

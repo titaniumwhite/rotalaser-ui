@@ -529,7 +529,7 @@ import axios from 'axios'
         
           if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
             console.log(this.$route.params.id)
-            axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
+            axios.get('http://195.231.3.173:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
               headers:{
                 'key':this.$session.get("key")
               }
@@ -648,7 +648,7 @@ import axios from 'axios'
               })
             
             /* get the effin CAD */
-            axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id,{
+            axios.get('http://195.231.3.173:5002/v1/diecutters/'+this.$route.params.id,{
               headers:{
                 'key':this.$session.get("key")
               }

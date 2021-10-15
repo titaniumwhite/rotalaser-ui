@@ -821,7 +821,7 @@ import axios from 'axios'
         
           if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
             console.log(this.$route.params.id)
-            axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
+            axios.get('http://195.231.3.173:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
               headers:{
                 'key':this.$session.get("key")
               }
@@ -841,8 +841,13 @@ import axios from 'axios'
                                 }
                                 let my_min = 0
                                 let my_max = 0
+
                                 let total_errors = 0;
+                                let prev_errors  = 0;
+
                                 let total_rotations = 0;
+                                let prev_rotations  = 0;
+
                                 let total_sessions = 0;
 
                                 
@@ -854,46 +859,38 @@ import axios from 'axios'
                                 let total_session = 0
 
                                 
-                                for(let i=this.got.length-1000; i<this.got.length-1;i++){
+                                for(let i=0; i<this.got.length-1;i++){
 
                                   let rotationCouple;
                                   let totalRotationCouple;
                                   let speedCouple;    
-                                  let sessionCouple;                              
+                                  let sessionCouple;   
+                                  let humidityCouple;
+                                  let temperatureCouple;  
+                                  
+                                  
+
                                   let time = Date.parse(this.got[i].id.slice(0,-9))
 
                                 
 
                                   if(!isNaN(time)){
-                                    if (i == this.got.length-500){ 
-                                      my_min = time 
+
+                                    /* Total Count S**T */
+
+                                    /* Errori totali */
+                                    if(this.got[i].errors != 0){
+                                      total_errors += this.got[i].errors - prev_errors
+                                      prev_errors = this.got[i].errors
                                     }
-                                    else if (i == this.got.length-2){
-                                      my_max=time
+                                    
+                                    /* Rotazioni totali */
+                                    if(this.got[i].rotations != 0){
+                                      total_rotations += this.got[i].rotations - prev_rotations
+                                      prev_rotations = this.got[i].rotations
                                     }
-                                    let timeCouple = "{ "
                                     
-                                    
-                                    timeCouple += '"x": ' + time + ', '
-                                    
-                                    rotationCouple = timeCouple + ' "y": '+ this.got[i].rotations + " }"
-                                    totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"
-                                    speedCouple = timeCouple + ' "y": '   + this.got[i].speed + " }"
-                                    sessionCouple = timeCouple + ' "y": ' + this.got[i].session_id + " }"
-                                    temperatureCouple = timeCouple + ' "y": ' + this.got[i].temperature + " }"
-                                    humidityCouple = timeCouple + ' "y": ' + this.got[i].humidity + " }"
-
-                                    rotationData.push(JSON.parse(rotationCouple))
-                                    totalRotationData.push(JSON.parse(totalRotationCouple))
-                                    speedData.push(JSON.parse(speedCouple))
-                                    sessionData.push(JSON.parse(sessionCouple))
-                                    temperatureData.push(JSON.parse(temperatureCouple))
-                                    humidityData.push(JSON.parse(humidityCouple))
-                                                         
-
-                                    total_errors += this.got[i].errors
-                                    total_rotations += this.got[i].rotations
-
+                                    /* Sessioni totali */
                                     if(parseInt(this.got[i].session_id) != last_session){
 
                                       
@@ -912,11 +909,47 @@ import axios from 'axios'
                                                           +'}'
                                       annotation_text.push(JSON.parse(curr_text))
                                       
-                                    } 
+                                    }
+
+                                    /* Settaggio window slider, ultimo quarto di dati  */
+                                    if (i == (this.got.length)-Math.floor(this.got.length/4)){ 
+                                      my_min = time 
+                                    }
+                                    else if (i == this.got.length-2){
+                                      my_max=time
+                                    }
+
+
+                                    /* INSERIMENTO DATI NEI GRAFICI */
+                                    /* Prendiamo tutti i dati per le stat ma agghreghiamo la visualizzazione sennò ci perdiamo la vita */
+
+                                    if(i%15 ==0){
+                                      
+                                      let timeCouple = "{ "
+                                    
+                                      timeCouple += '"x": ' + time + ', '
+                                      
+                                      rotationCouple = timeCouple + ' "y": '+ this.got[i].rotations + " }"
+                                      totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"
+                                      speedCouple = timeCouple + ' "y": '   + this.got[i].speed + " }"
+                                      sessionCouple = timeCouple + ' "y": ' + this.got[i].session_id + " }"
+                                      temperatureCouple = timeCouple + ' "y": ' + this.got[i].temperature + " }"
+                                      humidityCouple = timeCouple + ' "y": ' + this.got[i].humidity + " }"
+
+                                      rotationData.push(JSON.parse(rotationCouple))
+                                      totalRotationData.push(JSON.parse(totalRotationCouple))
+                                      speedData.push(JSON.parse(speedCouple))
+                                      sessionData.push(JSON.parse(sessionCouple))
+                                      temperatureData.push(JSON.parse(temperatureCouple))
+                                      humidityData.push(JSON.parse(humidityCouple))
+
+                                    }                
+                                     
   
                                   }
                                 }
                                 
+                                /*  SESSION STORAGE  */
                                 this.$session.set("fustellaR",rotationData)
                                 this.$session.set("fustellaRT",totalRotationData)
                                 this.$session.set("fustellaSpe",speedData)
@@ -931,6 +964,7 @@ import axios from 'axios'
                                 this.$session.set("total_sessions",total_sessions)
                                 this.$session.set("total_rotations",total_rotations)
 
+                                /* INSERIMENTO PARAMETRI */
                                 this.chartOptionsArea ={...this.chartOptionsArea,
                                   annotations: {
                                     xaxis: annotation_text
@@ -988,7 +1022,7 @@ import axios from 'axios'
               })
             
             /* get the effin CAD */
-            axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/'+this.$route.params.id,{
+            axios.get('http://195.231.3.173:5002/v1/diecutters/'+this.$route.params.id,{
               headers:{
                 'key':this.$session.get("key")
               }
@@ -1051,7 +1085,7 @@ import axios from 'axios'
               this.loading=false 
           }
 /* CHIAMATE API PER MODIFICA */
-          axios.get('https://foiadev.diag.uniroma1.it:5002/v1/customers/'+this.$route.params.id,{
+          axios.get('http://195.231.3.173:5002/v1/customers/'+this.$route.params.id,{
               headers:{
                 'key':this.$session.get("key")
               }
@@ -1064,7 +1098,7 @@ import axios from 'axios'
                 this.$router.push("/")
             })
 
-          axios.get('https://foiadev.diag.uniroma1.it:5002/v1/customers/'+this.$route.params.id+'/factories',{
+          axios.get('http://195.231.3.173:5002/v1/customers/'+this.$route.params.id+'/factories',{
               headers:{
                 'key':this.$session.get("key")
               }

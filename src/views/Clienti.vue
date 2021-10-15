@@ -117,26 +117,27 @@
 
       
       <v-container  fluid>
-        <v-card>
+        <v-fade-transition>
+        <v-card v-if="!loading">
         <v-card-title class="font-weight-bold">Clienti</v-card-title>
         <v-row dense>
           <v-col 
-            v-for="item in clienti"
-            :key="item.message"
-            :cols="item.flex"
+            v-for="item in real_clienti"
+            :key="item.name"
+            :cols="4"
           >
             <v-card
              
             >
               
-              <v-card-title v-text="item.message"></v-card-title>
-              <v-card-subtitle></v-card-subtitle>
+              <v-card-title v-text="item.name"></v-card-title>
+              <v-card-subtitle>P. IVA: {{item.piva}}</v-card-subtitle>
               <v-card-text></v-card-text>
               <v-card-actions>
                  <v-btn
                   text
                   color="secondary"
-                  @click="$router.push('/fustelle/'+item.message)">
+                  @click="$router.push('/fustelle/'+item.name)">
                   Info
                 </v-btn>
 
@@ -240,6 +241,7 @@
           </v-col>
         </v-row>
       </v-card>
+      </v-fade-transition>
       </v-container>
 
     </v-main> 
@@ -251,12 +253,15 @@
 
 
 <script>
+import axios from 'axios'
 export default {
    data: () => ({
       searching:false,
       drawer: false,
       group: null,
       dialog: false,
+      loading: true,
+      real_clienti: [],
       clienti: [
         { message: 'Rotalaser',flex:4 },
         //{ message: 'Cliente 2',flex:4 }
@@ -269,8 +274,42 @@ export default {
         this.drawer = false
       },
     },
+  mounted(){
+    if(!this.$session.exists("clienti")){
+      axios.get('http://195.231.3.173:5002/v1/customers/',{
+        headers:{
+          'key':this.$session.get("key")
+        }
+      }).then(response =>{
+          
+          
+          for(let i = 0;i<response.data.length;i++){
+              if(response.data[i].name != "prova"){
+              let str = "{ "
+              str += '"name": "'     + response.data[i].name + '" , '
+              str += '"active": "' + response.data[i].active + '", '
+              str += '"piva": "' + response.data[i].piva + '" '
+              str+= " }"
+              
+              this.real_clienti.push(JSON.parse(str))
+              }  
+          }
+          
+          this.loading= false
+          
+          this.$session.set("clienti",this.real_clienti)
+          
+        }).catch( (error) => {
+          console.log(error)
+          this.$router.push("/")
+        })
+    }else{
+      this.real_clienti = this.$session.get("clienti")
+      this.loading= false 
+    }
 
-methods: {
+  },
+  methods: {
       // when blur the searchbox, if there is no text, just make the box disappear
       is_text_empty: function (event, value) {
         if (event && value === '') {
@@ -280,9 +319,8 @@ methods: {
 
       reset: function() {
         this.$refs.textareaform.reset()
-    },
-
-    }
+      },
+  }
 };
 </script>
 

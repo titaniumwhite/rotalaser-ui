@@ -266,8 +266,9 @@ export default {
       },
     },
     mounted(){
-        if(!this.$session.exists("fustelle")){
-          axios.get('https://foiadev.diag.uniroma1.it:5002/v1/diecutters/',{
+        if(!this.$session.exists("fustelle") && 
+        (!this.$session.exists("pid") || this.$route.params.id == this.$session.get("pid"))){
+          axios.get('http://195.231.3.173:5002/v1/diecutters/'+this.$route.params.id,{
             headers:{
               'key':this.$session.get("key")
             }
@@ -290,6 +291,7 @@ export default {
                               this.loading= false
                               
                               this.$session.set("fustelle",filtered)
+                              this.$session.set("pid",this.$route.params.id)
                               
                             }).catch( (error) => {
                               console.log(error)
