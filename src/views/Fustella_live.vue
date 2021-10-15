@@ -222,9 +222,9 @@
           </v-card>
 
           <v-card v-if="err">
-            <v-layout align-center>
+            <v-card-text>
               <h2>Nessun dato recente da mostrare</h2>
-            </v-layout>
+            </v-card-text>
           </v-card>
 
           <v-col v-if="item=='cad'" 
@@ -634,6 +634,26 @@ import axios from 'axios'
                                   name: "RotazioniBrush",
                                   data: rotationData
                                 }]
+
+                                this.chartOptionsLine = {...this.chartOptionsLine, 
+                                  chart: {
+                                    id: 'brushChart',
+                                    height: 120,
+                                    type: 'area',
+                                    brush:{
+                                      target: 'rotazioni',
+                                      enabled: true,
+                                      autoScaleYaxis: false 
+                                    }, 
+                                    selection:{
+                                        enabled: true,
+                                        xaxis: {
+                                          min: my_min,
+                                          max: my_max
+                                        }
+                                    }
+                                  }
+                                }
 
                                 this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;

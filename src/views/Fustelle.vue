@@ -268,7 +268,7 @@ export default {
     mounted(){
         if(!this.$session.exists("fustelle") && 
         (!this.$session.exists("pid") || this.$route.params.id == this.$session.get("pid"))){
-          axios.get('http://195.231.3.173:5002/v1/diecutters/'+this.$route.params.id,{
+          axios.get('http://195.231.3.173:5002/v1/diecutters/',{
             headers:{
               'key':this.$session.get("key")
             }
