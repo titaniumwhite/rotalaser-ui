@@ -528,7 +528,7 @@ import axios from 'axios'
                                 //let prev_errors  = 0;
 
                                 let total_rotations = 0
-                                //let prev_rotations  = 0
+                                let prev_rotations  = -1
                                 
                                 
                                 let annotation_text = []
@@ -537,7 +537,7 @@ import axios from 'axios'
                                 let last_session = -1
                                 let total_session = 0
 
-                                console.log(response.data)
+                                
                                 
                                 for(let i=0; i<this.got.length-1;i++){
 
@@ -565,9 +565,9 @@ import axios from 'axios'
                                     }
                                     
                                     /* Rotazioni totali */
-                                    if(this.got[i].rotations != 0 /*&& (this.got[i].rotations > prev_rotations)*/){
-                                      total_rotations += this.got[i].rotations //- prev_rotations
-                                      //prev_rotations = this.got[i].rotations
+                                    if(this.got[i].rotations < prev_rotations && prev_rotations > 0){
+                                      
+                                      total_rotations += prev_rotations                                      
                                       
                                       /*
                                       console.log("curr " + this.got[i].rotations)
@@ -575,6 +575,8 @@ import axios from 'axios'
                                       console.log("ttl " + total_rotations)
                                       */
                                     }
+                                    
+                                    prev_rotations = this.got[i].rotations
                                     
                                     /* Sessioni totali */
                                     if(parseInt(this.got[i].session_id) != last_session){
