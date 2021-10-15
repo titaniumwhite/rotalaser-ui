@@ -595,7 +595,8 @@ import axios from 'axios'
                                     }
 
                                     /* Settaggio window slider, ultimo quarto di dati  */
-                                    if (i == ((this.got.length*3)/4)){ 
+                                    if (i == Math.floor(((this.got.length*3)/4))){ 
+                                      console.log("bang")
                                       my_min = time 
                                     }
                                     else if (i == this.got.length-2){
