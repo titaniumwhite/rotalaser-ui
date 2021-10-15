@@ -529,9 +529,6 @@ import axios from 'axios'
 
                                 let total_rotations = 0;
                                 //let prev_rotations  = 0;
-
-                                let total_sessions = 0;
-
                                 
                                 
                                 let annotation_text = []
@@ -594,7 +591,7 @@ import axios from 'axios'
                                     }
 
                                     /* Settaggio window slider, ultimo quarto di dati  */
-                                    if (i == (this.got.length)-500){ 
+                                    if (i == ((this.got.length)-(500))){ 
                                       my_min = time 
                                     }
                                     else if (i == this.got.length-2){
@@ -644,8 +641,10 @@ import axios from 'axios'
                                 this.$session.set("min",my_min)
                                 this.$session.set("max",my_max)
                                 this.$session.set("total_errors",total_errors)
-                                this.$session.set("total_sessions",total_sessions)
+                                this.$session.set("total_sessions",total_session)
                                 this.$session.set("total_rotations",total_rotations)
+
+                                
 
                                 /* INSERIMENTO PARAMETRI */
                                 this.chartOptionsAreaRotation ={...this.chartOptionsAreaRotation,
@@ -690,26 +689,6 @@ import axios from 'axios'
                                   data: rotationData
                                 }]
 
-                                this.chartOptionsLineBrush = {...this.chartOptionsLineBrush, 
-                                  chart: {
-                                    id: 'brushChart',
-                                    height: 120,
-                                    type: 'area',
-                                    brush:{
-                                      target: 'rotazioni',
-                                      enabled: true,
-                                      autoScaleYaxis: false 
-                                    }, 
-                                    selection:{
-                                        enabled: true,
-                                        xaxis: {
-                                          min: my_min,
-                                          max: my_max
-                                        }
-                                    }
-                                  }
-                                }
-
                                 this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
                                 this.total_sessions = total_session;
@@ -740,6 +719,11 @@ import axios from 'axios'
               })
           }else{
               this.cad =this.$session.get("cad")
+
+              console.log( this.$session.get("total_errors"))
+              this.total_rotations = this.$session.get("total_rotations")
+              this.total_errors = this.$session.get("total_errors")
+              this.total_sessions = this.$session.get("total_sessions")
 
               this.seriesLineBrush = [{
                 name: "RotazioniBrush",
@@ -776,20 +760,15 @@ import axios from 'axios'
                 data: this.$session.get("temperature")
               }]
 
-              this.chartOptionsArea ={...this.chartOptionsArea,
+              this.chartOptionsAreaRotation ={...this.chartOptionsAreaRotation,
                                   annotations: {
                                     xaxis: this.$session.get("text")
                                   }
                                 }
 
-              
-
-              this.total_errors = this.$session.get("errors")
-              this.total_rotations = this.$session.get("rotations")
-
               this.loading=false 
           }
-/* CHIAMATE API PER MODIFICA */
+          /* CHIAMATE API PER MODIFICA */
           axios.get('http://195.231.3.173:5002/v1/customers/'+this.$route.params.id,{
               headers:{
                 'key':this.$session.get("key")
@@ -822,7 +801,7 @@ import axios from 'axios'
         if(!this.created){
           console.log("creation")
           this.created = this.true
-          this.chartOptionsLine = {...this.chartOptionsLine, 
+          this.chartOptionsLineBrush = {...this.chartOptionsLineBrush, 
                                     chart: {
                                       id: 'brushChart',
                                       height: 120,
@@ -845,8 +824,9 @@ import axios from 'axios'
         this.slider = !this.slider
       },
       create_totali(){
+        this.slider = false
         this.totali = !this.totali
-        this.slider =false
+        
       }
     }
   };
