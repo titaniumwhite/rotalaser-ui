@@ -128,7 +128,10 @@
           <v-col 
             v-for="item in secret"
             :key="item.message"
-            :cols=4
+            lg="4"
+            md="4"
+            sm="6"
+            cols="6"
           >
             <v-card
             
@@ -137,7 +140,16 @@
               <v-card-title v-text="item.id"></v-card-title>
               <v-card-subtitle>Fustella attiva? {{item.active}}</v-card-subtitle>
               <v-card-text>Status: {{item.status}}</v-card-text>
+              
               <v-card-actions>
+                <v-container>
+                <v-row dense>
+                  <v-col
+                    lg="6"
+                    md="6"
+                    sm="12"
+                    cols="12"
+                  >
                  <v-btn
                   text
                   color="secondary"
@@ -145,87 +157,29 @@
                   Postanalisi
                 </v-btn>
 
-                <v-spacer></v-spacer>
+                </v-col>
+                
+                
+                <v-col
+                    lg="6"
+                    md="6"
+                    sm="12"
+                    cols="12"
+                  >
                 <v-btn
                   text
                   color="secondary"
                   @click="$router.push('/fustella/live/'+item.id)">
                   Live
                 </v-btn>
-    
-                <v-dialog
-                  v-model="dialog"
-                  max-width="600px"
-                  :retain-focus="false"
-                >
 
-                  <v-card>
-                    <v-card-title>
-                    <span class="text-h5">Fustella</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                          >
-                            <v-text-field
-                              label="Nome"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          
-                          <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                          >
-                            <v-text-field
-                              label="Cognome"
-                              hint
-                              required
-                            ></v-text-field>
-                          </v-col>
+                </v-col>
+                </v-row>
+                
+                            </v-container>
 
-                          <v-col cols="12">
-                            <v-text-field
-                              label="Email"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12">
-                            <v-text-field
-                              label="Password"
-                              type="password"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          
-                        </v-row>
-                        
-                      </v-container>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        color="secondary darken-1"
-                        text
-                        @click="dialog = false">
-                        Chiudi
-                      </v-btn>
-                      <v-btn
-                        color="secondary darken-1"
-                        text
-                        @click="$router.go()">
-                        Salva
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-  
               </v-card-actions>
+              
             </v-card>
           </v-col>
         </v-row>

@@ -528,7 +528,7 @@ import axios from 'axios'
                                 //let prev_errors  = 0;
 
                                 let total_rotations = 0;
-                                //let prev_rotations  = 0;
+                                let prev_rotations  = 0;
                                 
                                 
                                 let annotation_text = []
@@ -565,8 +565,8 @@ import axios from 'axios'
                                     
                                     /* Rotazioni totali */
                                     if(this.got[i].rotations != 0){
-                                      total_rotations += this.got[i].rotations //- prev_rotations)
-                                      //prev_rotations = this.got[i].rotations
+                                      total_rotations +=  prev_rotations - this.got[i].rotations 
+                                      prev_rotations = this.got[i].rotations
                                     }
                                     
                                     /* Sessioni totali */
