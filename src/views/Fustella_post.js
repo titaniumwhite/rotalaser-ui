@@ -23,8 +23,13 @@ import axios from 'axios'
         my_min:0,
         my_max:0,
         created: false,
-        customers: null,
-        customer_factories: null,
+
+        /* data per pagina 'modifica' */
+        customers_name: [],
+        customers: [],
+        chosen_customer: null,
+        customer_factories: [],
+        selectCustomer: false,
         items: [
           'informazioni', 'grafici', 'cad', 'modifica'
         ],
@@ -596,7 +601,6 @@ import axios from 'axios'
 
                                     /* Settaggio window slider, ultimo quarto di dati  */
                                     if (i == Math.floor(((this.got.length*3)/4))){ 
-                                      console.log("bang")
                                       my_min = time 
                                     }
                                     else if (i == this.got.length-2){
@@ -668,7 +672,6 @@ import axios from 'axios'
                                   data: totalRotationData
                                 }]
 
-
                                 this.seriesAreaSpeed = [{
                                   name: "Velocità",
                                   data: speedData
@@ -721,7 +724,33 @@ import axios from 'axios'
             }).catch( (error) => {
                 console.log(error)
                 this.$router.push("/")
-              })
+            })
+
+             /* CHIAMATE API PER MODIFICA FUSTELLA */
+            axios.get('http://195.231.3.173:5002/v1/customers/',{
+              headers:{
+                'key':this.$session.get("key")
+              }
+            }).then(response =>{
+              for(let i = 0; i < response.data.length; i++) {
+                let token = []
+                token[0] = response.data[i].piva
+                token[1] = response.data[i].name
+                this.customers_name[i] = response.data[i].name 
+                this.customers.push(token)
+                console.log(this.customers)
+              }
+
+              this.$session.set("customers_name",JSON.stringify(this.customers_name))
+              this.$session.set("customers",JSON.stringify(this.customers))
+
+
+            }).catch( (error) => {
+                console.log(error)
+                this.$router.push("/")
+            })
+
+          
           }else{
               this.cad =this.$session.get("cad")
 
@@ -730,6 +759,9 @@ import axios from 'axios'
               this.total_errors = this.$session.get("total_errors")
               this.total_sessions = this.$session.get("total_sessions")
 
+              this.customers_name = JSON.parse(this.$session.get("customers_name"))
+              this.customers = JSON.parse(this.$session.get("customers"))
+              
               this.seriesLineBrush = [{
                 name: "RotazioniBrush",
                 data: this.$session.get("fustellaR")
@@ -773,32 +805,7 @@ import axios from 'axios'
 
               this.loading=false 
           }
-          /* CHIAMATE API PER MODIFICA */
-          axios.get('http://195.231.3.173:5002/v1/customers/'+this.$route.params.id,{
-              headers:{
-                'key':this.$session.get("key")
-              }
-            }).then(response =>{
-            
-              this.customers = response.data.name
-
-            }).catch( (error) => {
-                console.log(error)
-                this.$router.push("/")
-            })
-
-          axios.get('http://195.231.3.173:5002/v1/customers/'+this.$route.params.id+'/factories',{
-              headers:{
-                'key':this.$session.get("key")
-              }
-            }).then(response =>{
-            
-              this.customer_factories = response.data.location
-
-            }).catch( (error) => {
-                console.log(error)
-                this.$router.push("/")
-            })
+         
 
     },
     methods: {
@@ -832,6 +839,35 @@ import axios from 'axios'
         this.slider = false
         this.totali = !this.totali
         
+      },
+      get_factory_of_customer: function() {
+        let customer_id = 0;
+        for (let i = 0; i < this.customers.length; i++) {
+          let customer = this.customers[i];
+          if (this.chosen_customer === customer[1]) customer_id = this.customers[0];
+        }
+
+        if (customer_id[0] == 0) {
+          console.log("[ERROR] Errore in get_factory_of_customer")
+          this.$router.push("/")
+        }
+        console.log("Here we are " + customer_id[0])
+
+        axios.get('http://195.231.3.173:5002/v1/customers/'+customer_id[0]+'/factories',{
+          headers:{
+            'key':this.$session.get("key")
+          }
+        }).then(response =>{     
+          for (let i = 0; i < response.data.length; i++) {
+            this.customer_factories[i] = response.data[i].id
+            console.log("si" + this.customer_factories[i])
+
+          }
+          this.selectCustomer = true
+        }).catch( (error) => {
+          console.log(error)
+          this.$router.push("/")
+        })
       }
-    }
+    },
   };

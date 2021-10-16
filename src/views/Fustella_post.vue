@@ -280,19 +280,22 @@
                       ></v-text-field>
 
                       <v-overflow-btn
-                        class="my-2"
-                        :items="items"
+                        :items="customers_name"
                         label="Cliente"
                         dense
                         filled
+                        editable
+                        v-model="chosen_customer"
+                        v-on:change="get_factory_of_customer"
                       ></v-overflow-btn>
 
                       <v-overflow-btn
-                        class="my-2"
-                        :items="items"
+                        :items="customer_factories"
                         label="Fabbrica"
                         dense
                         filled
+                        editable
+                        :disabled="!selectCustomer"
                       ></v-overflow-btn>
                       </v-col>
                   </v-row>
