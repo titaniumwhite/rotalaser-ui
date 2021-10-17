@@ -265,39 +265,59 @@
           </v-col>
 
           <!-- PAGINA MODIFICA -->
-              <v-form v-if="!loading && !err && item=='modifica'">
+          
+              <v-form 
+                v-if="!loading && !err && item=='modifica'"
+                ref="form"
+                v-model="valid"
+              >
                 <v-container>
                   <v-row>
                       <v-col
                       cols="12"
                       sm="12"
                     >
-                      <v-text-field
-                        :value="$route.params.id"
-                        label="Nome fustella"
-                        dense
-                        outlined
-                      ></v-text-field>
 
-                      <v-overflow-btn
+                      <v-text-field
+                        v-model="chosen_diecuttername"
+                        label="Nome fustella"
+                        required
+                        outlined
+                        :rules="rules"
+                      ></v-text-field>
+                    
+                      <v-select
+                        v-model="chosen_customer"
                         :items="customers_name"
                         label="Cliente"
-                        dense
-                        filled
-                        editable
-                        v-model="chosen_customer"
+                        required
+                        :rules="rules"
                         v-on:change="get_factory_of_customer"
-                      ></v-overflow-btn>
+                      ></v-select>  
 
-                      <v-overflow-btn
+                      <v-select
+                        v-model="chosen_factory"
                         :items="customer_factories"
+                        :key="render"
                         label="Fabbrica"
-                        dense
-                        filled
-                        editable
+                        required
+                        :rules="rules"
                         :disabled="!selectCustomer"
-                      ></v-overflow-btn>
-                      </v-col>
+                      ></v-select>
+
+                    <v-file-input
+                    required
+                    :rules="rules"
+                    ></v-file-input>
+                    
+                    <v-btn
+                      :disabled="!valid"
+                      @click="validate"
+                    >
+                      submit
+                    </v-btn>
+                    
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-form>     
@@ -327,3 +347,4 @@
 }
 
 </style>
+

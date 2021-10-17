@@ -23,13 +23,21 @@ import axios from 'axios'
         my_min:0,
         my_max:0,
         created: false,
+        
 
         /* data per pagina 'modifica' */
         customers_name: [],
         customers: [],
-        chosen_customer: null,
+        chosen_customer: '',
+        chosen_factory: '',
         customer_factories: [],
         selectCustomer: false,
+        chosen_diecuttername: '',
+        render: false,
+        valid: true,
+        rules: [value => !!value || 'È obbligatorio compilare questo campo'],
+
+
         items: [
           'informazioni', 'grafici', 'cad', 'modifica'
         ],
@@ -842,6 +850,7 @@ import axios from 'axios'
       },
       get_factory_of_customer: function() {
         let customer_id = 0;
+        this.render = false
         for (let i = 0; i < this.customers.length; i++) {
           let customer = this.customers[i];
           if (this.chosen_customer === customer[1]) customer_id = this.customers[0];
@@ -860,14 +869,19 @@ import axios from 'axios'
         }).then(response =>{     
           for (let i = 0; i < response.data.length; i++) {
             this.customer_factories[i] = response.data[i].id
-            console.log("si" + this.customer_factories[i])
-
           }
           this.selectCustomer = true
-        }).catch( (error) => {
+          this.render = true
+          }).catch( (error) => {
           console.log(error)
           this.$router.push("/")
         })
-      }
+      },
+      validate () {
+        //this.$refs.form.validate()
+        console.log("Inviato")
+      },
     },
   };
+
+  

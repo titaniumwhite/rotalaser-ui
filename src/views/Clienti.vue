@@ -282,7 +282,6 @@ export default {
         }
       }).then(response =>{
           
-          
           for(let i = 0;i<response.data.length;i++){
               if(response.data[i].name != "prova"){
               let str = "{ "
