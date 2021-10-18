@@ -162,29 +162,49 @@
               md="8"
               sm="12"
               cols="12"
-              >   <v-card>
-                  <div>
-                      <div id="chart-line" v-if="!totali">
+              >   <v-card  v-if="!totali">
+                    <div>
+                      <div id="chart-line1">
                         <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaRotation" :series="seriesAreaRotation"></apexchart>
                       </div>
-                      <div id="chart-line" v-if="totali">
-                        <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaTotalRotation" :series="seriesAreaTotalRotation"></apexchart>
-                      </div>
-                     <div id="chart-line" v-if="slider">
+                      
+                    
+                      <div id="chart-line2" >
                         <apexchart width='100%' height="100" type="area" :options="chartOptionsLineBrush" :series="seriesLineBrush"></apexchart>
                       </div>
-                  </div>
-                  <v-card-actions>
-                    <v-btn v-if="!totali"
-                    @click="create_slider()">
-                      Slider
-                    </v-btn>
-                     <v-btn
-                    @click="create_totali()">
-                      Rotazioni Complessive
-                    </v-btn>
+                    </div>
+                 
+                    <v-card-actions>
+                      <v-btn v-if="!totali"
+                        text
+                        color="secondary"
+                        @click="create_slider()">
+                        Slider
+                      </v-btn>
+                      <v-btn
+                        text
+                        color="secondary"
+                        @click="create_totali()">
+                          Rotazioni Complessive
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                  <v-card v-else >
+                    <div id="chart-line3" >
+                        <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaTotalRotation" :series="seriesAreaTotalRotation"></apexchart>
+                    </div>
+
+                    <v-card-actions>
+                    
+                      <v-btn
+                        text
+                        color="secondary"
+                        @click="create_totali()">
+                          Rotazioni per Sessione
+                      </v-btn>
                   </v-card-actions>
                   </v-card>
+
               </v-col>
 
               <v-col 
@@ -196,43 +216,34 @@
 
             </v-row>
 
-            <v-row>
-              <v-col lg="6"
-              md="6"
-              sm="12"
-              cols="12" >
-                    <div id="chart-line">
-                      <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaSession" :series="seriesAreaSession"></apexchart>
-                    </div>
-              </v-col>
-              <v-col lg="6"
-                md="6"
-                sm="12"
-                cols="12" 
-              >
-                    <div id="chart-line">
-                      <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaSpeed" :series="seriesAreaSpeed"></apexchart>
-                    </div>
-                
-              </v-col>
-            </v-row>
+
 
             <v-row>
-              <v-col lg="6"
-              md="6"
+              <v-col lg="4"
+              md="4"
               sm="12"
               cols="12" >
                     <div id="chart-line">
                       <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaHumidity" :series="seriesAreaHumidity"></apexchart>
                     </div>
               </v-col>
-              <v-col lg="6"
-                md="6"
+              <v-col lg="4"
+                md="4"
                 sm="12"
                 cols="12" 
               >
                     <div id="chart-line">
                       <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaTemperature" :series="seriesAreaTemperature"></apexchart>
+                    </div>
+                
+              </v-col>
+              <v-col lg="4"
+                md="4"
+                sm="12"
+                cols="12" 
+              >
+                    <div id="chart-line">
+                      <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaSpeed" :series="seriesAreaSpeed"></apexchart>
                     </div>
                 
               </v-col>

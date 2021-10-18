@@ -41,29 +41,32 @@ import axios from 'axios'
         items: [
           'informazioni', 'grafici', 'cad', 'modifica'
         ],
-        seriesAreaRotation: [{
-          name: 'Rotazioni',
-        }],
+
+        seriesAreaRotation: [],
+        seriesAreaTotalRotation: [],
+        seriesLineBrush: [],
+        seriesAreaSpeed: [],
+        seriesAreaTemperature: [],
+        seriesAreaHumidity: [],
+       
         chartOptionsAreaRotation: {
           chart: {
             id: 'rotazioni',
             height: 100,
             type: 'area',
-            /*
+            
             events: {
                 click: (event, chartContext, config) => {
-                    console.log(config.config.series[config.seriesIndex])
+                    
                     console.log(config.config.series[config.seriesIndex].name)
-                    console.log(config.config.series[config.seriesIndex].data[config.dataPointIndex])
+                    
+                    console.log(event.target.innerHTML)
                     this.got = !this.got
                     console.log(this.got)
                 }
-            },*/
-            group: 'sync',
-            toolbar: {
-              autoSelected: 'pan',
-              show: true
             },
+            //group: 'sync',
+            
             animations: {
               enabled: true,
               easing: 'easeinout',
@@ -102,7 +105,7 @@ import axios from 'axios'
             margin: 10,
             offsetX: 0,
             offsetY: 0,
-            floating: false,
+            floating: true,
             style: {
               fontSize:  '14px',
               fontWeight:  'bold',
@@ -119,33 +122,29 @@ import axios from 'axios'
             }
           },
         },
-        seriesAreaTotalRotation: [{
-          name: 'RotazioniTotali',
-        }],
+       
         chartOptionsAreaTotalRotation: {
           chart: {
             id: 'rotazioniTotali',
             height: 100,
             type: 'area',
-            /*
+            
             events: {
                 click: (event, chartContext, config) => {
-                    console.log(config.config.series[config.seriesIndex])
+                    
                     console.log(config.config.series[config.seriesIndex].name)
-                    console.log(config.config.series[config.seriesIndex].data[config.dataPointIndex])
+                    
+                    console.log(event.target.innerHTML)
                     this.got = !this.got
                     console.log(this.got)
                 }
-            },*/
-            group: 'sync',
-            toolbar: {
-              autoSelected: 'pan',
-              show: true
             },
+            //group: 'sync',
+            
             animations: {
               enabled: true,
               easing: 'easeinout',
-              speed: 800,
+              speed: 1000,
               animateGradually: {
                   enabled: true,
                   delay: 150
@@ -198,57 +197,37 @@ import axios from 'axios'
           },
         },
 
-
-        seriesLineBrush: [{
-            name: 'RotazioniBrush'
-          }],
-          chartOptionsLineBrush: {
-            chart: {
-              id: 'brushChart',
-              height: 120,
-              type: 'area',
-              brush:{
-                targets: ['rotazioni', 'velocità', 'sessione', 'temperatura', 'umidità'],
-                enabled: true,
-                autoScaleYaxis: false 
-              }, 
-            },
-
-            colors: ['#008FFB'],
-            fill: {
-              type: 'gradient',
-              gradient: {
-                opacityFrom: 0.91,
-                opacityTo: 0.1,
-              }
-            },
-            xaxis: {
-              type: 'datetime',
-              tooltip: {
-                enabled: false
-              }
-            },
-            yaxis: {
-              tickAmount: 2,
-              labels: {
-                minWidth: 40
-              }
-            } 
+        chartOptionsLineBrush: {
+          
+          colors: ['#008FFB'],
+          fill: {
+            type: 'gradient',
+            gradient: {
+              opacityFrom: 0.91,
+              opacityTo: 0.1,
+            }
           },
-
-        seriesAreaSpeed: [{
-          name: 'Velocità',
-        }],
+          xaxis: {
+            type: 'datetime',
+            tooltip: {
+              shared: false,
+              enabled: false
+            }
+          },
+          yaxis: {
+            tickAmount: 2,
+            labels: {
+              minWidth: 40
+            }
+          } 
+        },
+  
         chartOptionsAreaSpeed: {
           chart: {
             id: 'velocità',
             height: 160,
             type: 'area',
-            group: 'sync',
-            toolbar: {
-              autoSelected: 'pan',
-              show: true
-            },
+            //group: 'sync',
     
           },
           stroke: {
@@ -295,19 +274,13 @@ import axios from 'axios'
           },
         },
 
-        seriesAreaSession: [{
-          name: 'Sessione',
-        }],
         chartOptionsAreaSession: {
           chart: {
             id: 'sessione',
             height: 160,
             type: 'area',
-            group: 'sync',
-            toolbar: {
-              autoSelected: 'pan',
-              show: true
-            },
+            //group: 'sync',
+            
             animations: {
               enabled: true,
               easing: 'easeinout',
@@ -367,19 +340,13 @@ import axios from 'axios'
           }
         }, 
 
-        seriesAreaHumidity: [{
-          name: 'Umidità',
-        }],
         chartOptionsAreaHumidity: {
           chart: {
             id: 'umidità',
             height: 160,
             type: 'area',
-            group: 'sync',
-            toolbar: {
-              autoSelected: 'pan',
-              show: true
-            },
+            //group: 'sync',
+            
             animations: {
               enabled: true,
               easing: 'easeinout',
@@ -439,19 +406,13 @@ import axios from 'axios'
           }
         }, 
 
-        seriesAreaTemperature: [{
-          name: 'Temperatura',
-        }],
         chartOptionsAreaTemperature: {
           chart: {
             id: 'temperatura',
             height: 160,
             type: 'area',
-            group: 'sync',
-            toolbar: {
-              autoSelected: 'pan',
-              show: true
-            },
+            //group: 'sync',
+            
             animations: {
               enabled: true,
               easing: 'easeinout',
@@ -664,9 +625,17 @@ import axios from 'axios'
                                 
 
                                 /* INSERIMENTO PARAMETRI */
-                                this.chartOptionsAreaRotation ={...this.chartOptionsAreaRotation,
-                                  annotations: {
-                                    xaxis: annotation_text
+                                this.chartOptionsAreaRotation ={...this.chartOptionsAreaRotation,...{
+                                    annotations: {
+                                      xaxis: annotation_text
+                                    }
+                                  }
+                                }
+
+                                this.chartOptionsAreaTotalRotation ={...this.chartOptionsAreaTotalRotation,...{
+                                    annotations: {
+                                      xaxis: annotation_text
+                                    }
                                   }
                                 }
                                                               
@@ -685,11 +654,6 @@ import axios from 'axios'
                                   data: speedData
                                 }]
 
-                                this.seriesAreaSession = [{
-                                  name: "Sessione",
-                                  data: sessionData
-                                }]
-
                                 this.seriesAreaHumidity = [{
                                   name: "Umidità",
                                   data: humidityData
@@ -704,6 +668,28 @@ import axios from 'axios'
                                   name: "RotazioniBrush",
                                   data: rotationData
                                 }]
+
+
+                                this.chartOptionsLineBrush = {...this.chartOptionsLineBrush,...{
+                                  chart: {
+                                    id: 'brushChart',
+                                    height: 120,
+                                    type: 'area',
+                                    brush:{
+                                      target: 'rotazioni',
+                                      enabled: true,
+                                      autoScaleYaxis: false 
+                                    }, 
+                                    selection:{
+                                        enabled: true,
+                                        xaxis: {
+                                          min: my_min,
+                                          max: my_max
+                                        }
+                                    }
+                                  }
+                                }
+                              }
 
                                 this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
@@ -810,7 +796,32 @@ import axios from 'axios'
                                     xaxis: this.$session.get("text")
                                   }
                                 }
-
+              this.chartOptionsAreaTotalRotation ={...this.chartOptionsAreaTotalRotation,...{
+                  annotations: {
+                    xaxis: this.$session.get("text")
+                  }
+                }
+              }
+              this.chartOptionsLineBrush = {...this.chartOptionsLineBrush,...{
+                chart: {
+                  id: 'brushChart',
+                  height: 120,
+                  type: 'area',
+                  brush:{
+                    target: 'rotazioni',
+                    enabled: true,
+                    autoScaleYaxis: false 
+                  }, 
+                  selection:{
+                      enabled: true,
+                      xaxis: {
+                        min: this.$session.get("min"),
+                        max: this.$session.get("max")
+                      }
+                  }
+                }
+              }
+            }
               this.loading=false 
           }
          
@@ -819,15 +830,14 @@ import axios from 'axios'
     methods: {
       create_slider(){
         if(!this.created){
-          console.log("creation")
-          this.created = this.true
-          this.chartOptionsLineBrush = {...this.chartOptionsLineBrush, 
+         /*
+          this.chartOptionsLineBrush = {...this.chartOptionsLineBrush,...{
                                     chart: {
                                       id: 'brushChart',
                                       height: 120,
                                       type: 'area',
                                       brush:{
-                                        targets: ['rotazioni','velocità','sessione', 'temperatura', 'umidità'],
+                                        target: 'rotazioni',
                                         enabled: true,
                                         autoScaleYaxis: false 
                                       }, 
@@ -840,12 +850,34 @@ import axios from 'axios'
                                       }
                                     }
                                   }
+                                }
+                                  this.created = this.true
+                                  */
         }
+        
         this.slider = !this.slider
       },
       create_totali(){
-        this.slider = false
-        this.totali = !this.totali
+
+        /*
+        this.chartOptionsLineBrush = {...this.chartOptionsLineBrush,...{
+          chart: {
+            id: 'brushChart',
+            height: 120,
+            type: 'area',
+            brush:{
+              target: 'rotazioni',
+              enabled: false,
+              autoScaleYaxis: false 
+            }, 
+          }
+        }
+      }
+      
+      this.slider = false
+      */
+
+      this.totali = !this.totali
         
       },
       get_factory_of_customer: function() {
@@ -860,7 +892,7 @@ import axios from 'axios'
           console.log("[ERROR] Errore in get_factory_of_customer")
           this.$router.push("/")
         }
-        console.log("Here we are " + customer_id[0])
+        //console.log("Here we are " + customer_id[0])
 
         axios.get('http://195.231.3.173:5002/v1/customers/'+customer_id[0]+'/factories',{
           headers:{
