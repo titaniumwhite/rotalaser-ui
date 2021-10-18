@@ -138,7 +138,7 @@
              >
               
               <v-card-title v-text="item.id"></v-card-title>
-              <v-card-subtitle>Fustella attiva? {{item.active}}</v-card-subtitle>
+              <v-card-subtitle><!--Fustella attiva? {{item.active}}--></v-card-subtitle>
               <v-card-text>Status: {{item.status}}</v-card-text>
               
               <v-card-actions>
@@ -154,7 +154,7 @@
                   text
                   color="secondary"
                   @click="$router.push('/fustella/postanalisi/'+item.id)">
-                  Postanalisi
+                  Storico
                 </v-btn>
 
                 </v-col>
