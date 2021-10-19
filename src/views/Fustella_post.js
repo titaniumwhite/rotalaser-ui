@@ -24,6 +24,11 @@ import axios from 'axios'
         my_min:0,
         my_max:0,
         created: false,
+        ses: false,
+        ses_loading: true,
+        numero_sessione : -1,
+        from: 0,
+        to: 0,
         
 
         /* data per pagina 'modifica' */
@@ -49,6 +54,10 @@ import axios from 'axios'
         seriesAreaSpeed: [],
         seriesAreaTemperature: [],
         seriesAreaHumidity: [],
+
+        seriesAreaTemperatureSes: [],
+        seriesAreaHumiditySes: [],
+        seriesAreaSpeedSes: [],
        
         chartOptionsAreaRotation: {
           chart: {
@@ -62,8 +71,8 @@ import axios from 'axios'
                     console.log(config.config.series[config.seriesIndex].name)
                     
                     console.log(event.target.innerHTML)
-                    this.got = !this.got
-                    console.log(this.got)
+                
+                    this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[1]))
                 }
             },
             //group: 'sync',
@@ -116,7 +125,11 @@ import axios from 'axios'
           },
           xaxis: {
             type: 'datetime',
+            labels: {
+              datetimeUTC: false
+            }
           },
+
           yaxis: {
             labels: {
               minWidth: 40
@@ -131,21 +144,21 @@ import axios from 'axios'
             type: 'area',
             
             events: {
-                click: (event, chartContext, config) => {
+              click: (event, chartContext, config) => {
                     
-                    console.log(config.config.series[config.seriesIndex].name)
-                    
-                    console.log(event.target.innerHTML)
-                    this.got = !this.got
-                    console.log(this.got)
-                }
+                console.log(config.config.series[config.seriesIndex].name)
+                
+                console.log(event.target.innerHTML)
+            
+                this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[1]))
+              }
             },
             //group: 'sync',
             
             animations: {
               enabled: true,
               easing: 'easeinout',
-              speed: 1000,
+              speed: 700,
               animateGradually: {
                   enabled: true,
                   delay: 150
@@ -190,6 +203,9 @@ import axios from 'axios'
           },
           xaxis: {
             type: 'datetime',
+            labels: {
+              datetimeUTC: false
+            }
           },
           yaxis: {
             labels: {
@@ -210,6 +226,9 @@ import axios from 'axios'
           },
           xaxis: {
             type: 'datetime',
+            labels: {
+              datetimeUTC: false
+            },
             tooltip: {
               shared: false,
               enabled: false
@@ -252,7 +271,7 @@ import axios from 'axios'
             }
           },
           title: {
-            text: "Velocità",
+            text: "Velocità (rotazioni/secondo)",
             align: 'left',
             margin: 10,
             offsetX: 0,
@@ -266,7 +285,10 @@ import axios from 'axios'
             },
           },
           xaxis: {
-            type: 'datetime'
+            type: 'datetime',
+            labels: {
+              datetimeUTC: false
+            } 
           },
           yaxis: {
             labels: {
@@ -274,72 +296,6 @@ import axios from 'axios'
             }
           },
         },
-
-        chartOptionsAreaSession: {
-          chart: {
-            id: 'sessione',
-            height: 160,
-            type: 'area',
-            //group: 'sync',
-            
-            animations: {
-              enabled: true,
-              easing: 'easeinout',
-              speed: 800,
-              animateGradually: {
-                  enabled: true,
-                  delay: 150
-              },
-              dynamicAnimation: {
-                  enabled: true,
-                  speed: 350
-              }
-            }
-          },
-          stroke: {
-            curve: 'stepline'
-          },
-          colors: ["#7E36AF"],
-          dataLabels: {
-              enabled: false
-          },
-          markers: {
-            size: 0
-          },
-          fill: {
-            colors: ["#7E36AF"],
-            type: "gradient",
-            gradient: {
-              shadeIntensity: 1,
-              opacityFrom: 0.7,
-              opacityTo: 0.9,
-              stops: [0, 90, 100]
-            }
-          },
-          title: {
-              text: "Sessione",
-              align: 'left',
-              margin: 10,
-              offsetX: 0,
-              offsetY: 0,
-              floating: false,
-              style: {
-                fontSize:  '14px',
-                fontWeight:  'bold',
-                fontFamily:  undefined,
-                color:  '#263238'
-              },
-            },
-          xaxis: {
-            type: 'datetime'
-
-          },
-          yaxis: {
-            labels: {
-              minWidth: 40
-            }
-          }
-        }, 
 
         chartOptionsAreaHumidity: {
           chart: {
@@ -383,7 +339,7 @@ import axios from 'axios'
             }
           },
           title: {
-              text: "Umidità",
+              text: "Umidità (%)",
               align: 'left',
               margin: 10,
               offsetX: 0,
@@ -397,7 +353,10 @@ import axios from 'axios'
               },
             },
           xaxis: {
-            type: 'datetime'
+            type: 'datetime',
+            labels: {
+              datetimeUTC: false
+            }
 
           },
           yaxis: {
@@ -449,7 +408,7 @@ import axios from 'axios'
             }
           },
           title: {
-              text: "Temperatura",
+              text: "Temperatura (°C)",
               align: 'left',
               margin: 10,
               offsetX: 0,
@@ -463,7 +422,10 @@ import axios from 'axios'
               },
             },
           xaxis: {
-            type: 'datetime'
+            type: 'datetime',
+            labels: {
+              datetimeUTC: false
+            }
 
           },
           yaxis: {
@@ -485,10 +447,15 @@ import axios from 'axios'
             }).then(response =>{
                                 let rotationData = []
                                 let totalRotationData = []
-                                let speedData = []
-                                let sessionData = []
-                                let temperatureData = []
-                                let humidityData = []
+
+                                
+                                let speedSesData = []
+                                
+                                
+                                let temperatureSesData = []
+
+                                
+                                let humiditySesData = []
 
                                 this.got = response.data 
                                 if(this.got.length<1){
@@ -512,25 +479,28 @@ import axios from 'axios'
                                 let last_session = -1
                                 let total_session = 0
 
-                                
+                                let temp_t_list_ses = []
+                                let temp_h_list_ses = []
+                                let temp_s_list_ses = []
+
                                 
                                 for(let i=0; i<this.got.length-1;i++){
 
                                   let rotationCouple;
                                   let totalRotationCouple;
                                   let speedCouple;    
-                                  let sessionCouple;   
+                                  
                                   let humidityCouple;
-                                  let temperatureCouple;  
+                                  let temperatureCouple; 
                                   
-                                  
-
+                        
                                   let time = Date.parse(this.got[i].id.slice(0,-9))
 
                                 
 
                                   if(!isNaN(time)){
 
+                                   
                                     /* Total Count S**T */
 
                                     /* Errori totali */
@@ -547,24 +517,36 @@ import axios from 'axios'
                                     }
                                     
                                     prev_rotations = this.got[i].rotations
+                                   
                                     
                                     /* Sessioni totali */
                                     if(parseInt(this.got[i].session_id) != last_session){
 
+                                                                     
+                                      temperatureSesData.push(temp_t_list_ses)
+                                      humiditySesData.push(temp_h_list_ses)
+                                      speedSesData.push(temp_s_list_ses)
+                                      
+                                      temp_t_list_ses = []
+                                      temp_h_list_ses = []
+                                      temp_s_list_ses = []
                                       
                                       total_session+=1
+
                                       last_session = parseInt(this.got[i].session_id)
                                       
                                       let curr_text =     '{'+
                                                             '"x": '+ time +
-                                                            ',"strokeDashArray": 0,"borderColor": "#775DD0",'+
+                                                            ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
                                                             '"label": {' +
-                                                              '"borderColor": "#775DD0", "style":{' +
-                                                                '"color": "#fff", "background": "#775DD0"' +
+                                                              '"borderColor": "#ff6090", "style":{' +
+                                                                '"color": "#fff", "background": "#ff6090"' +
                                                                 '},'+
                                                               '"text":"'+ "Sessione " + total_session 
                                                             +'"}'
                                                           +'}'
+
+                                      
                                       annotation_text.push(JSON.parse(curr_text))
                                       
                                     }
@@ -581,27 +563,27 @@ import axios from 'axios'
                                     /* INSERIMENTO DATI NEI GRAFICI */
                                     /* Prendiamo tutti i dati per le stat ma agghreghiamo la visualizzazione sennò ci perdiamo la vita */
 
-                                    if(i%15 ==0){
-                                      
-                                      let timeCouple = "{ "
+                                    let timeCouple = "{ "
                                     
-                                      timeCouple += '"x": ' + time + ', '
-                                      
+                                    timeCouple += '"x": ' + time + ', '
+                                    if(i%15 == 0){
+                                  
                                       rotationCouple = timeCouple + ' "y": '+ this.got[i].rotations + " }"
                                       totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"
-                                      speedCouple = timeCouple + ' "y": '   + this.got[i].speed + " }"
-                                      sessionCouple = timeCouple + ' "y": ' + this.got[i].session_id + " }"
-                                      temperatureCouple = timeCouple + ' "y": ' + this.got[i].temperature + " }"
-                                      humidityCouple = timeCouple + ' "y": ' + this.got[i].humidity + " }"
+                                     
 
                                       rotationData.push(JSON.parse(rotationCouple))
                                       totalRotationData.push(JSON.parse(totalRotationCouple))
-                                      speedData.push(JSON.parse(speedCouple))
-                                      sessionData.push(JSON.parse(sessionCouple))
-                                      temperatureData.push(JSON.parse(temperatureCouple))
-                                      humidityData.push(JSON.parse(humidityCouple))
 
-                                    }                
+                                    }          
+                                    speedCouple = timeCouple + ' "y": '   + this.got[i].speed + " }"
+                                    temperatureCouple = timeCouple + ' "y": ' + this.got[i].temperature + " }"
+                                    humidityCouple = timeCouple + ' "y": ' + this.got[i].humidity + " }"      
+
+                                    temp_t_list_ses.push(JSON.parse(temperatureCouple))
+                                    temp_h_list_ses.push(JSON.parse(humidityCouple))
+                                    temp_s_list_ses.push(JSON.parse(speedCouple))
+
                                      
   
                                   }
@@ -628,10 +610,9 @@ import axios from 'axios'
                                 /*  SESSION STORAGE  */
                                 this.$session.set("fustellaR",rotationData)
                                 this.$session.set("fustellaRT",totalRotationData)
-                                this.$session.set("fustellaSpe",speedData)
-                                this.$session.set("fustellaSes",sessionData)
-                                this.$session.set("temperature",temperatureData)
-                                this.$session.set("humidity",humidityData)
+                                this.$session.set("speed",speedSesData)
+                                this.$session.set("temperature",temperatureSesData)
+                                this.$session.set("humidity",humiditySesData)
                                 this.$session.set("id",this.$route.params.id)
                                 this.$session.set("text",annotation_text)
                                 this.$session.set("min",my_min)
@@ -640,9 +621,12 @@ import axios from 'axios'
                                 this.$session.set("total_sessions",total_session)
                                 this.$session.set("total_rotations",total_rotations)
                                 this.$session.set("diecutter_name",this.diecutter_name)
-
-
                                 
+                                
+                                this.seriesAreaTemperatureSes = temperatureSesData
+                                this.seriesAreaSpeedSes       = speedSesData
+                                this.seriesAreaHumiditySes    = humiditySesData
+
 
                                 /* INSERIMENTO PARAMETRI */
                                 this.chartOptionsAreaRotation ={...this.chartOptionsAreaRotation,...{
@@ -669,21 +653,7 @@ import axios from 'axios'
                                   data: totalRotationData
                                 }]
 
-                                this.seriesAreaSpeed = [{
-                                  name: "Velocità",
-                                  data: speedData
-                                }]
-
-                                this.seriesAreaHumidity = [{
-                                  name: "Umidità",
-                                  data: humidityData
-                                }]
-
-                                this.seriesAreaTemperature = [{
-                                  name: "Temperatura",
-                                  data: temperatureData
-                                }]
-
+                                
                                 this.seriesLineBrush = [{
                                   name: "RotazioniBrush",
                                   data: rotationData
@@ -777,6 +747,10 @@ import axios from 'axios'
 
               this.customers_name = JSON.parse(this.$session.get("customers_name"))
               this.customers = JSON.parse(this.$session.get("customers"))
+
+              this.seriesAreaHumiditySes = this.$session.get("humidity")
+              this.seriesAreaTemperatureSes = this.$session.get("temperature")
+              this.seriesAreaSpeedSes = this.$session.get("speed")
               
               this.seriesLineBrush = [{
                 name: "RotazioniBrush",
@@ -787,30 +761,10 @@ import axios from 'axios'
                 name: "Rotazioni",
                 data: this.$session.get("fustellaR")
               }]  
-
-              this.seriesAreaSpeed = [{
-                name: "Velocità",
-                data: this.$session.get("fustellaSpe")
-              }]
-
-              this.seriesAreaSession = [{
-                name: "Sessione",
-                data: this.$session.get("fustellaSes")
-              }]
-
+ 
               this.seriesAreaTotalRotation = [{
                 name: "RotazioniTotali",
                 data: this.$session.get("fustellaRT")
-              }]
-
-              this.seriesAreaHumidity = [{
-                name: "Umidità",
-                data: this.$session.get("humidity")
-              }]
-                                
-              this.seriesAreaTemperature = [{
-                name: "Temperatura",
-                data: this.$session.get("temperature")
               }]
 
               this.chartOptionsAreaRotation ={...this.chartOptionsAreaRotation,
@@ -850,54 +804,10 @@ import axios from 'axios'
 
     },
     methods: {
-      create_slider(){
-        if(!this.created){
-         /*
-          this.chartOptionsLineBrush = {...this.chartOptionsLineBrush,...{
-                                    chart: {
-                                      id: 'brushChart',
-                                      height: 120,
-                                      type: 'area',
-                                      brush:{
-                                        target: 'rotazioni',
-                                        enabled: true,
-                                        autoScaleYaxis: false 
-                                      }, 
-                                      selection:{
-                                          enabled: true,
-                                          xaxis: {
-                                            min: this.$session.get("min"),
-                                            max: this.$session.get("max")
-                                          }
-                                      }
-                                    }
-                                  }
-                                }
-                                  this.created = this.true
-                                  */
-        }
-        
+      create_slider(){  
         this.slider = !this.slider
       },
       create_totali(){
-
-        /*
-        this.chartOptionsLineBrush = {...this.chartOptionsLineBrush,...{
-          chart: {
-            id: 'brushChart',
-            height: 120,
-            type: 'area',
-            brush:{
-              target: 'rotazioni',
-              enabled: false,
-              autoScaleYaxis: false 
-            }, 
-          }
-        }
-      }
-      
-      this.slider = false
-      */
 
       this.totali = !this.totali
         
@@ -934,6 +844,52 @@ import axios from 'axios'
       validate () {
         //this.$refs.form.validate()
         console.log("Inviato")
+      },
+      timeConverter(UNIX_timestamp){
+        var a = new Date(UNIX_timestamp);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var year = a.getFullYear();
+        var month = months[a.getMonth()];
+        var date = a.getDate();
+        var hour = a.getHours();
+        
+        if(parseInt(a.getMinutes())<10){
+          var min = "0"+ a.getMinutes();
+        }else{
+           min = a.getMinutes();
+        }
+        var sec = a.getSeconds();
+        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+        return time;
+      },
+      grafico_per_sessione(n){
+        this.ses =  false
+        this.ses_loading = true
+
+
+        this.numero_sessione = n
+
+   
+        this.from = this.timeConverter(this.seriesAreaTemperatureSes[n-1][0].x)
+        this.to   = this.timeConverter(this.seriesAreaTemperatureSes[n-1][this.seriesAreaTemperatureSes[n-1].length-1].x)
+
+        this.seriesAreaTemperature = [{
+          name: "Temperatura",
+          data: this.seriesAreaTemperatureSes[n-1]
+        }]
+
+        this.seriesAreaHumidity = [{
+          name: "Temperatura",
+          data: this.seriesAreaHumiditySes[n-1]
+        }]
+
+        this.seriesAreaSpeed = [{
+          name: "Temperatura",
+          data: this.seriesAreaSpeedSes[n-1]
+        }]
+
+        this.ses =  true
+        this.ses_loading = false
       },
     },
   };

@@ -5,13 +5,20 @@
 
       <v-app-bar
         color="primary"
-        dark
+        
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
         <v-toolbar-title class="font-weight-bold"></v-toolbar-title>
-          
+
+        <v-img
+          src="./rotalaser-logo.png"
+          max-height="50"
+          max-width="100">
+        </v-img>
+       
         <v-spacer></v-spacer>
+        
 
         <v-scroll-x-reverse-transition>
           <v-text-field
@@ -47,7 +54,6 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              color="white"
               icon
               v-bind="attrs"
               v-on="on"
@@ -138,7 +144,7 @@
                   text
                   color="secondary"
                   @click="$router.push('/fustelle/'+item.name)">
-                  Info
+                  Fustelle
                 </v-btn>
 
                 <v-spacer></v-spacer>

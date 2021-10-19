@@ -4,11 +4,16 @@
 
       <v-toolbar
         color="primary"
-        dark
-        flat
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        
         <v-toolbar-title></v-toolbar-title>
+
+        <v-img
+          src="../rotalaser-logo.png"
+          max-height="50"
+          max-width="100">
+        </v-img>
   
         <v-spacer></v-spacer>
   
@@ -46,7 +51,6 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              color="white"
               icon
               v-bind="attrs"
               v-on="on"
@@ -131,8 +135,8 @@
             :key="item.message"
             lg="4"
             md="4"
-            sm="6"
-            cols="6"
+            sm="12"
+            cols="12"
           >
             <v-card>
               <div class="d-flex flex-no-wrap justify-space-between">

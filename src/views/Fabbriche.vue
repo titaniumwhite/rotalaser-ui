@@ -5,11 +5,17 @@
 
       <v-app-bar
         color="primary"
-        dark
+        
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title class="font-weight-bold">Fabbriche</v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold"></v-toolbar-title>
+        
+         <v-img
+          src="./rotalaser-logo.png"
+          max-height="50"
+          max-width="100">
+        </v-img>
           
         <v-spacer></v-spacer>
 
@@ -47,7 +53,6 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              color="white"
               icon
               v-bind="attrs"
               v-on="on"

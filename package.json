@@ -12,6 +12,7 @@
     "apexcharts": "^3.29.0",
     "chart.js": "^2.9.4",
     "core-js": "^3.6.5",
+    "dateformat": "^5.0.2",
     "echarts": "^5.2.1",
     "mdbvue": "^6.7.3",
     "prettier": "^2.4.1",

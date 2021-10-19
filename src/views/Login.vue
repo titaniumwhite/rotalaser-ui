@@ -5,7 +5,10 @@
             <v-layout align-center justify-center>
                <v-flex xs12 sm8 md4>
                   <v-card class="elevation-12">
-                     <v-toolbar dark color="primary">
+                     <v-toolbar  color="primary">
+                        <v-img src="./rotalaser-logo_min.png"
+                        max-height="30"
+                        max-width="30"></v-img>
                         <v-spacer />
                         <v-toolbar-title>Login</v-toolbar-title>
                         <v-spacer />

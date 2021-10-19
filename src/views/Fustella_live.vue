@@ -4,9 +4,8 @@
     <v-card>
 
       <v-toolbar
-        color="primary"
         dark
-        flat
+        color="secondary"
       >
 
         <v-btn icon 
@@ -23,7 +22,7 @@
             <v-tabs-slider color="secondary"></v-tabs-slider>
   
             <v-tab
-              dark
+              
               v-for="item in items"
               :key="item"
             >
@@ -43,7 +42,7 @@
         <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                color="white"
+                
                 icon
                 v-bind="attrs"
                 v-on="on"

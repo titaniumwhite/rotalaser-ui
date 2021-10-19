@@ -22,8 +22,8 @@ export default new Vuetify({
           background: colors.shades.black
         },
         light: {
-          primary: colors.blue.darken1,
-          secondary: colors.pink.lighten1,
+          primary: '#FFFFFF',
+          secondary: colors.blue.lighten1,
           accent: colors.shades.black,
           error: colors.red.accent3,        
         }

@@ -4,9 +4,7 @@
     <v-card>
 
       <v-toolbar
-        color="primary"
-        dark
-        flat
+        color="secondary"
       >
 
         <v-btn icon 
@@ -17,14 +15,15 @@
         <v-toolbar-title class="font-weight-bold"></v-toolbar-title>
 
         <v-spacer></v-spacer>
-        <v-tabs
+
+          <v-tabs
+            dark
             v-model="tab"
             align-with-title
           >
-            <v-tabs-slider color="secondary"></v-tabs-slider>
+            <v-tabs-slider color="primary"></v-tabs-slider>
   
             <v-tab
-              dark
               v-for="item in items"
               :key="item"
             >
@@ -37,7 +36,6 @@
         <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                color="white"
                 icon
                 v-bind="attrs"
                 v-on="on"
@@ -62,7 +60,7 @@
               <v-progress-circular
               v-if="loading"
               :size="50"
-              color="primary"
+              color="secondary"
               indeterminate
             ></v-progress-circular>
           </div>
@@ -181,12 +179,7 @@
                     </div>
                  
                     <v-card-actions>
-                      <v-btn v-if="!totali"
-                        text
-                        color="secondary"
-                        @click="create_slider()">
-                        Slider
-                      </v-btn>
+                      
                       <v-btn
                         text
                         color="secondary"
@@ -223,7 +216,10 @@
             </v-row>
 
 
-
+            <v-card v-if="ses && !ses_loading">
+            <v-card-title>Sessione {{numero_sessione}}</v-card-title>
+            <v-card-text><h3>Inizio: {{from}}</h3></v-card-text>
+            <v-card-text><h3>Fine: {{to}}</h3></v-card-text>
             <v-row>
               <v-col lg="4"
               md="4"
@@ -254,6 +250,7 @@
                 
               </v-col>
             </v-row>
+            </v-card>
 
           </v-card>
 
