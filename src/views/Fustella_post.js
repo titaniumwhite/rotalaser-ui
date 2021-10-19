@@ -852,14 +852,24 @@ import axios from 'axios'
         var year = a.getFullYear();
         var month = months[a.getMonth()];
         var date = a.getDate();
-        var hour = a.getHours();
+       
+        if(parseInt(a.getHours())<10){
+          var hour = "0"+ a.getHours();
+        }else{
+           hour = a.getHours();
+        }
         
         if(parseInt(a.getMinutes())<10){
           var min = "0"+ a.getMinutes();
         }else{
            min = a.getMinutes();
         }
-        var sec = a.getSeconds();
+        
+        if(parseInt(a.getSeconds())<10){
+          var sec = "0"+ a.getSeconds();
+        }else{
+           sec = a.getSeconds();
+        }
         var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
         return time;
       },
