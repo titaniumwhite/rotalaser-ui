@@ -880,12 +880,12 @@ import axios from 'axios'
         }]
 
         this.seriesAreaHumidity = [{
-          name: "Temperatura",
+          name: "Umidità",
           data: this.seriesAreaHumiditySes[n-1]
         }]
 
         this.seriesAreaSpeed = [{
-          name: "Temperatura",
+          name: "Velocità",
           data: this.seriesAreaSpeedSes[n-1]
         }]
 
