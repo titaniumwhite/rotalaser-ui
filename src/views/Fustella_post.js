@@ -248,7 +248,7 @@ import axios from 'axios'
             id: 'velocità',
             height: 160,
             type: 'area',
-            //group: 'sync',
+            group: 'sync',
     
           },
           stroke: {
@@ -303,7 +303,7 @@ import axios from 'axios'
             id: 'umidità',
             height: 160,
             type: 'area',
-            //group: 'sync',
+            group: 'sync',
             
             animations: {
               enabled: true,
@@ -372,7 +372,7 @@ import axios from 'axios'
             id: 'temperatura',
             height: 160,
             type: 'area',
-            //group: 'sync',
+            group: 'sync',
             
             animations: {
               enabled: true,
