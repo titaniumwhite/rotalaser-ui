@@ -606,6 +606,23 @@ import axios from 'axios'
   
                                   }
                                 }
+                                /* SERIE DI IF ELSE DA RIMUOVERE NEL NUOVO BACKEND */
+
+                                if (this.$route.params.id === "da:5b:93:12:58:30") {
+                                  this.diecutter_name = "L02241"
+                                } else if (this.$route.params.id === "ee:ea:4b:24:65:33") {
+                                  this.diecutter_name = "G02012"
+                                } else if (this.$route.params.id === "c7:02:8f:47:f2:0d") {
+                                  this.diecutter_name = "2877"
+                                } else if (this.$route.params.id === "d5:65:e4:a8:89:60") {
+                                  this.diecutter_name = "2147B"
+                                } else if (this.$route.params.id === "d7:05:4d:e8:6a:f9") {
+                                  this.diecutter_name = "2771"
+                                } else if (this.$route.params.id === "c2:f3:33:08:5a:2f") {
+                                  this.diecutter_name = "B02181"
+                                } else if (this.$route.params.id === "da:bc:6e:d4:80:73") {
+                                  this.diecutter_name = "L02140"
+                                }    
                                 
 
                                 /*  SESSION STORAGE  */
@@ -622,6 +639,8 @@ import axios from 'axios'
                                 this.$session.set("total_errors",total_errors)
                                 this.$session.set("total_sessions",total_session)
                                 this.$session.set("total_rotations",total_rotations)
+                                this.$session.set("diecutter_name",this.diecutter_name)
+
 
                                 
 
@@ -691,23 +710,7 @@ import axios from 'axios'
                                   }
                                 }
                               }
-                                /* SERIE DI IF ELSE DA RIMUOVERE NEL NUOVO BACKEND */
-
-                                if (this.$route.params.id === "da:5b:93:12:58:30") {
-                                  this.diecutter_name = "L02241"
-                                } else if (this.$route.params.id === "ee:ea:4b:24:65:33") {
-                                  this.diecutter_name = "G02012"
-                                } else if (this.$route.params.id === "c7:02:8f:47:f2:0d") {
-                                  this.diecutter_name = "2877"
-                                } else if (this.$route.params.id === "d5:65:e4:a8:89:60") {
-                                  this.diecutter_name = "2147B"
-                                } else if (this.$route.params.id === "d7:05:4d:e8:6a:f9") {
-                                  this.diecutter_name = "2771"
-                                } else if (this.$route.params.id === "c2:f3:33:08:5a:2f") {
-                                  this.diecutter_name = "B02181"
-                                } else if (this.$route.params.id === "da:bc:6e:d4:80:73") {
-                                  this.diecutter_name = "L02140"
-                                }    
+                                
 
                                 this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
@@ -770,6 +773,7 @@ import axios from 'axios'
               this.total_rotations = this.$session.get("total_rotations")
               this.total_errors = this.$session.get("total_errors")
               this.total_sessions = this.$session.get("total_sessions")
+              this.diecutter_name = this.$session.get("diecutter_name")
 
               this.customers_name = JSON.parse(this.$session.get("customers_name"))
               this.customers = JSON.parse(this.$session.get("customers"))
@@ -903,16 +907,16 @@ import axios from 'axios'
         this.render = false
         for (let i = 0; i < this.customers.length; i++) {
           let customer = this.customers[i];
-          if (this.chosen_customer === customer[1]) customer_id = this.customers[0];
+          if (this.chosen_customer === customer[1]) customer_id = customer[0];
         }
 
-        if (customer_id[0] == 0) {
+        if (customer_id == 0) {
           console.log("[ERROR] Errore in get_factory_of_customer")
           this.$router.push("/")
         }
         //console.log("Here we are " + customer_id[0])
 
-        axios.get('http://195.231.3.173:5002/v1/customers/'+customer_id[0]+'/factories',{
+        axios.get('http://195.231.3.173:5002/v1/customers/'+customer_id+'/factories',{
           headers:{
             'key':this.$session.get("key")
           }

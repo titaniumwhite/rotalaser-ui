@@ -73,91 +73,7 @@
             ></v-progress-circular>
           </div>
 
-<!-- PAGINA INFORMAZIONI -->
-          <v-fade-transition>
-     
-              
-              
-              <v-form v-if="!loading && !err && item=='informazioni'">
-                <v-container>
-                  <v-row>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                    >
-                      <v-text-field
-                        :value="$route.params.id"
-                        label="Nome fustella"
-                        outlined
-                        readonly
-                      ></v-text-field>
-                    </v-col>
-            
-                    <v-col
-                      cols="12"
-                      sm="6"
-                    >
-                      <v-text-field
-                        :value="total_sessions"
-                        label="Sessioni totali"
-                        outlined
-                        readonly
-                      ></v-text-field>
-                    </v-col>
-            
-                    <v-col
-                      cols="12"
-                      sm="6"
-                    >
-                      <v-text-field
-                        value="IN ATTESA DI API"
-                        label="Cliente"
-                        outlined
-                        readonly
-                      ></v-text-field>
-                    </v-col>
-            
-                    <v-col
-                      cols="12"
-                      sm="6"
-                    >
-                      <v-text-field
-                        :value="total_rotations"
-                        label="Rotazioni totali"
-                        outlined
-                        readonly
-                      ></v-text-field>
-                    </v-col>
-            
-                    <v-col
-                      cols="12"
-                      sm="6"
-                    >
-                      <v-text-field
-                        value="IN ATTESA DI API"
-                        label="Fabbrica"
-                        outlined
-                        readonly
-                      ></v-text-field>
-                    </v-col>
-            
-                    <v-col
-                      cols="12"
-                      sm="6"
-                    >
-                      <v-text-field
-                        :value="total_errors"
-                        label="Errori totali"
-                        outlined
-                        readonly
-                      ></v-text-field>
-                    </v-col>
-            
-                  </v-row>
-                </v-container>
-              </v-form>
-
-     
+          <v-fade-transition>     
 
 <!-- PAGINA GRAFICI -->
           <v-card v-if="!loading && !err && item=='grafici'">
@@ -274,7 +190,7 @@ import axios from 'axios'
         total_errors: 0,
         total_rotations: 0,
         items: [
-          'informazioni', 'grafici', 'cad'
+          'grafici', 'cad'
         ],
         seriesArea: [{
           name: 'Rotazioni',
