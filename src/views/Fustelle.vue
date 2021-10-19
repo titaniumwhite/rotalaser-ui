@@ -127,45 +127,42 @@
         <v-row dense >
           <v-col 
             v-for="item in secret"
+            
             :key="item.message"
             lg="4"
             md="4"
             sm="6"
             cols="6"
           >
-            <v-card
-            
-             >
+            <v-card>
+              <div class="d-flex flex-no-wrap justify-space-between">
+              <div>
               
-              <v-card-title v-text="item.id"></v-card-title>
-              <v-card-subtitle><!--Fustella attiva? {{item.active}}--></v-card-subtitle>
-              <v-card-text>Status: {{item.status}}</v-card-text>
-              
-              <v-card-actions>
-                <v-container>
-                <v-row dense>
-                  <v-col
-                    lg="6"
-                    md="6"
-                    sm="12"
-                    cols="12"
+              <v-card-title v-text="item.name"></v-card-title>
+              <v-card-subtitle v-text="item.id"></v-card-subtitle>
+              <div>
+                <v-row>
+                <v-chip
+                  class="ma-6"
+                  color="#E53935"
+                  text-color="white"
                   >
-                 <v-btn
+                  Fustella non attiva
+                </v-chip>
+                </v-row>
+                </div>
+
+              <v-card-actions>
+                
+
+
+                <v-btn
                   text
                   color="secondary"
                   @click="$router.push('/fustella/postanalisi/'+item.id)">
                   Storico
                 </v-btn>
 
-                </v-col>
-                
-                
-                <v-col
-                    lg="6"
-                    md="6"
-                    sm="12"
-                    cols="12"
-                  >
                 <v-btn
                   text
                   color="secondary"
@@ -173,12 +170,19 @@
                   Live
                 </v-btn>
 
-                </v-col>
-                </v-row>
                 
-                            </v-container>
-
               </v-card-actions>
+              </div>
+
+              <v-avatar
+                size="180"
+                tile
+              >
+              <v-img 
+                v-bind:src="'data:image/jpeg;base64,'+item.cad"
+              ></v-img>
+              </v-avatar>
+              </div>
               
             </v-card>
           </v-col>
@@ -231,16 +235,38 @@ export default {
                               
                               for(let i = 0;i<response.data.length;i++){
                                   if(response.data[i].id != "00:00:00:00:00:10"){
+                                    let name;
+                                    
+                                    if (response.data[i].id === "da:5b:93:12:58:30") {
+                                      name = "L02241"
+                                    } else if (response.data[i].id === "ee:ea:4b:24:65:33") {
+                                      name = "G02012"
+                                    } else if (response.data[i].id === "c7:02:8f:47:f2:0d") {
+                                      name = "2877"
+                                    } else if (response.data[i].id === "d5:65:e4:a8:89:60") {
+                                      name = "2147B"
+                                    } else if (response.data[i].id === "d7:05:4d:e8:6a:f9") {
+                                      name = "2771"
+                                    } else if (response.data[i].id === "c2:f3:33:08:5a:2f") {
+                                      name = "B02181"
+                                    } else if (response.data[i].id === "da:bc:6e:d4:80:73") {
+                                      name = "L02140"
+                                    }
+                                    
                                     
                                     let str = "{ "
-                                    str += '"id": "'     + response.data[i].id + '" , '
+                                    str += '"name": "'   + name + '", '
+                                    str += '"id": "'     + response.data[i].id + '", '
                                     str += '"active": "' + response.data[i].active + '", '
-                                    str += '"status": "' + response.data[i].status + '" '
+                                    str += '"status": "' + response.data[i].status + '", '
+                                    str += '"cad": "' + response.data[i].cadimage + '" '
                                     str+= " }"
+                              
                                     
                                     filtered.push(JSON.parse(str))
                                   }
                               }
+                              console.log(filtered)
                               this.secret = filtered
                               this.loading= false
                               
