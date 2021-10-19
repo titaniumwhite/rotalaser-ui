@@ -323,8 +323,10 @@
                       ></v-select>
 
                     <v-file-input
-                    required
-                    :rules="rules"
+                      label="CAD"
+                      required
+                      :rules="rules"
+                      prepend-icon="mdi-file-cad"
                     ></v-file-input>
                     
                     <v-btn
