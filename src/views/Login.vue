@@ -15,12 +15,13 @@
                      </v-toolbar>
                      
                      <v-card-text>
-                        <v-form>
+                        <v-form @submit.prevent="validate()">
                            <v-text-field
                               prepend-inner-icon="email"
                               name="email"
                               label="Email"
                               type="email"
+                              v-model="email"
                               :rules="emailRules"
                               filled
                               rounded
@@ -35,6 +36,7 @@
                               name="password"
                               label="Password"
                               type="password"
+                              v-model="password"
                               filled
                               rounded
                               color="secondary"
@@ -42,14 +44,17 @@
                               required
                              
                            ></v-text-field>
+                           <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="secondary" 
+                        type="submit"
+                        
+                        >Accedi</v-btn>
+                     </v-card-actions>
                         </v-form>
                      </v-card-text>
 
-                     <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="secondary" 
-                        to="/clienti">Accedi</v-btn>
-                     </v-card-actions>
+                     
 
                      <v-fab-transition>
                         <v-btn  
@@ -67,6 +72,24 @@
                      </v-fab-transition>
 
                   </v-card>
+
+                  <v-snackbar
+                     v-model="snackbar"
+                     >
+                     {{ text }}
+               
+                     <template v-slot:action="{ attrs }">
+                        <v-btn
+                           color="pink"
+                           text
+                           v-bind="attrs"
+                           
+                           @click="snackbar = false"
+                        >
+                           Close
+                        </v-btn>
+                     </template>
+                  </v-snackbar>
                   
                </v-flex>
               
@@ -84,9 +107,13 @@ export default {
    name: 'Login',
    data: () => ({
       email: '',
+      password: '',
+      text: 'Credenziali Errate',
+      snackbar: false,
       emailRules: [ 
-        v => !v || /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'Email non valida.'
+        v => !v || /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'Email non valida.',
       ],
+      
     }),
    computed: {
       activeFab () {
@@ -106,6 +133,15 @@ export default {
             this.$root.key = k
             this.$session.set("key", k);
       })
+   },
+   methods: {
+      validate(){
+         console.log(this.email)
+         if(this.email == "admin@admin.com" && this.password == "Rotalaser2021!")
+            this.$router.push("/clienti")
+         else
+            this.snackbar = true
+      }
    }
 };
 </script>
