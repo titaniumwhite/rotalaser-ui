@@ -3,9 +3,8 @@
   <v-app>
     <v-main>
       <v-toolbar
-        color="primary"
+        color="secondary"
         dark
-        flat
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>Inserisci</v-toolbar-title>
