@@ -4,6 +4,7 @@
     <v-card>
 
       <v-toolbar
+      dark
         color="secondary"
       >
 
