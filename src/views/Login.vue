@@ -7,8 +7,8 @@
                   <v-card class="elevation-12">
                      <v-toolbar  color="primary">
                         <v-img src="./rotalaser-logo_min.png"
-                        max-height="30"
-                        max-width="30"></v-img>
+                        max-height="40"
+                        max-width="40"></v-img>
                         <v-spacer />
                         <v-toolbar-title>Login</v-toolbar-title>
                         <v-spacer />
@@ -24,6 +24,7 @@
                               :rules="emailRules"
                               filled
                               rounded
+                              color="secondary"
                               dense
                               required
                              
@@ -36,6 +37,7 @@
                               type="password"
                               filled
                               rounded
+                              color="secondary"
                               dense
                               required
                              
@@ -55,7 +57,7 @@
                         fab 
                         absolute
                         small 
-                        dark 
+                         
                         bottom 
                         left 
                         class="v-btn--example"
