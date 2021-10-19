@@ -70,78 +70,84 @@
           <!-- PAGINA INFORMAZIONI -->
           <v-fade-transition>
 
-              <v-card v-if="!loading && !err && item=='informazioni'">
-                <v-card-title>{{$route.params.id}}</v-card-title>
+              <v-form v-if="!loading && !err && item=='informazioni'">
                 <v-container>
                   <v-row>
-                    
                     <v-col
                       cols="12"
                       sm="6"
                     >
-                      <v-card
-                        
-                      >
-                        <v-card-title>Sessioni Totali</v-card-title>
-                        <v-card-text>{{total_sessions}}</v-card-text>
-                      </v-card>
-
+                      <v-text-field
+                        :value="diecutter_name"
+                        label="Nome fustella"
+                        outlined
+                        readonly
+                      ></v-text-field>
                     </v-col>
             
                     <v-col
                       cols="12"
                       sm="6"
                     >
-                      
-                      <v-card
-                        
-                      >
-                        <v-card-title>Cliente</v-card-title>
-                        <v-card-text>IN ATTESA DI API</v-card-text>
-                      </v-card>
+                      <v-text-field
+                        :value="total_sessions"
+                        label="Sessioni totali"
+                        outlined
+                        readonly
+                      ></v-text-field>
                     </v-col>
             
                     <v-col
                       cols="12"
                       sm="6"
                     >
-                     
-
-                      <v-card
-                        
-                      >
-                        <v-card-title>Rotazioni Totali</v-card-title>
-                        <v-card-text>{{total_rotations}}</v-card-text>
-                      </v-card>
+                      <v-text-field
+                        value="IN ATTESA DI API"
+                        label="Cliente"
+                        outlined
+                        readonly
+                      ></v-text-field>
                     </v-col>
             
                     <v-col
                       cols="12"
                       sm="6"
                     >
-
-                      <v-card>
-                        <v-card-title>Fabbrica</v-card-title>
-                        <v-card-text>IN ATTESA DI API</v-card-text>
-                      </v-card>
-
+                      <v-text-field
+                        :value="total_rotations"
+                        label="Rotazioni totali"
+                        outlined
+                        readonly
+                      ></v-text-field>
                     </v-col>
             
                     <v-col
                       cols="12"
                       sm="6"
                     >
-                      
-                      <v-card>
-                        <v-card-title>Errori Totali</v-card-title>
-                        <v-card-text>{{total_errors}}</v-card-text>
-                      </v-card>
+                      <v-text-field
+                        value="IN ATTESA DI API"
+                        label="Fabbrica"
+                        outlined
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+            
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        :value="total_errors"
+                        label="Errori totali"
+                        outlined
+                        readonly
+                      ></v-text-field>
                     </v-col>
             
                   </v-row>
-                
                 </v-container>
-              </v-card>
+              </v-form>
 
           </v-fade-transition>
           <v-fade-transition>

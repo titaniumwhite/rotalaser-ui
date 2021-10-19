@@ -144,8 +144,9 @@
                 <v-row>
                 <v-chip
                   class="ma-6"
-                  color="#E53935"
+                  color="red"
                   text-color="white"
+                  @click="alarm"
                   >
                   Fustella non attiva
                 </v-chip>
@@ -251,8 +252,7 @@ export default {
                                       name = "B02181"
                                     } else if (response.data[i].id === "da:bc:6e:d4:80:73") {
                                       name = "L02140"
-                                    }
-                                    
+                                    }                                    
                                     
                                     let str = "{ "
                                     str += '"name": "'   + name + '", '
@@ -289,6 +289,9 @@ export default {
         if (event && value === '') {
           this.searching =! this.searching
         }
+      },
+      alarm () {
+        alert('ATTENZIONE\nQuesta funzionalità ancora non è attiva')
       },
     }
 };

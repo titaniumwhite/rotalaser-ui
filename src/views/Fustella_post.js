@@ -16,6 +16,7 @@ import axios from 'axios'
         tab: null,
         datacollection: null,
         cad: undefined,
+        diecutter_name: '',
         session_id: 0,
         total_errors: 0,
         total_rotations: 0,
@@ -690,6 +691,23 @@ import axios from 'axios'
                                   }
                                 }
                               }
+                                /* SERIE DI IF ELSE DA RIMUOVERE NEL NUOVO BACKEND */
+
+                                if (this.$route.params.id === "da:5b:93:12:58:30") {
+                                  this.diecutter_name = "L02241"
+                                } else if (this.$route.params.id === "ee:ea:4b:24:65:33") {
+                                  this.diecutter_name = "G02012"
+                                } else if (this.$route.params.id === "c7:02:8f:47:f2:0d") {
+                                  this.diecutter_name = "2877"
+                                } else if (this.$route.params.id === "d5:65:e4:a8:89:60") {
+                                  this.diecutter_name = "2147B"
+                                } else if (this.$route.params.id === "d7:05:4d:e8:6a:f9") {
+                                  this.diecutter_name = "2771"
+                                } else if (this.$route.params.id === "c2:f3:33:08:5a:2f") {
+                                  this.diecutter_name = "B02181"
+                                } else if (this.$route.params.id === "da:bc:6e:d4:80:73") {
+                                  this.diecutter_name = "L02140"
+                                }    
 
                                 this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
