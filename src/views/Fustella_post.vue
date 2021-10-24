@@ -48,6 +48,7 @@
         </v-tooltip>
 
       </v-toolbar>
+        </v-card>
   
 
       <v-tabs-items v-model="tab">
@@ -64,11 +65,12 @@
               indeterminate
             ></v-progress-circular>
           </div>
+        
 
           <!-- PAGINA INFORMAZIONI -->
           <v-fade-transition>
 
-              <v-form v-if="!loading && !err && item=='informazioni'">
+              <v-card v-if="!loading && !err && item=='informazioni'">
                 <v-container>
                   <v-row>
                     <v-col
@@ -151,7 +153,7 @@
             
                   </v-row>
                 </v-container>
-              </v-form>
+              </v-card>
 
           </v-fade-transition>
           <v-fade-transition>
@@ -354,7 +356,6 @@
           </v-container>
         </v-tab-item>
       </v-tabs-items>
-    </v-card>
   </v-app>
 </div>
 

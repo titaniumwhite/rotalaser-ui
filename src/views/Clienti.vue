@@ -127,9 +127,26 @@
 
       
       <v-container  fluid>
+        
         <v-fade-transition>
-        <v-card v-if="!loading">
+        <v-card v-if="!loading" class="pa-4">
+        <v-row> 
         <v-card-title class="font-weight-bold">Clienti</v-card-title>
+        
+        <v-text-field
+            class="pa-6"
+            clearable
+            solo
+            dense 
+            hide-details
+            single-line
+            color="secondary"
+            label="Cerca"
+            prepend-inner-icon="mdi-account-search"
+          > 
+          </v-text-field>
+        </v-row>
+        
         <v-row dense>
           <v-col 
             v-for="item in real_clienti"
