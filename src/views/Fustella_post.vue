@@ -4,8 +4,7 @@
     <v-card>
 
       <v-toolbar
-      dark
-        color="secondary"
+        color="primary"
       >
 
         <v-btn icon 
@@ -13,18 +12,18 @@
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
   
-        <v-toolbar-title class="font-weight-bold"></v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold" ></v-toolbar-title>
 
         <v-spacer></v-spacer>
 
           <v-tabs
-            dark
             v-model="tab"
             align-with-title
           >
-            <v-tabs-slider color="primary"></v-tabs-slider>
+            <v-tabs-slider color="secondary"></v-tabs-slider>
   
             <v-tab
+              class="secondary--text"
               v-for="item in items"
               :key="item"
             >
@@ -81,6 +80,7 @@
                         label="Nome fustella"
                         outlined
                         readonly
+                        color="secondary"
                       ></v-text-field>
                     </v-col>
             
@@ -93,6 +93,7 @@
                         label="Sessioni totali"
                         outlined
                         readonly
+                        color="secondary"
                       ></v-text-field>
                     </v-col>
             
@@ -105,6 +106,7 @@
                         label="Cliente"
                         outlined
                         readonly
+                        color="secondary"
                       ></v-text-field>
                     </v-col>
             
@@ -117,6 +119,7 @@
                         label="Rotazioni totali"
                         outlined
                         readonly
+                        color="secondary"
                       ></v-text-field>
                     </v-col>
             
@@ -129,6 +132,7 @@
                         label="Fabbrica"
                         outlined
                         readonly
+                        color="secondary"
                       ></v-text-field>
                     </v-col>
             
@@ -141,6 +145,7 @@
                         label="Errori totali"
                         outlined
                         readonly
+                        color="secondary"
                       ></v-text-field>
                     </v-col>
             
@@ -299,6 +304,7 @@
                         required
                         outlined
                         :rules="rules"
+                        color="secondary"
                       ></v-text-field>
                     
                       <v-select
@@ -308,6 +314,8 @@
                         required
                         :rules="rules"
                         v-on:change="get_factory_of_customer"
+                        color="secondary"
+                        item-color="secondary"
                       ></v-select>  
 
                       <v-select
@@ -318,6 +326,8 @@
                         required
                         :rules="rules"
                         :disabled="!selectCustomer"
+                        color="secondary"
+                        item-color="secondary"
                       ></v-select>
 
                     <v-file-input
@@ -325,13 +335,15 @@
                       required
                       :rules="rules"
                       prepend-icon="mdi-file-cad"
+                      color="secondary"
                     ></v-file-input>
                     
                     <v-btn
                       :disabled="!valid"
                       @click="validate"
+                      color="secondary"
                     >
-                      submit
+                      Conferma
                     </v-btn>
                     
                     </v-col>
@@ -361,6 +373,13 @@
   min-height: 300px;
   margin: 35px auto;
   opacity: 0.9;
+}
+
+.basil {
+  background-color: #caa900 !important;
+}
+.basil--text {
+  color: #356859 !important;
 }
 
 </style>

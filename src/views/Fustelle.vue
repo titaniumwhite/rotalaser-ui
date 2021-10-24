@@ -28,10 +28,11 @@
             rounded
             single-line
             autofocus
-            background-color="primary darken-3"
+            color="secondary"
             label="Cerca"
             prepend-inner-icon="mdi-magnify"
             @blur="is_text_empty($event, $event.target.value)"
+
           > 
           </v-text-field>
         </v-scroll-x-reverse-transition>
@@ -40,11 +41,15 @@
 
         <v-btn icon 
           @click="searching=!searching"
-          v-show="!searching">
+          v-show="!searching"
+          color="secondary"
+        >
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
 
-        <v-btn icon>
+        <v-btn icon
+          color="secondary"
+        >
           <v-icon>mdi-filter</v-icon>
         </v-btn>
 
@@ -55,6 +60,7 @@
               v-bind="attrs"
               v-on="on"
               @click="$router.push('/')"
+              color="secondary"
             >
               <v-icon>mdi-logout-variant</v-icon>
             </v-btn>
