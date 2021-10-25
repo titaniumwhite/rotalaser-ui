@@ -127,7 +127,7 @@ import axios from 'axios'
           xaxis: {
             type: 'datetime',
             labels: {
-              datetimeUTC: true
+              datetimeUTC: false
             }
           },
 
@@ -495,11 +495,12 @@ import axios from 'axios'
                                   let temperatureCouple; 
                                   
                                  
-                                  let time = Date.parse(this.got[i].id.slice(0,-9))
+                                  let time = new Date(this.got[i].id.slice(0,-9))
 
                        
                                   if(!isNaN(time)){
-
+                                    
+                                    time.setHours(time.getHours() + 4);
                                    
                                     /* Total Count S**T */
 
@@ -536,7 +537,7 @@ import axios from 'axios'
                                       last_session = parseInt(this.got[i].session_id)
                                       
                                       let curr_text =     '{'+
-                                                            '"x": '+ time +
+                                                            '"x": '+ time.getTime() +
                                                             ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
                                                             '"label": {' +
                                                               '"borderColor": "#ff6090", "style":{' +
@@ -553,10 +554,10 @@ import axios from 'axios'
 
                                     /* Settaggio window slider, ultimo quarto di dati  */
                                     if (i == Math.floor(((this.got.length*3)/4))){ 
-                                      my_min = time 
+                                      my_min = time.getTime() 
                                     }
                                     else if (i == this.got.length-2){
-                                      my_max=time
+                                      my_max=time.getTime()
                                     }
 
 
@@ -565,7 +566,7 @@ import axios from 'axios'
 
                                     let timeCouple = "{ "
                                     
-                                    timeCouple += '"x": ' + time + ', '
+                                    timeCouple += '"x": ' + time.getTime() + ', '
                                     if(i%15 == 0){
                                   
                                       rotationCouple = timeCouple + ' "y": '+ this.got[i].rotations + " }"
@@ -853,9 +854,11 @@ import axios from 'axios'
         date_.getUTCHours(), date_.getUTCMinutes(), date_.getUTCSeconds());
 
         var a = new Date(utc_date);
+
+        //console.log(a)
+        // a.setHours(a.getHours() + 2); /* GMT +2 (?)*/
+        //console.log(a)
         
-        a.setHours(a.getHours() - 2); /* GMT +2 (?)*/
-        console.log(a)
         
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         var year = a.getFullYear();
