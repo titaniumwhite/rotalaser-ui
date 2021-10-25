@@ -500,7 +500,7 @@ import axios from 'axios'
                        
                                   if(!isNaN(time)){
                                     
-                                    time.setHours(time.getHours() + 4);
+                                    time.setHours(time.getHours() + 2);
                                    
                                     /* Total Count S**T */
 
