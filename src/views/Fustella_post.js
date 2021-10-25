@@ -494,11 +494,10 @@ import axios from 'axios'
                                   let humidityCouple;
                                   let temperatureCouple; 
                                   
-                        
-                                  let time = Date.parse(parseInt(this.got[i].id)/1e6)
+                                 
+                                  let time = Date.parse(this.got[i].id.slice(0,-9))
 
-                                
-
+                       
                                   if(!isNaN(time)){
 
                                    
@@ -856,6 +855,7 @@ import axios from 'axios'
         var a = new Date(utc_date);
         
         a.setHours(a.getHours() - 2); /* GMT +2 (?)*/
+        console.log(a)
         
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         var year = a.getFullYear();
