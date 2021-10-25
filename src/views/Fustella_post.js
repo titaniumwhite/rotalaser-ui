@@ -127,7 +127,7 @@ import axios from 'axios'
           xaxis: {
             type: 'datetime',
             labels: {
-              datetimeUTC: false
+              datetimeUTC: true
             }
           },
 
@@ -495,7 +495,7 @@ import axios from 'axios'
                                   let temperatureCouple; 
                                   
                         
-                                  let time = Date.parse(this.got[i].id.slice(0,-9))
+                                  let time = Date.parse(parseInt(this.got[i].id)/1e6)
 
                                 
 
@@ -848,14 +848,15 @@ import axios from 'axios'
       },
       timeConverter(UNIX_timestamp){
         var date_ = new Date(UNIX_timestamp);
-        console.log(date_)
+        
         /* new Date(1634869208146113300/1e6), Fri Oct 22 2021 04:20:08 GMT+0200 (Ora legale dell’Europa centrale) 420 */
         var utc_date =  Date.UTC(date_.getUTCFullYear(), date_.getUTCMonth(), date_.getUTCDate(),
         date_.getUTCHours(), date_.getUTCMinutes(), date_.getUTCSeconds());
 
         var a = new Date(utc_date);
-        console.log(a)
-        console.log(new Date(1634869208146113300/1e6))
+        
+        a.setHours(a.getHours() - 2); /* GMT +2 (?)*/
+        
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         var year = a.getFullYear();
         var month = months[a.getMonth()];
