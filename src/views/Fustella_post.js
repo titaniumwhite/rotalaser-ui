@@ -847,7 +847,15 @@ import axios from 'axios'
         console.log("Inviato")
       },
       timeConverter(UNIX_timestamp){
-        var a = new Date(UNIX_timestamp);
+        var date_ = new Date(UNIX_timestamp);
+        console.log(date_)
+        /* new Date(1634869208146113300/1e6), Fri Oct 22 2021 04:20:08 GMT+0200 (Ora legale dell’Europa centrale) 420 */
+        var utc_date =  Date.UTC(date_.getUTCFullYear(), date_.getUTCMonth(), date_.getUTCDate(),
+        date_.getUTCHours(), date_.getUTCMinutes(), date_.getUTCSeconds());
+
+        var a = new Date(utc_date);
+        console.log(a)
+        console.log(new Date(1634869208146113300/1e6))
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         var year = a.getFullYear();
         var month = months[a.getMonth()];
