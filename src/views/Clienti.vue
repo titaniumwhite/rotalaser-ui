@@ -151,7 +151,10 @@
           <v-col 
             v-for="item in real_clienti"
             :key="item.name"
-            :cols="4"
+            lg="4"
+            md="4"
+            sm="12"
+            cols="12"
           >
             <v-card
              
@@ -161,15 +164,31 @@
               <v-card-subtitle>P. IVA: {{item.piva}}</v-card-subtitle>
               <v-card-text></v-card-text>
               <v-card-actions>
-                 <v-btn
-                  text
-                  color="secondary"
-                  @click="$router.push('/fustelle/'+item.name)">
-                  Fustelle
-                </v-btn>
+                <v-container>
+                <v-row>
+                  <v-col
+                    lg="6"
+                    md="6"
+                    sm="6"
+                    cols="6"
+                  >
 
-                <v-spacer></v-spacer>
-  
+                  <v-btn
+                    text
+                    color="secondary"
+                    @click="$router.push('/fustelle/'+item.name)">
+                    Fustelle
+                  </v-btn>
+                  </v-col>
+
+                
+                <v-col
+                    lg="6"
+                    md="6"
+                    sm="6"
+                    cols="6"
+                  >
+
                 <v-dialog
                   v-model="dialog"
                   max-width="600px"
@@ -261,14 +280,18 @@
 
                     </v-card-actions>
                   </v-card>
-                </v-dialog>
 
+                </v-dialog>
+                </v-col>
+                </v-row>
+                </v-container>
               </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
       </v-card>
       </v-fade-transition>
+      
       </v-container>
 
     </v-main> 

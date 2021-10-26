@@ -164,8 +164,14 @@
                 </div>
 
               <v-card-actions>
-                
-
+                <v-container>
+                <v-row dense>
+                  <v-col
+                    lg="6"
+                    md="6"
+                    sm="12"
+                    cols="12"
+                  >
 
                 <v-btn
                   text
@@ -173,14 +179,23 @@
                   @click="$router.push('/fustella/postanalisi/'+item.id)">
                   Storico
                 </v-btn>
-
+                  </v-col>
+                  <v-spacer></v-spacer>
+                  <v-col
+                    lg="6"
+                    md="6"
+                    sm="12"
+                    cols="12"
+                  >
                 <v-btn
                   text
                   color="secondary"
                   @click="$router.push('/fustella/live/'+item.id)">
                   Live
                 </v-btn>
-
+                  </v-col>
+                </v-row>
+                </v-container>
                 
               </v-card-actions>
               </div>

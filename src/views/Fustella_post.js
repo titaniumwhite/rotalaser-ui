@@ -255,7 +255,7 @@ import axios from 'axios'
             curve: 'stepline'
           },
           
-          colors: ["#00b359"],
+          colors: ["#FFEE58"],
           dataLabels: {
               enabled: false
           },
@@ -263,6 +263,7 @@ import axios from 'axios'
             size: 0
           },
           fill: {
+            colors: ["#FFEE58"],
             type: "gradient",
             gradient: {
               shadeIntensity: 1,
@@ -322,7 +323,7 @@ import axios from 'axios'
           stroke: {
             curve: 'stepline'
           },
-          colors: ["#7E36AF"],
+          colors: ["#ff9b58"],
           dataLabels: {
               enabled: false
           },
@@ -330,7 +331,7 @@ import axios from 'axios'
             size: 0
           },
           fill: {
-            colors: ["#7E36AF"],
+            colors: ["#ff9b58"],
             type: "gradient",
             gradient: {
               shadeIntensity: 1,
@@ -391,7 +392,7 @@ import axios from 'axios'
           stroke: {
             curve: 'stepline'
           },
-          colors: ["#7E36AF"],
+          colors: ["#bcff58"],
           dataLabels: {
               enabled: false
           },
@@ -399,7 +400,7 @@ import axios from 'axios'
             size: 0
           },
           fill: {
-            colors: ["#7E36AF"],
+            colors: ["#bcff58"],
             type: "gradient",
             gradient: {
               shadeIntensity: 1,
@@ -493,6 +494,8 @@ import axios from 'axios'
                                   
                                   let humidityCouple;
                                   let temperatureCouple; 
+
+                                  let session_started = false
                                   
                                  
                                   let time = new Date(this.got[i].id.slice(0,-9))
@@ -523,6 +526,7 @@ import axios from 'axios'
                                     /* Sessioni totali */
                                     if(parseInt(this.got[i].session_id) != last_session){
 
+                                      session_started = true
                                                                      
                                       temperatureSesData.push(temp_t_list_ses)
                                       humiditySesData.push(temp_h_list_ses)
@@ -567,7 +571,7 @@ import axios from 'axios'
                                     let timeCouple = "{ "
                                     
                                     timeCouple += '"x": ' + time.getTime() + ', '
-                                    if(i%15 == 0){
+                                    if(i%15 == 0 || session_started){
                                   
                                       rotationCouple = timeCouple + ' "y": '+ this.got[i].rotations + " }"
                                       totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"

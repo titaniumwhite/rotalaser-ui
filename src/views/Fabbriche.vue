@@ -147,7 +147,10 @@
           <v-col 
             v-for="item in real_fabbriche"
             :key="item.name"
-            :cols="4"
+            lg="4"
+            md="4"
+            sm="12"
+            cols="12"
           >
             <v-card
              
@@ -157,15 +160,29 @@
               <v-card-subtitle>P.IVA {{item.piva}}</v-card-subtitle>
               <v-card-text>{{item.location}}</v-card-text>
               <v-card-actions>
+                <v-container>
+                  <v-row dense>
+                    <v-col
+                    lg="6"
+                    md="6"
+                    sm="6"
+                    cols="6"
+                  >
                  <v-btn
                   text
                   color="secondary"
                   @click="$router.push('/fustelle/'+item.name)">
-                  Info
+                  Fustelle
                 </v-btn>
+                    </v-col>
 
                 <v-spacer></v-spacer>
-  
+                  <v-col
+                    lg="6"
+                    md="6"
+                    sm="6"
+                    cols="6"
+                  >
                 <v-dialog
                   v-model="dialog"
                   max-width="600px"
@@ -247,7 +264,10 @@
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
-
+                  </v-col>
+                  </v-row>
+                </v-container>
+                
               </v-card-actions>
             </v-card>
           </v-col>
