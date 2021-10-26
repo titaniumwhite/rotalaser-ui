@@ -3,44 +3,18 @@
   <v-app>
     <v-main>
       <v-toolbar
-        color="secondary"
-        dark
+        color="primary"
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <v-toolbar-title>Inserisci</v-toolbar-title>
+        <v-toolbar-title class="font-weight-bold"></v-toolbar-title>
+
+        <v-img
+          src="./rotalaser-logo.png"
+          max-height="50"
+          max-width="100">
+        </v-img>
   
         <v-spacer></v-spacer>
-  
-        <v-scroll-x-reverse-transition>
-          <v-text-field
-            v-show="searching" 
-            clearable
-            transition="slide-x-reverse-transition"
-            solo
-            dense 
-            hide-details
-            rounded
-            single-line
-            autofocus
-            background-color="primary darken-3"
-            label="Cerca"
-            prepend-inner-icon="mdi-magnify"
-            @blur="is_text_empty($event, $event.target.value)"
-          > 
-          </v-text-field>
-        </v-scroll-x-reverse-transition>
-
-        <v-spacer></v-spacer>
-
-        <v-btn icon 
-          @click="searching=!searching"
-          v-show="!searching">
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
-
-        <v-btn icon>
-          <v-icon>mdi-filter</v-icon>
-        </v-btn>
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -59,6 +33,8 @@
     
         <template v-slot:extension>
           <v-tabs
+            centered
+            icons-and-text
             v-model="tab"
             align-with-title
           >

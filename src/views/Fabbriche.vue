@@ -52,6 +52,108 @@
           <v-icon>mdi-filter</v-icon>
         </v-btn>
 
+        <v-dialog
+          v-model="dialog_add"
+          max-width="600px"
+          :retain-focus="false"
+        >
+          <template #activator="{ on: dialog_add }">
+          <v-tooltip bottom>
+          <template v-slot:activator="{ on: tooltip_add }">
+            <v-btn
+              icon
+              color="secondary"
+              v-on="{ ...tooltip_add, ...dialog_add }"
+            >
+            <v-icon>mdi-home-plus</v-icon>
+            </v-btn>
+          </template>
+            <span>Aggiungi cliente</span>
+          </v-tooltip>
+        </template>
+
+
+          <v-card>
+            <v-card-title class="text-h5">
+              <b>Aggiungi fabbrica</b>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      label="Nome"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      label="Cognome"
+                      hint
+                      required
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-text-field
+                      label="Email"
+                      required
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-text-field
+                      label="Password"
+                      type="password"
+                      required
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-text-field
+                      label="P.IVA"
+                      type="P.IVA"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+
+              <v-btn
+                color="grey"
+                text
+                @click="dialog_add = false"
+              >
+                Annulla
+              </v-btn>
+
+              <v-btn
+                color="green darken-1"
+                text
+                @click="dialog_add = false"
+              >
+                Salva
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+
+        </v-dialog>
+
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -97,7 +199,7 @@
                 <v-list-item-title>Fabbriche</v-list-item-title>
               </v-list-item>
 
-              <v-list-item to="/inserisci">
+              <v-list-item to="/inserisci" disabled>
                 <v-list-item-icon>
                   <v-icon>mdi-plus-thick</v-icon>
                 </v-list-item-icon>
@@ -184,86 +286,158 @@
                     cols="6"
                   >
                 <v-dialog
-                  v-model="dialog"
-                  max-width="600px"
-                  :retain-focus="false"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      color="secondary"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                    <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
+                    v-model="dialog_modify"
+                    max-width="600px"
+                    :retain-focus="false"
+                  >
+                   <template #activator="{ on: dialog_modify }">
+                    <v-tooltip bottom>
+                    <template v-slot:activator="{ on: tooltip1 }">
+                      <v-btn
+                        icon
+                        color="secondary"
+                        v-on="{ ...tooltip1, ...dialog_modify }"
+                      >
+                      <v-icon>mdi-pencil</v-icon>
+                      </v-btn>
+                    </template>
+                      <span>Modifica fabbrica</span>
+                    </v-tooltip>
                   </template>
-                  <v-card>
-                    <v-card-title>
-                      <span class="text-h5">Fabbrica</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                          >
-                            <v-text-field
-                              label="Nome"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          
-                          <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                          >
-                            <v-text-field
-                              label="Cognome"
-                              hint
-                              required
-                            ></v-text-field>
-                          </v-col>
 
-                          <v-col cols="12">
-                            <v-text-field
-                              label="Email"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12">
-                            <v-text-field
-                              label="Password"
-                              type="password"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
+
+                    <v-card>
+                      <v-card-title>
+                        <span class="text-h5"><b>Modifica {{item.name}}</b></span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <v-col
+                              cols="12"
+                              sm="6"
+                              md="4"
+                            >
+                              <v-text-field
+                                label="Nome"
+                                required
+                              ></v-text-field>
+                            </v-col>
+                            
+                            <v-col
+                              cols="12"
+                              sm="6"
+                              md="4"
+                            >
+                              <v-text-field
+                                label="Cognome"
+                                hint
+                                required
+                              ></v-text-field>
+                            </v-col>
+
+                            <v-col cols="12">
+                              <v-text-field
+                                label="Email"
+                                required
+                              ></v-text-field>
+                            </v-col>
+
+                            <v-col cols="12">
+                              <v-text-field
+                                label="Password"
+                                type="password"
+                                required
+                              ></v-text-field>
+                            </v-col>
+
+                            <v-col cols="12">
+                              <v-text-field
+                                label="P.IVA"
+                                type="P.IVA"
+                                required
+                              ></v-text-field>
+                            </v-col>
+                            
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+                      <v-card-actions>
+
+                        <v-spacer></v-spacer>
+
+                        <v-btn
+                          color="grey"
+                          text
+                          @click="dialog_modify = false">
+                          Annulla
+                        </v-btn>
+
+                        <v-btn
+                          color="green darken-1"
+                          text
+                          @click="dialog_modify = false">
+                          Salva
+                        </v-btn>
+
+                      </v-card-actions>
+                    </v-card>
+
+                  </v-dialog>
+
+                  <v-dialog
+                    v-model="dialog_delete"
+                    max-width="600px"
+                    :retain-focus="false"
+                  >
+                   <template #activator="{ on: dialog_delete }">
+                    <v-tooltip bottom>
+                    <template v-slot:activator="{ on: tooltip2 }">
                       <v-btn
-                        color="secondary darken-1"
-                        text
-                        @click="dialog = false"
-                        >
-                        Chiudi
+                        icon
+                        color="secondary"
+                        v-on="{ ...tooltip2, ...dialog_delete }"
+                      >
+                      <v-icon>mdi-delete</v-icon>
                       </v-btn>
-                      <v-btn
-                        color="secondary darken-1"
-                        text
-                        @click="$router.go()"
+                    </template>
+                      <span>Elimina fabbrica</span>
+                    </v-tooltip>
+                  </template>
+
+
+                    <v-card>
+                      <v-card-title class="text-h5">
+                        <b>Elimina {{item.name}}</b>
+                      </v-card-title>
+
+                      <v-card-text>
+                        Sei sicuro di voler eliminare {{item.name}}? <br>
+                        <b> Il processo è irreversibile e comporterà l'eliminazione di tutti i dati associati alla fabbrica.</b>
+                      </v-card-text>
+
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+
+                        <v-btn
+                          color="grey"
+                          text
+                          @click="dialog_delete = false"
                         >
-                        Salva
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+                          Annulla
+                        </v-btn>
+
+                        <v-btn
+                          color="error"
+                          text
+                          @click="dialog_delete = false"
+                        >
+                          Elimina
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+
+                  </v-dialog>
                   </v-col>
                   </v-row>
                 </v-container>
@@ -288,7 +462,9 @@ export default {
       searching:false,
       drawer: false,
       group: null,
-      dialog: false,
+      dialog_modify: false,
+      dialog_delete: false,
+      dialog_add: false,
       loading: true,
       true: true,
       real_fabbriche: [],
