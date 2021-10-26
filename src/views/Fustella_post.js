@@ -127,8 +127,8 @@ import axios from 'axios'
           xaxis: {
             type: 'datetime',
             labels: {
-              datetimeUTC: false
-            }
+              datetimeUTC: false,
+            },
           },
 
           yaxis: {
@@ -136,6 +136,11 @@ import axios from 'axios'
               minWidth: 40
             }
           },
+          tooltip: {
+            x: {
+                format: "dd MMM H:mm"
+               }
+          }
         },
        
         chartOptionsAreaTotalRotation: {
@@ -213,6 +218,11 @@ import axios from 'axios'
               minWidth: 40
             }
           },
+          tooltip: {
+            x: {
+                format: "dd MMM H:mm"
+               }
+          }
         },
 
         chartOptionsLineBrush: {
@@ -240,6 +250,11 @@ import axios from 'axios'
             labels: {
               minWidth: 40
             }
+          },
+          tooltip: {
+            x: {
+                format: "dd MMM hh:mm TT"
+               }
           } 
         },
   
@@ -297,6 +312,11 @@ import axios from 'axios'
               minWidth: 40
             }
           },
+          tooltip: {
+            x: {
+                format: "dd MMM H:mm"
+               }
+          }
         },
 
         chartOptionsAreaHumidity: {
@@ -365,6 +385,11 @@ import axios from 'axios'
             labels: {
               minWidth: 40
             }
+          },
+          tooltip: {
+            x: {
+                format: "dd MMM H:mm"
+               }
           }
         }, 
 
@@ -434,6 +459,11 @@ import axios from 'axios'
             labels: {
               minWidth: 40
             }
+          },
+          tooltip: {
+            x: {
+                format: "dd MMM H:mm"
+               }
           }
         }, 
         
