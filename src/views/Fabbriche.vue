@@ -93,7 +93,9 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="12">
+                  <v-col
+                    cols="6"
+                  >
                     <v-text-field
                       label="Stato"
                       v-model="country"
@@ -123,7 +125,7 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="12">
+                  <v-col cols="6">
                     <v-text-field
                       label="Indirizzo"
                       v-model="address"
@@ -131,6 +133,18 @@
                       :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
                       color="secondary"
                     ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-select
+                      :items="customers_name"
+                      label="Cliente"
+                      v-model="chosen_customer"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"  
+                      color="secondary"
+                      item-color="secondary"
+                    ></v-select>
                   </v-col>
 
                 </v-row>
@@ -334,7 +348,7 @@
                             </v-col>
                             
                             <v-col
-                              cols="12"
+                              cols="6"
                             >
                               <v-text-field
                                 label="Stato"
@@ -362,7 +376,7 @@
                               ></v-text-field>
                             </v-col>
 
-                            <v-col cols="12">
+                            <v-col cols="6">
                               <v-text-field
                                 label="Indirizzo"
                                 :value="item.address"
@@ -370,7 +384,18 @@
                                 color="secondary"
                               ></v-text-field>
                             </v-col>
-                            
+
+                            <v-col cols="12">
+                              <v-select
+                                :items="customers_name"
+                                label="Cliente"
+                                required
+                                :rules="rules"
+                                color="secondary"
+                                item-color="secondary"
+                              ></v-select>
+                            </v-col>
+
                           </v-row>
                         </v-container>
                       </v-card-text>
@@ -379,7 +404,6 @@
                         <v-spacer></v-spacer>
 
                         <v-btn
-                          color="grey"
                           text
                           @click="dialog_modify = false">
                           Annulla
@@ -432,7 +456,6 @@
                         <v-spacer></v-spacer>
 
                         <v-btn
-                          color="grey"
                           text
                           @click="dialog_delete = false"
                         >
@@ -490,7 +513,11 @@ export default {
       country: '',
       state: '',
       city: '',
-      address: ''
+      address: '',
+      customerId: '',
+      chosen_customer: '',
+      customers: [],
+      customers_name: []
     }),
 
     watch: {
@@ -539,6 +566,24 @@ export default {
       this.loading= false 
     }
 
+    axios.get('http://195.231.3.173:5002/v1/customers/',{
+      headers:{
+        'key':this.$session.get("key")
+      }
+    }).then(response =>{
+      for(let i = 0; i < response.data.length; i++) {
+        let token = []
+        token[0] = response.data[i].id
+        token[1] = response.data[i].name
+        this.customers_name[i] = response.data[i].name 
+        this.customers.push(token)
+      }
+
+    }).catch( (error) => {
+        console.log(error)
+        this.$router.push("/")
+    })
+
   },
 
     methods: {
@@ -550,12 +595,20 @@ export default {
       },
 
       submit_factory: function() {
+        let chosen_customerId = -1;
+
+        for (let i = 0; i < this.customers.length; i++) {
+          let temp = this.customers[i]
+          if (temp[1] === this.chosen_customer) chosen_customerId = temp[0]
+        }
+
         axios.post('http://195.231.3.173:8080/v1/factories/', { 
           name: this.name, 
           country: this.country,
           state: this.state,
           city: this.city,
-          address: this.address
+          address: this.address,
+          customerId: chosen_customerId
         })
         .then(
           response => this.responseData = response.data,
@@ -569,7 +622,8 @@ export default {
           country: this.country,
           state: this.state,
           city: this.city,
-          address: this.address
+          address: this.address,
+          customerId: this.customerId
         })
         .then(
           response => this.responseData = response.data,
