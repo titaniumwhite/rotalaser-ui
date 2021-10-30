@@ -55,17 +55,17 @@
         </v-btn>
 
         <v-dialog
-          v-model="dialog_add"
+          v-model="dialog_submit"
           max-width="600px"
           :retain-focus="false"
         >
-          <template #activator="{ on: dialog_add }">
+          <template #activator="{ on: dialog_submit }">
           <v-tooltip bottom>
           <template v-slot:activator="{ on: tooltip_add }">
             <v-btn
               icon
               color="secondary"
-              v-on="{ ...tooltip_add, ...dialog_add }"
+              v-on="{ ...tooltip_add, ...dialog_submit }"
             >
             <v-icon>mdi-account-plus</v-icon>
             </v-btn>
@@ -74,8 +74,10 @@
           </v-tooltip>
         </template>
 
-
+          
           <v-card>
+            <v-form v-model="valid">
+
             <v-card-title class="text-h5">
               <b>Aggiungi cliente</b>
             </v-card-title>
@@ -83,49 +85,24 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                
+                  <v-col cols="12">
                     <v-text-field
                       label="Nome"
+                      v-model="name"
                       required
-                    ></v-text-field>
-                  </v-col>
-                  
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      label="Cognome"
-                      hint
-                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
                     ></v-text-field>
                   </v-col>
 
                   <v-col cols="12">
                     <v-text-field
-                      label="Email"
+                      label="Partita IVA"
+                      v-model="vat"
+                      :rules="vat_rule" 
                       required
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="12">
-                    <v-text-field
-                      label="Password"
-                      type="password"
-                      required
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="12">
-                    <v-text-field
-                      label="P.IVA"
-                      type="P.IVA"
-                      required
+                      color="secondary"
                     ></v-text-field>
                   </v-col>
                   
@@ -137,9 +114,8 @@
               <v-spacer></v-spacer>
 
               <v-btn
-                color="grey"
                 text
-                @click="dialog_add = false"
+                @click="dialog_submit = false"
               >
                 Annulla
               </v-btn>
@@ -147,11 +123,14 @@
               <v-btn
                 color="green darken-1"
                 text
-                @click="dialog_add = false"
+                :disabled="!valid"
+                @click="submit_client"
               >
                 Salva
               </v-btn>
             </v-card-actions>
+          </v-form>
+
           </v-card>
 
         </v-dialog>
@@ -324,49 +303,26 @@
                           <v-row>
                             <v-col
                               cols="12"
-                              sm="6"
-                              md="4"
                             >
                               <v-text-field
                                 label="Nome"
                                 required
+                                :value="item.name"
+                                color="secondary"
                               ></v-text-field>
                             </v-col>
                             
                             <v-col
                               cols="12"
-                              sm="6"
-                              md="4"
                             >
                               <v-text-field
-                                label="Cognome"
-                                hint
+                                label="Partita IVA"
                                 required
+                                :value="item.vat"
+                                color="secondary"
                               ></v-text-field>
                             </v-col>
 
-                            <v-col cols="12">
-                              <v-text-field
-                                label="Email"
-                                required
-                              ></v-text-field>
-                            </v-col>
-
-                            <v-col cols="12">
-                              <v-text-field
-                                label="Password"
-                                type="password"
-                                required
-                              ></v-text-field>
-                            </v-col>
-
-                            <v-col cols="12">
-                              <v-text-field
-                                label="P.IVA"
-                                type="P.IVA"
-                                required
-                              ></v-text-field>
-                            </v-col>
                             
                           </v-row>
                         </v-container>
@@ -385,7 +341,7 @@
                         <v-btn
                           color="green darken-1"
                           text
-                          @click="dialog_modify = false">
+                          @click="modify_client">
                           Salva
                         </v-btn>
 
@@ -440,7 +396,7 @@
                         <v-btn
                           color="error"
                           text
-                          @click="dialog_delete = false"
+                          @click="delete_client"
                         >
                           Elimina
                         </v-btn>
@@ -477,14 +433,18 @@ export default {
       group: null,
       dialog_modify: false,
       dialog_delete: false,
-      dialog_add: false,
-      loading: true,
-      real_clienti: [],
-      clienti: [
-        { message: 'Rotalaser',flex:4 },
-        //{ message: 'Cliente 2',flex:4 }
+      dialog_submit: false,
+      vat_rule: [
+        p => !!p || 'È obbligatorio compilare questo campo',
+        p => (p.length == 11 && new RegExp('^\\d+$').test(p)) || 'La Partita IVA inserita non è valida', 
       ],
+      loading: true,
+      valid: true,
+      real_clienti: [],
       offset: true,
+      // Variabili per aggiungere cliente //
+      name: '',
+      vat: '',
     }),
 
     watch: {
@@ -505,7 +465,7 @@ export default {
               let str = "{ "
               str += '"name": "'     + response.data[i].name + '" , '
               str += '"active": "' + response.data[i].active + '", '
-              str += '"piva": "' + response.data[i].piva + '" '
+              str += '"vat": "' + response.data[i].vat + '" '
               str+= " }"
               
               this.real_clienti.push(JSON.parse(str))
@@ -523,21 +483,52 @@ export default {
     }else{
       this.real_clienti = this.$session.get("clienti")
       this.loading= false 
-    }
+    }   
 
   },
   methods: {
       // when blur the searchbox, if there is no text, just make the box disappear
-      is_text_empty: function (event, value) {
-        if (event && value === '') {
-          this.searching =! this.searching
-        }
-      },
+    is_text_empty: function (event, value) {
+      if (event && value === '') {
+        this.searching =! this.searching
+      }
+    },
 
-      reset: function() {
-        this.$refs.textareaform.reset()
-      },
-  }
+    submit_client: function() {
+      axios.post('http://195.231.3.173:8080/v1/customers/', { 
+        name: this.name, 
+        vat: this.vat
+      })
+      .then(
+        response => this.responseData = response.data,
+        this.dialog_submit = false
+      )
+    },
+
+    modify_client: function() {
+      axios.post('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id, { 
+        name: this.name, 
+        vat: this.vat
+      })
+      .then(
+        response => this.responseData = response.data,
+        this.dialog_modify = false
+      )
+    },
+
+    delete_client: function() {
+      axios.delete('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id)
+      .then(
+        response => this.responseData = response.data,
+        this.dialog_delete = false
+      )
+    },
+
+    reset: function() {
+      this.$refs.textareaform.reset()
+    },
+  },
+
 };
 </script>
 

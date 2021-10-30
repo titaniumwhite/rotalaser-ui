@@ -53,27 +53,28 @@
         </v-btn>
 
         <v-dialog
-          v-model="dialog_add"
+          v-model="dialog_submit"
           max-width="600px"
           :retain-focus="false"
         >
-          <template #activator="{ on: dialog_add }">
+          <template #activator="{ on: dialog_submit }">
           <v-tooltip bottom>
           <template v-slot:activator="{ on: tooltip_add }">
             <v-btn
               icon
               color="secondary"
-              v-on="{ ...tooltip_add, ...dialog_add }"
+              v-on="{ ...tooltip_add, ...dialog_submit }"
             >
             <v-icon>mdi-home-plus</v-icon>
             </v-btn>
           </template>
-            <span>Aggiungi cliente</span>
+            <span>Aggiungi fabbrica</span>
           </v-tooltip>
         </template>
 
-
           <v-card>
+            <v-form v-model="valid">
+
             <v-card-title class="text-h5">
               <b>Aggiungi fabbrica</b>
             </v-card-title>
@@ -81,52 +82,57 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                
+                  <v-col cols="12">
                     <v-text-field
                       label="Nome"
+                      v-model="name"
                       required
-                    ></v-text-field>
-                  </v-col>
-                  
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      label="Cognome"
-                      hint
-                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
                     ></v-text-field>
                   </v-col>
 
                   <v-col cols="12">
                     <v-text-field
-                      label="Email"
+                      label="Stato"
+                      v-model="country"
                       required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-text-field
+                      label="Regione"
+                      v-model="state"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-text-field
+                      label="Città"
+                      v-model="city"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
                     ></v-text-field>
                   </v-col>
 
                   <v-col cols="12">
                     <v-text-field
-                      label="Password"
-                      type="password"
+                      label="Indirizzo"
+                      v-model="address"
                       required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="12">
-                    <v-text-field
-                      label="P.IVA"
-                      type="P.IVA"
-                      required
-                    ></v-text-field>
-                  </v-col>
-                  
                 </v-row>
               </v-container>
             </v-card-text>
@@ -135,9 +141,8 @@
               <v-spacer></v-spacer>
 
               <v-btn
-                color="grey"
                 text
-                @click="dialog_add = false"
+                @click="dialog_submit = false"
               >
                 Annulla
               </v-btn>
@@ -145,11 +150,14 @@
               <v-btn
                 color="green darken-1"
                 text
-                @click="dialog_add = false"
+                :disabled="!valid"
+                @click="submit_factory"
               >
                 Salva
               </v-btn>
             </v-card-actions>
+          </v-form>
+
           </v-card>
 
         </v-dialog>
@@ -315,47 +323,50 @@
                           <v-row>
                             <v-col
                               cols="12"
-                              sm="6"
-                              md="4"
                             >
                               <v-text-field
                                 label="Nome"
                                 required
+                                :value="item.name"
+                                color="secondary"
                               ></v-text-field>
                             </v-col>
                             
                             <v-col
                               cols="12"
-                              sm="6"
-                              md="4"
                             >
                               <v-text-field
-                                label="Cognome"
-                                hint
+                                label="Stato"
                                 required
+                                :value="item.country"
+                                color="secondary"
+                              ></v-text-field>
+                            </v-col>
+
+                            <v-col cols="6">
+                              <v-text-field
+                                label="Regione"
+                                required
+                                :value="item.state"
+                                color="secondary"
+                              ></v-text-field>
+                            </v-col>
+
+                            <v-col cols="6">
+                              <v-text-field
+                                label="Città"
+                                required
+                                :value="item.city"
+                                color="secondary"
                               ></v-text-field>
                             </v-col>
 
                             <v-col cols="12">
                               <v-text-field
-                                label="Email"
+                                label="Indirizzo"
+                                :value="item.address"
                                 required
-                              ></v-text-field>
-                            </v-col>
-
-                            <v-col cols="12">
-                              <v-text-field
-                                label="Password"
-                                type="password"
-                                required
-                              ></v-text-field>
-                            </v-col>
-
-                            <v-col cols="12">
-                              <v-text-field
-                                label="P.IVA"
-                                type="P.IVA"
-                                required
+                                color="secondary"
                               ></v-text-field>
                             </v-col>
                             
@@ -376,7 +387,7 @@
                         <v-btn
                           color="green darken-1"
                           text
-                          @click="dialog_modify = false">
+                          @click="modify_factory">
                           Salva
                         </v-btn>
 
@@ -430,7 +441,7 @@
                         <v-btn
                           color="error"
                           text
-                          @click="dialog_delete = false"
+                          @click="delete_factory"
                         >
                           Elimina
                         </v-btn>
@@ -464,18 +475,21 @@ export default {
       group: null,
       dialog_modify: false,
       dialog_delete: false,
-      dialog_add: false,
+      dialog_submit: false,
+      valid: true,
       loading: true,
       true: true,
       real_fabbriche: [],
-      fabbriche: [
-        { message: 'International Paper',flex:4 },
-        //{ message: 'Fabbrica 2',flex:4 }
-      ],
       items: [
         { title: 'Logout' },
       ],
       offset: true,
+      // Variabili per aggiungere fabbrica //
+      name: '',
+      country: '',
+      state: '',
+      city: '',
+      address: '',
     }),
 
     watch: {
@@ -527,6 +541,42 @@ export default {
         if (event && value === '') {
           this.searching =! this.searching
         }
+      },
+
+      submit_factory: function() {
+        axios.post('http://195.231.3.173:8080/v1/factories/', { 
+          name: this.name, 
+          country: this.country,
+          state: this.state,
+          city: this.city,
+          address: this.address
+        })
+        .then(
+          response => this.responseData = response.data,
+          this.dialog_submit = false
+        )
+      },
+
+      modify_factory: function() {
+        axios.post('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id, { 
+          name: this.name, 
+          country: this.country,
+          state: this.state,
+          city: this.city,
+          address: this.address
+        })
+        .then(
+          response => this.responseData = response.data,
+          this.dialog_modify = false
+        )
+      },
+
+      delete_factory: function() {
+        axios.delete('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id)
+        .then(
+          response => this.responseData = response.data,
+          this.dialog_delete = false
+        )
       }
     }
 };
