@@ -566,16 +566,16 @@ export default {
       this.loading= false 
     }
 
-    axios.get('http://195.231.3.173:5002/v1/customers/',{
+    axios.get('http://195.231.3.173:8080/v1/customers/',{
       headers:{
         'key':this.$session.get("key")
       }
     }).then(response =>{
-      for(let i = 0; i < response.data.length; i++) {
+      for(let i = 0; i < response.data.data.length; i++) {
         let token = []
-        token[0] = response.data[i].id
-        token[1] = response.data[i].name
-        this.customers_name[i] = response.data[i].name 
+        token[0] = response.data.data[i].id
+        token[1] = response.data.data[i].name
+        this.customers_name[i] = response.data.data[i].name 
         this.customers.push(token)
       }
 

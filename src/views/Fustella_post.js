@@ -472,7 +472,7 @@ import axios from 'axios'
     mounted(){
           if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
             console.log(this.$route.params.id)
-            axios.get('http://195.231.3.173:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
+            axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/measurements',{
               headers:{
                 'key':this.$session.get("key")
               }
@@ -489,7 +489,10 @@ import axios from 'axios'
                                 
                                 let humiditySesData = []
 
-                                this.got = response.data 
+                                this.got = response.data.data
+
+                                console.log(this.got)
+
                                 if(this.got.length<1){
                                   this.loading = false
                                   this.err=true
@@ -528,33 +531,33 @@ import axios from 'axios'
                                   let session_started = false
                                   
                                  
-                                  let time = new Date(this.got[i].id.slice(0,-9))
+                                  let time = new Date(this.got[i].timestamp)
 
                        
                                   if(!isNaN(time)){
                                     
-                                    time.setHours(time.getHours() + 2);
+                                    //time.setHours(time.getHours() + 2);
                                    
                                     /* Total Count S**T */
 
                                     /* Errori totali */
-                                    if(this.got[i].errors != 0){
+                                    /*if(this.got[i].errors != 0){
                                       total_errors += this.got[i].errors //- prev_errors
                                       //prev_errors = this.got[i].errors
-                                    }
+                                    }*/
                                     
                                     /* Rotazioni totali */
-                                    if(this.got[i].rotations < prev_rotations && prev_rotations > 0){
+                                    if(this.got[i].rotationCount < prev_rotations && prev_rotations > 0){
                                       
                                       total_rotations += prev_rotations                                      
                                       
                                     }
                                     
-                                    prev_rotations = this.got[i].rotations
+                                    prev_rotations = this.got[i].rotationCount
                                    
                                     
                                     /* Sessioni totali */
-                                    if(parseInt(this.got[i].session_id) != last_session){
+                                    if(parseInt(this.got[i].session.id) != last_session){
 
                                       session_started = true
                                                                      
@@ -566,9 +569,9 @@ import axios from 'axios'
                                       temp_h_list_ses = []
                                       temp_s_list_ses = []
                                       
-                                      total_session+=1
+                                      total_session+= 1
 
-                                      last_session = parseInt(this.got[i].session_id)
+                                      last_session = parseInt(this.got[i].session.id)
                                       
                                       let curr_text =     '{'+
                                                             '"x": '+ time.getTime() +
@@ -603,7 +606,7 @@ import axios from 'axios'
                                     timeCouple += '"x": ' + time.getTime() + ', '
                                     if(i%15 == 0 || session_started){
                                   
-                                      rotationCouple = timeCouple + ' "y": '+ this.got[i].rotations + " }"
+                                      rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
                                       totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"
                                      
 
@@ -611,7 +614,7 @@ import axios from 'axios'
                                       totalRotationData.push(JSON.parse(totalRotationCouple))
 
                                     }          
-                                    speedCouple = timeCouple + ' "y": '   + this.got[i].speed + " }"
+                                    speedCouple = timeCouple + ' "y": '   + this.got[i].rotationSpeed + " }"
                                     temperatureCouple = timeCouple + ' "y": ' + this.got[i].temperature + " }"
                                     humidityCouple = timeCouple + ' "y": ' + this.got[i].humidity + " }"      
 
@@ -732,7 +735,7 @@ import axios from 'axios'
               })
             
             /* get the effin CAD */
-            axios.get('http://195.231.3.173:5002/v1/diecutters/'+this.$route.params.id,{
+            axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+"/cadimage",{
               headers:{
                 'key':this.$session.get("key")
               }
@@ -747,16 +750,16 @@ import axios from 'axios'
             })
 
              /* CHIAMATE API PER MODIFICA FUSTELLA */
-            axios.get('http://195.231.3.173:5002/v1/customers/',{
+            axios.get('http://195.231.3.173:8080/v1/customers/',{
               headers:{
                 'key':this.$session.get("key")
               }
             }).then(response =>{
-              for(let i = 0; i < response.data.length; i++) {
+              for(let i = 0; i < response.data.data.length; i++) {
                 let token = []
-                token[0] = response.data[i].piva
-                token[1] = response.data[i].name
-                this.customers_name[i] = response.data[i].name 
+                token[0] = response.data.data[i].vat
+                token[1] = response.data.data[i].name
+                this.customers_name[i] = response.data.data[i].name 
                 this.customers.push(token)
                 console.log(this.customers)
               }

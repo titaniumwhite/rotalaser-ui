@@ -339,6 +339,7 @@ export default {
       dialog_submit: false,
       secret: null,
       valid: false,
+      true: true,
 
       // Variabili per modifica fustella//
       factories: [],
@@ -361,6 +362,7 @@ export default {
               'key':this.$session.get("key")
             }
           }).then(response =>{
+                             
                               let filtered = []
 
                              
@@ -408,6 +410,7 @@ export default {
                                 }).then(response =>{
                                   
                                   cad_bytes = response.data.data
+
                                   filtered[i].cad = cad_bytes
                                   filtered[i].loading = false
                                   
@@ -430,13 +433,13 @@ export default {
           this.loading= false 
         }
 
-        axios.get('http://195.231.3.173:5002/v1/factories',{
+        axios.get('http://195.231.3.173:8080/v1/factories',{
           headers:{
             'key':this.$session.get("key")
           }
         }).then(response =>{     
-          for (let i = 0; i < response.data.length; i++) {
-            this.factories[i] = response.data[i].id
+          for (let i = 0; i < response.data.data.length; i++) {
+            this.factories[i] = response.data.data[i].id
           }
           }).catch( (error) => {
             console.log(error)
@@ -451,6 +454,37 @@ export default {
           this.searching =! this.searching
         }
       },
+
+      submit_client: function() {
+      axios.post('http://195.231.3.173:8080/v1/customers/', { 
+        name: this.name, 
+        vat: this.vat
+      })
+      .then(
+        response => this.responseData = response.data,
+        this.dialog_submit = false
+      )
+    },
+    modify_client: function() {
+      axios.post('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id, { 
+        name: this.name, 
+        vat: this.vat
+      })
+      .then(
+        response => this.responseData = response.data,
+        this.dialog_modify = false
+      )
+    },
+    delete_client: function() {
+      axios.delete('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id)
+      .then(
+        response => this.responseData = response.data,
+        this.dialog_delete = false
+      )
+    },
+    reset: function() {
+      this.$refs.textareaform.reset()
+    },
 
       alarm () {
         alert('ATTENZIONE\nQuesta funzionalità ancora non è attiva')

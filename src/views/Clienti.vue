@@ -460,7 +460,6 @@ export default {
       }).then(response =>{
          
           for(let i = 0;i<response.data.data.length;i++){
-              console.log(response.data.data[i].vat)
               
               let str = "{ "
               str += '"name": "'     + response.data.data[i].name + '" , '

@@ -444,7 +444,7 @@ import axios from 'axios'
         
           if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
             console.log(this.$route.params.id)
-            axios.get('http://195.231.3.173:5002/v1/diecutters/'+this.$route.params.id+'/cycles',{
+            axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/measurements',{
               headers:{
                 'key':this.$session.get("key")
               }
