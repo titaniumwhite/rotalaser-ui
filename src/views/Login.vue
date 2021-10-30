@@ -125,18 +125,17 @@ export default {
       },
    },
    mounted(){
-      const creds = JSON.parse('{"username": "rotalaser.software@gmail.com", "password": "mGnvxjZTdi89BM8sgcH2UjrJm"}')
-      axios.post('http://195.231.3.173:5002/v1/login/',creds,{}).then(
+      const creds = JSON.parse('{"username": "rotalaser.software@gmail.com", "password": "$2b$10$Vgk0LvHqeznUms/ejMsEauKyPYL.mGnvxjZTdi89BM8sgcH2UjrJm"}')
+      axios.post('http://195.231.3.173:8080/v1/login/',creds,{}).then(
          response =>{
             let k;
-            k = response.data.token
+            k = response.data.data.accessToken
             this.$root.key = k
             this.$session.set("key", k);
       })
    },
    methods: {
       validate(){
-         console.log(this.email)
          if(this.email == "admin@admin.com" && this.password == "Rotalaser2021!")
             this.$router.push("/clienti")
          else

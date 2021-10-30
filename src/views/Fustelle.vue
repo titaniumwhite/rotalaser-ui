@@ -205,6 +205,7 @@
                 tile
               >
               <v-img 
+                v-if="!item.loading"
                 v-bind:src="'data:image/jpeg;base64,'+item.cad"
               ></v-img>
               </v-avatar>
@@ -232,6 +233,7 @@ export default {
       dialog: false,
       group: null,
       loading: true,
+      true: true,
       text: "Clienti",
       fustelle: [
         { message: 'Fustella 1',flex:4 },
@@ -250,48 +252,67 @@ export default {
       },
     },
     mounted(){
-        if(!this.$session.exists("fustelle") && 
-        (!this.$session.exists("pid") || this.$route.params.id == this.$session.get("pid"))){
-          axios.get('http://195.231.3.173:5002/v1/diecutters/',{
+        if(this.true/*!this.$session.exists("fustelle") && 
+        (!this.$session.exists("pid") || this.$route.params.id == this.$session.get("pid"))*/){
+          axios.get('http://195.231.3.173:8080/v1/diecutters/',{
             headers:{
               'key':this.$session.get("key")
             }
           }).then(response =>{
                               let filtered = []
+
+                             
                               
-                              for(let i = 0;i<response.data.length;i++){
-                                  if(response.data[i].id != "00:00:00:00:00:10"){
+                              for(let i = 0;i<response.data.data.length;i++){
                                     let name;
                                     
-                                    if (response.data[i].id === "da:5b:93:12:58:30") {
+                                    if (response.data.data[i].id === "da:5b:93:12:58:30") {
                                       name = "L02241"
-                                    } else if (response.data[i].id === "ee:ea:4b:24:65:33") {
+                                    } else if (response.data.data[i].id === "ee:ea:4b:24:65:33") {
                                       name = "G02012"
-                                    } else if (response.data[i].id === "c7:02:8f:47:f2:0d") {
+                                    } else if (response.data.data[i].id === "c7:02:8f:47:f2:0d") {
                                       name = "2877"
-                                    } else if (response.data[i].id === "d5:65:e4:a8:89:60") {
+                                    } else if (response.data.data[i].id === "d5:65:e4:a8:89:60") {
                                       name = "2147B"
-                                    } else if (response.data[i].id === "d7:05:4d:e8:6a:f9") {
+                                    } else if (response.data.data[i].id === "d7:05:4d:e8:6a:f9") {
                                       name = "2771"
-                                    } else if (response.data[i].id === "c2:f3:33:08:5a:2f") {
+                                    } else if (response.data.data[i].id === "c2:f3:33:08:5a:2f") {
                                       name = "B02181"
-                                    } else if (response.data[i].id === "da:bc:6e:d4:80:73") {
+                                    } else if (response.data.data[i].id === "da:bc:6e:d4:80:73") {
                                       name = "L02140"
-                                    }                                    
+                                    }      
                                     
+                                   
+
                                     let str = "{ "
-                                    str += '"name": "'   + name + '", '
-                                    str += '"id": "'     + response.data[i].id + '", '
-                                    str += '"active": "' + response.data[i].active + '", '
-                                    str += '"status": "' + response.data[i].status + '", '
-                                    str += '"cad": "' + response.data[i].cadimage + '" '
-                                    str+= " }"
+                                      str += '"name": "'   + name + '", '
+                                      str += '"id": "'     + response.data.data[i].id + '", '
+                                      str += '"status": "' + response.data.data[i].status + '", '
+                                      str += '"cad": "'    + response.data.data[i].cadImage.href + '", '
+                                      str += '"loading": "true"' 
+                                      str+= " }"
                               
                                     
-                                    filtered.push(JSON.parse(str))
-                                  }
+                                      filtered.push(JSON.parse(str))
+                                    
                               }
-                              console.log(filtered)
+
+                              for(let i =0;i<response.data.data.length;i++){
+                               let cad_bytes;
+                                axios.get('http://195.231.3.173:8080'+response.data.data[i].cadImage.href,{
+                                  headers:{
+                                    'key':this.$session.get("key")
+                                  }
+                                }).then(response =>{
+                                  
+                                  cad_bytes = response.data.data
+                                  filtered[i].cad = cad_bytes
+                                  filtered[i].loading = false
+                                  
+                                })
+                                
+                              }
+                              //console.log(filtered)
                               this.secret = filtered
                               this.loading= false
                               

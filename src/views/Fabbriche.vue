@@ -267,8 +267,9 @@
             >
               
               <v-card-title v-text="item.name"></v-card-title>
-              <v-card-subtitle>P.IVA {{item.piva}}</v-card-subtitle>
-              <v-card-text>{{item.location}}</v-card-text>
+              
+              <v-card-text> {{item.address}} <br> {{item.city}} {{item.province}}, {{item.region}}
+              <br> {{item.postalCode}} <br> {{item.country}}</v-card-text>
               <v-card-actions>
                 <v-container>
                   <v-row dense>
@@ -489,7 +490,7 @@ export default {
       country: '',
       state: '',
       city: '',
-      address: '',
+      address: ''
     }),
 
     watch: {
@@ -500,24 +501,29 @@ export default {
 
     mounted(){
     if(!this.$session.exists("fabbriche")){
-      axios.get('http://195.231.3.173:5002/v1/factories/',{
+      axios.get('http://195.231.3.173:8080/v1/factories/',{
         headers:{
           'key':this.$session.get("key")
         }
       }).then(response =>{
           
           
-          for(let i = 0;i<response.data.length;i++){
-            console.log(response.data)
-              //if(response.data[i].name != "prova"){
+          for(let i = 0;i<response.data.data.length;i++){
+              
               let str = "{ "
-              str += '"name": "'     + response.data[i].id + '" , '
-              str += '"location": "' + response.data[i].location + '", '
-              str += '"piva": "' + response.data[i].CustomerPiva + '" '
+              str += '"name": "'     + response.data.data[i].name + '" , '
+              str += '"address": "' + response.data.data[i].address + '" , '
+              str += '"city": "' +response.data.data[i].city + '" , '
+              str += '"province": "' +' ('  + response.data.data[i].province + ')' + '" , '
+              str += '"region": "' +response.data.data[i].region + '" , '
+              str += '"postalCode": "'+ response.data.data[i].postalCode  + '" , '
+              str +=  '"country": "'+response.data.data[i].country + '" '
               str+= " }"
               
               this.real_fabbriche.push(JSON.parse(str))
-              //}  
+
+              console.log(this.real_fabbriche[0].address)
+              
           }
           
           this.loading= false

@@ -245,7 +245,7 @@
             <v-card>
               
               <v-card-title v-text="item.name"></v-card-title>
-              <v-card-subtitle>P. IVA: {{item.piva}}</v-card-subtitle>
+              <v-card-subtitle>P. IVA: {{item.vat}}</v-card-subtitle>
               <v-card-text></v-card-text>
               <v-card-actions>
                 <v-container>
@@ -442,6 +442,7 @@ export default {
       valid: true,
       real_clienti: [],
       offset: true,
+      true: true,
       // Variabili per aggiungere cliente //
       name: '',
       vat: '',
@@ -454,22 +455,22 @@ export default {
     },
   mounted(){
     if(!this.$session.exists("clienti")){
-      axios.get('http://195.231.3.173:5002/v1/customers/',{
+      axios.get('http://195.231.3.173:8080/v1/customers/',{
         headers:{
           'key':this.$session.get("key")
         }
       }).then(response =>{
-          
-          for(let i = 0;i<response.data.length;i++){
-              if(response.data[i].name != "prova"){
+         
+          for(let i = 0;i<response.data.data.length;i++){
+              console.log(response.data.data[i].vat)
+              
               let str = "{ "
-              str += '"name": "'     + response.data[i].name + '" , '
-              str += '"active": "' + response.data[i].active + '", '
-              str += '"vat": "' + response.data[i].vat + '" '
+              str += '"name": "'     + response.data.data[i].name + '" , '
+              str += '"vat": "' + response.data.data[i].vat + '" '
               str+= " }"
               
               this.real_clienti.push(JSON.parse(str))
-              }  
+               
           }
           
           this.loading= false
