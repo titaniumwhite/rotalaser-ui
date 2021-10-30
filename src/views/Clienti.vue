@@ -332,7 +332,6 @@
                         <v-spacer></v-spacer>
 
                         <v-btn
-                          color="grey"
                           text
                           @click="dialog_modify = false">
                           Annulla
@@ -386,7 +385,6 @@
                         <v-spacer></v-spacer>
 
                         <v-btn
-                          color="grey"
                           text
                           @click="dialog_delete = false"
                         >

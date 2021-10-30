@@ -53,6 +53,109 @@
           <v-icon>mdi-filter</v-icon>
         </v-btn>
 
+        <v-dialog
+          v-model="dialog_submit"
+          max-width="600px"
+          :retain-focus="false"
+        >
+          <template #activator="{ on: dialog_submit }">
+          <v-tooltip bottom>
+          <template v-slot:activator="{ on: tooltip_add }">
+            <v-btn
+              icon
+              color="secondary"
+              v-on="{ ...tooltip_add, ...dialog_submit }"
+            >
+            <v-icon>mdi-database-plus</v-icon>
+            </v-btn>
+          </template>
+            <span>Aggiungi fustella</span>
+          </v-tooltip>
+        </template>
+
+          
+          <v-card>
+            <v-form v-model="valid">
+
+            <v-card-title class="text-h5">
+              <b>Aggiungi fustella</b>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                
+                  <v-col cols="12">
+                    <v-text-field
+                      label="Identificativo MAC"
+                      v-model="id"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-text-field
+                      label="Nominativo fustella"
+                      v-model="cadName"
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      required
+                      color="secondary"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-select
+                      label="Fabbrica"
+                      v-model="FactoryId"
+                      :items="factories"
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      required
+                      color="secondary"
+                      item-color="secondary"                     
+                    ></v-select>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-file-input
+                      label="CAD"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      prepend-icon="mdi-file-cad"
+                      color="secondary"
+                    ></v-file-input>
+                  </v-col>
+                  
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+
+              <v-btn
+                text
+                @click="dialog_submit = false"
+              >
+                Annulla
+              </v-btn>
+
+              <v-btn
+                color="green darken-1"
+                text
+                :disabled="!valid"
+                @click="submit_client"
+              >
+                Conferma
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+
+          </v-card>
+
+        </v-dialog>
+
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -232,16 +335,16 @@ export default {
       dialog: false,
       group: null,
       loading: true,
-      text: "Clienti",
-      fustelle: [
-        { message: 'Fustella 1',flex:4 },
-        { message: 'Fustella 2',flex:4 },
-        { message: 'Fustella 3',flex:4 },
-        { message: 'Fustella 4',flex:4 },
-        { message: 'Fustella 5',flex:4 },
-        { message: 'Fustella 6',flex:4 },
-      ],
-      secret: null
+      dialog_submit: false,
+      secret: null,
+      valid: false,
+
+      // Variabili per modifica fustella//
+      factories: [],
+      id: '', 
+      cadName: '',
+      FactoryId: '',
+      cadFile: ''
     }),
 
     watch: {
@@ -307,6 +410,19 @@ export default {
           this.loading= false 
         }
 
+        axios.get('http://195.231.3.173:5002/v1/factories',{
+          headers:{
+            'key':this.$session.get("key")
+          }
+        }).then(response =>{     
+          for (let i = 0; i < response.data.length; i++) {
+            this.factories[i] = response.data[i].id
+          }
+          }).catch( (error) => {
+            console.log(error)
+            this.$router.push("/")
+        })
+
     },
     methods: {
       // when blur the searchbox, if there is no text, just make the box disappear
@@ -315,9 +431,23 @@ export default {
           this.searching =! this.searching
         }
       },
+
       alarm () {
         alert('ATTENZIONE\nQuesta funzionalità ancora non è attiva')
       },
+
+      submit_diecutter: function() {
+        axios.post('http://195.231.3.173:8080/v1/diecutters/', { 
+          id: this.id, 
+          cadName: this.cadName,
+          FactoryId: this.FactoryId,
+          cadFile: this.cadFile
+        })
+        .then(
+          response => this.responseData = response.data,
+          this.dialog_submit = false
+        )
+      }
     }
 };
 </script>
