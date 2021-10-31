@@ -456,7 +456,7 @@ export default {
     },
   mounted(){
     if(!this.$session.exists("clienti")){
-      this.get_all_clients()
+      this.update_clients_array()
     }else{
       this.real_clienti = this.$session.get("clienti")
       this.loading= false 
@@ -471,7 +471,7 @@ export default {
       }
     },
 
-    get_all_clients: function() {
+    update_clients_array: function() {
       axios.get('http://195.231.3.173:8080/v1/customers/',{
         headers:{
           'key':this.$session.get("key")
@@ -479,13 +479,12 @@ export default {
       }).then(response =>{
           this.real_clienti = []
           for(let i = 0;i<response.data.data.length;i++){
-
+            console.log(response.data.data.length)
             this.real_clienti.push(JSON.parse(this.client_parser(response.data.data[i].id, response.data.data[i].name, response.data.data[i].vat)))
-               
+            console.log(this.real_clienti)
           }
           
           this.loading= false
-          
           this.$session.set("clienti",this.real_clienti)
           
         }).catch( (error) => {
@@ -504,13 +503,13 @@ export default {
         },
       })
       .then(
-        response => this.responseData = response.data,
-        this.dialog_submit = false,
-
-        // take again the clients to save in the storage the id of the new client
-        this.get_all_clients()
+        response => { 
+          this.responseData = response.data
+          this.dialog_delete = false
+          // take again the clients to save in the storage the id of the new client
+          this.update_clients_array()
+        }
       )
-
       
     },
 
@@ -548,29 +547,26 @@ export default {
         response => { 
           this.responseData = response.data,
           this.dialog_delete = false
-          let new_storage = this.removeByAttr(this.$session.get("clienti"), 'id', id)
-          this.$session.set("clienti", new_storage)
-          console.log(new_storage)
+          this.delete_from_storage(id)
         }
-        
       )
-      this.force_rendering()
-
     },
 
-    // Remove an object from a list by knowing an attribute 
-    removeByAttr: function(arr, attr, value){
-      var i = arr.length;
-      while(i--){
-          if( arr[i] 
-              && arr[i][attr]
-              && (arguments.length > 2 && arr[i][attr] === value ) ){ 
+    delete_from_storage: function(id) {
+      let old_storage = this.$session.get("clienti")
+      let index = -1
 
-              arr.splice(i,1);
-
-          }
+      for (let i = 0; i < old_storage.length; i++) {
+        if (old_storage[i].id === id) index = i;
       }
-      return arr;
+      
+      if (index === -1) {
+        console.error("Errore nell'eliminazione di un utente")
+        return
+      }
+
+      this.real_clienti.splice(index, 1)
+      this.$session.set("clienti", this.real_clienti)
     },
 
     client_parser: function(id, name, vat) {
@@ -581,14 +577,6 @@ export default {
       str+= " }"
 
       return str;
-    },
-
-    force_rendering: function() {
-      this.render += 1
-    },
-
-    reset: function() {
-      this.$refs.textareaform.reset()
     },
   },
 
