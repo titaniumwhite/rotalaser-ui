@@ -390,7 +390,7 @@
                                 :items="customers_name"
                                 label="Cliente"
                                 required
-                                :rules="rules"
+                                :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
                                 color="secondary"
                                 item-color="secondary"
                               ></v-select>
@@ -535,7 +535,7 @@ export default {
       }).then(response =>{
           
           
-          for(let i = 0;i<response.data.data.length;i++){
+          for(let i = 0;i<response.data.length;i++){
               
               let str = "{ "
               str += '"name": "'     + response.data.data[i].name + '" , '
@@ -603,13 +603,16 @@ export default {
         }
 
         axios.post('http://195.231.3.173:8080/v1/factories/', { 
+          headers:{
+            'key':this.$session.get("key")
+          },
           name: this.name, 
           country: this.country,
           state: this.state,
           city: this.city,
           address: this.address,
           customerId: chosen_customerId
-        })
+        }, {})
         .then(
           response => this.responseData = response.data,
           this.dialog_submit = false
@@ -617,7 +620,8 @@ export default {
       },
 
       modify_factory: function() {
-        axios.post('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id, { 
+        axios.post('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id, {
+          
           name: this.name, 
           country: this.country,
           state: this.state,

@@ -236,19 +236,19 @@
         <v-row dense>
           <v-col 
             v-for="item in real_clienti"
-            :key="item.name"
+            :key="item.id"
             lg="4"
             md="4"
             sm="12"
             cols="12"
           >
-            <v-card>
+            <v-card >
               
               <v-card-title v-text="item.name"></v-card-title>
               <v-card-subtitle>P. IVA: {{item.vat}}</v-card-subtitle>
               <v-card-text></v-card-text>
               <v-card-actions>
-                <v-container>
+                <v-container :key="render">
                 <v-row>
                   <v-col
                     lg="6"
@@ -394,7 +394,8 @@
                         <v-btn
                           color="error"
                           text
-                          @click="delete_client"
+                          v-model="name"
+                          @click="delete_client(item.id)"
                         >
                           Elimina
                         </v-btn>
@@ -441,9 +442,11 @@ export default {
       real_clienti: [],
       offset: true,
       true: true,
+      render: 0,
       // Variabili per aggiungere cliente //
       name: '',
       vat: '',
+      id: ''
     }),
 
     watch: {
@@ -453,31 +456,7 @@ export default {
     },
   mounted(){
     if(!this.$session.exists("clienti")){
-      axios.get('http://195.231.3.173:8080/v1/customers/',{
-        headers:{
-          'key':this.$session.get("key")
-        }
-      }).then(response =>{
-         
-          for(let i = 0;i<response.data.data.length;i++){
-              
-              let str = "{ "
-              str += '"name": "'     + response.data.data[i].name + '" , '
-              str += '"vat": "' + response.data.data[i].vat + '" '
-              str+= " }"
-              
-              this.real_clienti.push(JSON.parse(str))
-               
-          }
-          
-          this.loading= false
-          
-          this.$session.set("clienti",this.real_clienti)
-          
-        }).catch( (error) => {
-          console.log(error)
-          this.$router.push("/")
-        })
+      this.get_all_clients()
     }else{
       this.real_clienti = this.$session.get("clienti")
       this.loading= false 
@@ -492,21 +471,57 @@ export default {
       }
     },
 
+    get_all_clients: function() {
+      axios.get('http://195.231.3.173:8080/v1/customers/',{
+        headers:{
+          'key':this.$session.get("key")
+        }
+      }).then(response =>{
+          this.real_clienti = []
+          for(let i = 0;i<response.data.data.length;i++){
+
+            this.real_clienti.push(JSON.parse(this.client_parser(response.data.data[i].id, response.data.data[i].name, response.data.data[i].vat)))
+               
+          }
+          
+          this.loading= false
+          
+          this.$session.set("clienti",this.real_clienti)
+          
+        }).catch( (error) => {
+          console.log(error)
+          this.$router.push("/")
+        })
+    },
+
     submit_client: function() {
-      axios.post('http://195.231.3.173:8080/v1/customers/', { 
+      axios.post('http://195.231.3.173:8080/v1/customers/', {
         name: this.name, 
         vat: this.vat
+      }, {
+        headers: {
+          'key':this.$session.get("key")
+        },
       })
       .then(
         response => this.responseData = response.data,
-        this.dialog_submit = false
+        this.dialog_submit = false,
+
+        // take again the clients to save in the storage the id of the new client
+        this.get_all_clients()
       )
+
+      
     },
 
     modify_client: function() {
-      axios.post('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id, { 
+      axios.put('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id, { 
         name: this.name, 
         vat: this.vat
+      }, {
+        headers: {
+          'key':this.$session.get("key")
+        },
       })
       .then(
         response => this.responseData = response.data,
@@ -514,12 +529,62 @@ export default {
       )
     },
 
-    delete_client: function() {
-      axios.delete('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id)
+    delete_client: function(id) {
+      
+      console.log("il nome è" + id)
+
+      if (typeof id === undefined || id === '') {
+        console.error("Errore durante l'eliminazione del cliente")
+        return
+      }
+
+      console.log(id)
+      axios.delete('http://195.231.3.173:8080/v1/customers/'+id, {
+        headers: {
+          'key':this.$session.get("key")
+        },
+      })
       .then(
-        response => this.responseData = response.data,
-        this.dialog_delete = false
+        response => { 
+          this.responseData = response.data,
+          this.dialog_delete = false
+          let new_storage = this.removeByAttr(this.$session.get("clienti"), 'id', id)
+          this.$session.set("clienti", new_storage)
+          console.log(new_storage)
+        }
+        
       )
+      this.force_rendering()
+
+    },
+
+    // Remove an object from a list by knowing an attribute 
+    removeByAttr: function(arr, attr, value){
+      var i = arr.length;
+      while(i--){
+          if( arr[i] 
+              && arr[i][attr]
+              && (arguments.length > 2 && arr[i][attr] === value ) ){ 
+
+              arr.splice(i,1);
+
+          }
+      }
+      return arr;
+    },
+
+    client_parser: function(id, name, vat) {
+      let str = "{ "
+      str += '"id": "' + id + '", '
+      str += '"name": "'     + name + '" , '
+      str += '"vat": "' + vat + '" '
+      str+= " }"
+
+      return str;
+    },
+
+    force_rendering: function() {
+      this.render += 1
     },
 
     reset: function() {

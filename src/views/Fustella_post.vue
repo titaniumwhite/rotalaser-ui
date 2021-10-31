@@ -33,6 +33,116 @@
         
         <v-spacer></v-spacer>
 
+        <v-dialog
+          v-model="dialog_modify"
+          max-width="600px"
+          :retain-focus="false"
+        >
+          <template #activator="{ on: dialog_modify }">
+          <v-tooltip bottom>
+          <template v-slot:activator="{ on: tooltip_add }">
+            <v-btn
+              icon
+              color="secondary"
+              v-on="{ ...tooltip_add, ...dialog_modify }"
+            >
+            <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+          </template>
+            <span>Modifica fustella</span>
+          </v-tooltip>
+        </template>
+
+          <v-card>
+            <v-form v-model="valid">
+
+            <v-card-title class="text-h5">
+              <b>Modifica fustella</b>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                
+                  <v-col cols="12">
+                    <v-text-field
+                        v-model="chosen_diecuttername"
+                        label="Nome fustella"
+                        required
+                        outlined
+                        :rules="rules"
+                        color="secondary"
+                      ></v-text-field>
+                  </v-col>
+
+                  <v-col
+                    cols="12"
+                  >
+                    <v-select
+                        v-model="chosen_customer"
+                        :items="customers_name"
+                        label="Cliente"
+                        required
+                        :rules="rules"
+                        v-on:change="get_factory_of_customer"
+                        color="secondary"
+                        item-color="secondary"
+                      ></v-select>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-select
+                        v-model="chosen_factory"
+                        :items="customer_factories"
+                        :key="render"
+                        label="Fabbrica"
+                        required
+                        :rules="rules"
+                        :disabled="!selectCustomer"
+                        color="secondary"
+                        item-color="secondary"
+                      ></v-select>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-file-input
+                      label="CAD"
+                      required
+                      :rules="rules"
+                      prepend-icon="mdi-file-cad"
+                      color="secondary"
+                    ></v-file-input>
+                  </v-col>
+
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+
+              <v-btn
+                text
+                @click="dialog_modify = false"
+              >
+                Annulla
+              </v-btn>
+
+              <v-btn
+                color="green darken-1"
+                text
+                :disabled="!valid"
+                @click="submit_factory"
+              >
+                Salva
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+
+          </v-card>
+
+        </v-dialog>
+
         <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -40,6 +150,7 @@
                 v-bind="attrs"
                 v-on="on"
                 @click="$router.push('/')"
+                color="secondary"
                 >
                 <v-icon>mdi-logout-variant</v-icon>
                 </v-btn>
