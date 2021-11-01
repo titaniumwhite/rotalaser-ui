@@ -66,7 +66,6 @@
               icon
               color="secondary"
               v-on="{ ...tooltip_add, ...dialog_submit }"
-              @click="save_id(editing_customer_id)"
             >
             <v-icon>mdi-account-plus</v-icon>
             </v-btn>
@@ -342,7 +341,7 @@
                         <v-btn
                           color="green darken-1"
                           text
-                          @click="modify_client">
+                          @click="modify_client(editing_customer_id, editing_customer_name, editing_customer_vat)">
                           Salva
                         </v-btn>
 
@@ -447,6 +446,7 @@ export default {
       render: 0,
       editing_customer_id: '',
       editing_customer_name: '',
+      editing_customer_vat: '',
       // Variabili per aggiungere cliente //
       name: '',
       vat: '',
@@ -519,7 +519,7 @@ export default {
       
     },
 
-    modify_client: function() {
+    modify_client: function(id, name, vat) {
       axios.put('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id, { 
         name: this.name, 
         vat: this.vat
@@ -529,8 +529,11 @@ export default {
         },
       })
       .then(
-        response => this.responseData = response.data,
-        this.dialog_modify = false
+        response => { 
+          this.responseData = response.data,
+          this.dialog_modify = false
+          this.modify_from_storage(id, name, vat)
+        }
       )
     },
 
@@ -571,6 +574,25 @@ export default {
       }
 
       this.real_clienti.splice(index, 1)
+      this.$session.set("clienti", this.real_clienti)
+    },
+
+    modify_from_storage: function(id, name, vat) {
+      let old_storage = this.$session.get("clienti")
+      let index = -1
+
+      for (let i = 0; i < old_storage.length; i++) {
+        if (old_storage[i].id === id) index = i;
+      }
+      
+      if (index === -1) {
+        console.error("Errore nell'eliminazione di un utente")
+        return
+      }
+
+      this.real_clienti.splice(index, 1)
+
+      this.real_clienti.push(this.client_parser(id, name, vat))
       this.$session.set("clienti", this.real_clienti)
     },
 
