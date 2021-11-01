@@ -170,7 +170,7 @@
         <v-container fluid >
           <div class="text-center">
               <v-progress-circular
-              v-if="loading"
+              v-if="loading || annotation_loading"
               :size="50"
               color="secondary"
               indeterminate
@@ -269,7 +269,8 @@
           </v-fade-transition>
           <v-fade-transition>
           <!-- PAGINA GRAFICI -->
-          <v-card v-if="!loading && !err && item=='grafici'">
+          
+          <v-card v-if="!loading && !err && item=='grafici' && !annotation_loading">
           <v-card-title>Fustella {{$route.params.id}}</v-card-title>
             <v-row centered>
 

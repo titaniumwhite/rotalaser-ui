@@ -30,6 +30,12 @@ import axios from 'axios'
         numero_sessione : -1,
         from: 0,
         to: 0,
+        from_: [],
+        to_: [],
+        dialog_modify: false,
+        first_session: 0,
+        last_session:0,
+        annotation_loading : true,
         
 
         /* data per pagina 'modifica' */
@@ -73,7 +79,7 @@ import axios from 'axios'
                     
                     console.log(event.target.innerHTML)
                 
-                    this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[1]))
+                    this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[2]))
                 }
             },
             //group: 'sync',
@@ -156,7 +162,7 @@ import axios from 'axios'
                 
                 console.log(event.target.innerHTML)
             
-                this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[1]))
+                this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[2]))
               }
             },
             //group: 'sync',
@@ -470,8 +476,12 @@ import axios from 'axios'
       };
     },
     mounted(){
-          if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id)){
-            console.log(this.$route.params.id)
+      axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/sessions/latest',{
+        headers:{
+          'key':this.$session.get("key")
+        }
+      }).then(response =>{this.last_session = response.data.data.id})
+          if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id) && this.true){
             axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/measurements',{
               headers:{
                 'key':this.$session.get("key")
@@ -491,7 +501,6 @@ import axios from 'axios'
 
                                 this.got = response.data.data
 
-                                console.log(this.got)
 
                                 if(this.got.length<1){
                                   this.loading = false
@@ -514,6 +523,7 @@ import axios from 'axios'
                                 let last_session = -1
                                 let total_session = 0
 
+                                /* Buffer measurement per session */
                                 let temp_t_list_ses = []
                                 let temp_h_list_ses = []
                                 let temp_s_list_ses = []
@@ -530,11 +540,16 @@ import axios from 'axios'
 
                                   let session_started = false
                                   
+                                  
+                                  if(this.got[i].session.id !==0 && this.first_session === 0){
+                                    this.first_session = this.got[i].session.id
+                                  }
                                  
                                   let time = new Date(this.got[i].timestamp)
 
                        
                                   if(!isNaN(time)){
+                                    
                                     
                                     //time.setHours(time.getHours() + 2);
                                    
@@ -572,20 +587,63 @@ import axios from 'axios'
                                       total_session+= 1
 
                                       last_session = parseInt(this.got[i].session.id)
-                                      
-                                      let curr_text =     '{'+
-                                                            '"x": '+ time.getTime() +
+
+
+                                      axios.get('http://195.231.3.173:8080'+ this.got[i].session.href,{
+                                        headers:{
+                                          'key':this.$session.get("key")
+                                        }
+                                      }).then(response =>{
+
+                                    
+    
+                                        let time_start  = new Date(response.data.data.startedAt)
+                                        let time_finish = new Date(response.data.data.endedAt)
+                                        let session_number = response.data.data.id - this.first_session
+                                        
+                                        this.from_[session_number] = time_start
+                                        this.to_[session_number] = time_finish
+                                        
+
+                                        let curr_text =     '{'+
+                                                            '"x": '+ time_start.getTime() +
                                                             ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
                                                             '"label": {' +
                                                               '"borderColor": "#ff6090", "style":{' +
                                                                 '"color": "#fff", "background": "#ff6090"' +
                                                                 '},'+
-                                                              '"text":"'+ "Sessione " + total_session 
+                                                              '"text":"'+ "Inizio sessione " + session_number
                                                             +'"}'
                                                           +'}'
 
                                       
-                                      annotation_text.push(JSON.parse(curr_text))
+                                        annotation_text.push(JSON.parse(curr_text))
+
+                                        curr_text =     '{'+
+                                          '"x": '+ time_finish.getTime() +
+                                          ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
+                                          '"label": {' +
+                                            '"borderColor": "#ff6090", "style":{' +
+                                              '"color": "#fff", "background": "#ff6090"' +
+                                              '},'+
+                                            '"text":"'+ "Fine sessione " +  session_number 
+                                          +'"}'
+                                        +'}'
+
+                
+                                        annotation_text.push(JSON.parse(curr_text))
+
+                                        this.$session.set("text",annotation_text)
+                                        this.$session.set("from_",this.from_)
+                                        this.$session.set("to_",this.to_)
+
+                                        if(response.data.data.id == this.last_session){
+                                          this.annotation_loading = false
+                                        }
+
+                                      })
+                                      
+                                      
                                       
                                     }
 
@@ -652,7 +710,7 @@ import axios from 'axios'
                                 this.$session.set("temperature",temperatureSesData)
                                 this.$session.set("humidity",humiditySesData)
                                 this.$session.set("id",this.$route.params.id)
-                                this.$session.set("text",annotation_text)
+                                
                                 this.$session.set("min",my_min)
                                 this.$session.set("max",my_max)
                                 this.$session.set("total_errors",total_errors)
@@ -741,8 +799,8 @@ import axios from 'axios'
               }
             }).then(response =>{
             
-                this.cad = response.data.cadimage
-                this.$session.set("cad",response.data.cadimage)
+                this.cad = response.data.data
+                this.$session.set("cad",this.cad)
 
             }).catch( (error) => {
                 console.log(error)
@@ -761,7 +819,7 @@ import axios from 'axios'
                 token[1] = response.data.data[i].name
                 this.customers_name[i] = response.data.data[i].name 
                 this.customers.push(token)
-                console.log(this.customers)
+                
               }
 
               this.$session.set("customers_name",JSON.stringify(this.customers_name))
@@ -777,7 +835,8 @@ import axios from 'axios'
           }else{
               this.cad =this.$session.get("cad")
 
-              console.log( this.$session.get("total_errors"))
+              this.from_ = this.$session.get("from_")
+              this.to_ = this.$session.get("to_")
               this.total_rotations = this.$session.get("total_rotations")
               this.total_errors = this.$session.get("total_errors")
               this.total_sessions = this.$session.get("total_sessions")
@@ -837,6 +896,7 @@ import axios from 'axios'
               }
             }
               this.loading=false 
+              this.annotation_loading = false
           }
          
 
@@ -930,8 +990,8 @@ import axios from 'axios'
         this.numero_sessione = n
 
    
-        this.from = this.timeConverter(this.seriesAreaTemperatureSes[n-1][0].x)
-        this.to   = this.timeConverter(this.seriesAreaTemperatureSes[n-1][this.seriesAreaTemperatureSes[n-1].length-1].x)
+        this.from = this.timeConverter(this.from_[n-1])
+        this.to   = this.timeConverter(this.to_[n-1])
 
         this.seriesAreaTemperature = [{
           name: "Temperatura",
@@ -951,6 +1011,41 @@ import axios from 'axios'
         this.ses =  true
         this.ses_loading = false
       },
+      
+
+      submit_factory: function() {
+        axios.post('http://195.231.3.173:8080/v1/factories/', { 
+          name: this.name, 
+          country: this.country,
+          state: this.state,
+          city: this.city,
+          address: this.address
+        })
+        .then(
+          response => this.responseData = response.data,
+          this.dialog_submit = false
+        )
+      },
+      modify_factory: function() {
+        axios.post('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id, { 
+          name: this.name, 
+          country: this.country,
+          state: this.state,
+          city: this.city,
+          address: this.address
+        })
+        .then(
+          response => this.responseData = response.data,
+          this.dialog_modify = false
+        )
+      },
+      delete_factory: function() {
+        axios.delete('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id)
+        .then(
+          response => this.responseData = response.data,
+          this.dialog_delete = false
+        )
+      }
     },
   };
 
