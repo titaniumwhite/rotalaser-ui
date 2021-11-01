@@ -66,6 +66,7 @@
               icon
               color="secondary"
               v-on="{ ...tooltip_add, ...dialog_submit }"
+              @click="save_id(editing_customer_id)"
             >
             <v-icon>mdi-account-plus</v-icon>
             </v-btn>
@@ -76,7 +77,7 @@
 
           
           <v-card>
-            <v-form v-model="valid">
+            <v-form v-model="valid" ref="submit_form">
 
             <v-card-title class="text-h5">
               <b>Aggiungi cliente</b>
@@ -126,7 +127,7 @@
                 :disabled="!valid"
                 @click="submit_client"
               >
-                Salva
+                Conferma
               </v-btn>
             </v-card-actions>
           </v-form>
@@ -285,6 +286,7 @@
                         icon
                         color="secondary"
                         v-on="{ ...tooltip1, ...dialog_modify }"
+                        @click="save_id(item.id)"
                       >
                       <v-icon>mdi-pencil</v-icon>
                       </v-btn>
@@ -296,7 +298,7 @@
 
                     <v-card>
                       <v-card-title>
-                        <span class="text-h5"><b>Modifica {{item.name}}</b></span>
+                        <span class="text-h5"><b>Modifica {{editing_customer_name}}</b></span>
                       </v-card-title>
                       <v-card-text>
                         <v-container>
@@ -362,6 +364,7 @@
                         icon
                         color="secondary"
                         v-on="{ ...tooltip2, ...dialog_delete }"
+                        @click="save_id(item.id)"
                       >
                       <v-icon>mdi-delete</v-icon>
                       </v-btn>
@@ -373,11 +376,11 @@
 
                     <v-card>
                       <v-card-title class="text-h5">
-                        <b>Elimina {{item.name}}</b>
+                        <b>Elimina {{editing_customer_name}}</b>
                       </v-card-title>
 
                       <v-card-text>
-                        Sei sicuro di voler eliminare {{item.name}}? <br>
+                        Sei sicuro di voler eliminare {{editing_customer_name}}? <br>
                         <b> Il processo è irreversibile e comporterà l'eliminazione di tutti i dati associati al cliente.</b>
                       </v-card-text>
 
@@ -394,8 +397,7 @@
                         <v-btn
                           color="error"
                           text
-                          v-model="name"
-                          @click="delete_client(item.id)"
+                          @click="delete_client(editing_customer_id)"
                         >
                           Elimina
                         </v-btn>
@@ -435,7 +437,7 @@ export default {
       dialog_submit: false,
       vat_rule: [
         p => !!p || 'È obbligatorio compilare questo campo',
-        p => (p.length == 11 && new RegExp('^\\d+$').test(p)) || 'La Partita IVA inserita non è valida', 
+        p => (p && p.length == 11 && new RegExp('^\\d+$').test(p)) || 'La Partita IVA inserita non è valida', 
       ],
       loading: true,
       valid: true,
@@ -443,10 +445,12 @@ export default {
       offset: true,
       true: true,
       render: 0,
+      editing_customer_id: '',
+      editing_customer_name: '',
       // Variabili per aggiungere cliente //
       name: '',
       vat: '',
-      id: ''
+      id: null
     }),
 
     watch: {
@@ -503,9 +507,11 @@ export default {
         },
       })
       .then(
-        response => { 
+        (response) => { 
           this.responseData = response.data
-          this.dialog_delete = false
+          this.dialog_submit = false
+
+          this.$refs.submit_form.reset();
           // take again the clients to save in the storage the id of the new client
           this.update_clients_array()
         }
@@ -530,14 +536,13 @@ export default {
 
     delete_client: function(id) {
       
-      console.log("il nome è" + id)
+      console.log("l'id è" + id)
 
       if (typeof id === undefined || id === '') {
         console.error("Errore durante l'eliminazione del cliente")
         return
       }
 
-      console.log(id)
       axios.delete('http://195.231.3.173:8080/v1/customers/'+id, {
         headers: {
           'key':this.$session.get("key")
@@ -578,6 +583,18 @@ export default {
 
       return str;
     },
+
+    save_id: function(id) {
+      this.editing_customer_id = id;
+      console.log("Il customer id è " + this.editing_customer_id)
+      this.get_name_by_id(id);
+    },
+
+    get_name_by_id: function(id) {
+      for (let i = 0; i < this.real_clienti.length; i++) {
+        if (this.real_clienti[i].id === id) this.editing_customer_name = this.real_clienti[i].name
+      }
+    }
   },
 
 };
