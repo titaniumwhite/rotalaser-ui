@@ -108,7 +108,7 @@
                   <v-col cols="6">
                     <v-text-field
                       label="Regione"
-                      v-model="state"
+                      v-model="region"
                       required
                       :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
                       color="secondary"
@@ -270,7 +270,7 @@
         <v-row dense>
           <v-col 
             v-for="item in real_fabbriche"
-            :key="item.name"
+            :key="item.id"
             lg="4"
             md="4"
             sm="12"
@@ -362,7 +362,7 @@
                               <v-text-field
                                 label="Regione"
                                 required
-                                :value="item.state"
+                                :value="item.region"
                                 color="secondary"
                               ></v-text-field>
                             </v-col>
@@ -511,9 +511,11 @@ export default {
       // Variabili per aggiungere fabbrica //
       name: '',
       country: '',
-      state: '',
+      region: '',
+      province: '',
       city: '',
       address: '',
+      postalCode: '',
       customerId: '',
       chosen_customer: '',
       customers: [],
@@ -535,7 +537,7 @@ export default {
       }).then(response =>{
           
           
-          for(let i = 0;i<response.data.length;i++){
+          for(let i = 0;i<response.data.data.length;i++){
               
               let str = "{ "
               str += '"name": "'     + response.data.data[i].name + '" , '
@@ -546,6 +548,8 @@ export default {
               str += '"postalCode": "'+ response.data.data[i].postalCode  + '" , '
               str +=  '"country": "'+response.data.data[i].country + '" '
               str+= " }"
+
+              console.log(str)
               
               this.real_fabbriche.push(JSON.parse(str))
 
@@ -608,7 +612,7 @@ export default {
           },
           name: this.name, 
           country: this.country,
-          state: this.state,
+          region: this.region,
           city: this.city,
           address: this.address,
           customerId: chosen_customerId
@@ -624,7 +628,7 @@ export default {
           
           name: this.name, 
           country: this.country,
-          state: this.state,
+          region: this.region,
           city: this.city,
           address: this.address,
           customerId: this.customerId
@@ -645,4 +649,3 @@ export default {
     }
 };
 </script>
-

@@ -76,7 +76,11 @@
 
           
           <v-card>
-            <v-form v-model="valid" ref="submit_form">
+            <v-form 
+              v-model="valid" 
+              ref="submit_form"
+              @submit.prevent="submit_client"
+            >
 
             <v-card-title class="text-h5">
               <b>Aggiungi cliente</b>
@@ -124,7 +128,7 @@
                 color="green darken-1"
                 text
                 :disabled="!valid"
-                @click="submit_client"
+                type="submit"
               >
                 Conferma
               </v-btn>
@@ -285,7 +289,7 @@
                         icon
                         color="secondary"
                         v-on="{ ...tooltip1, ...dialog_modify }"
-                        @click="save_id(item.id)"
+                        @click="get_data_to_edit(item.id)"
                       >
                       <v-icon>mdi-pencil</v-icon>
                       </v-btn>
@@ -296,8 +300,13 @@
 
 
                     <v-card>
+                      <v-form 
+                        v-model="valid" 
+                        ref="submit_form"
+                        @submit.prevent="modify_client(editing_customer_id)"
+                      >
                       <v-card-title>
-                        <span class="text-h5"><b>Modifica {{editing_customer_name}}</b></span>
+                        <span class="text-h5"><b>Modifica</b></span>
                       </v-card-title>
                       <v-card-text>
                         <v-container>
@@ -307,7 +316,9 @@
                             >
                               <v-text-field
                                 label="Nome"
+                                v-model="editing_customer_name"
                                 required
+                                :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
                                 :value="item.name"
                                 color="secondary"
                               ></v-text-field>
@@ -319,6 +330,8 @@
                               <v-text-field
                                 label="Partita IVA"
                                 required
+                                v-model="editing_customer_vat"
+                                :rules="vat_rule"
                                 :value="item.vat"
                                 color="secondary"
                               ></v-text-field>
@@ -341,11 +354,14 @@
                         <v-btn
                           color="green darken-1"
                           text
-                          @click="modify_client(editing_customer_id, editing_customer_name, editing_customer_vat)">
-                          Salva
+                          type="submit"
+                          :disabled="!valid"
+                        >
+                          Conferma
                         </v-btn>
 
                       </v-card-actions>
+                    </v-form>
                     </v-card>
 
                   </v-dialog>
@@ -363,7 +379,7 @@
                         icon
                         color="secondary"
                         v-on="{ ...tooltip2, ...dialog_delete }"
-                        @click="save_id(item.id)"
+                        @click="get_data_to_edit(item.id)"
                       >
                       <v-icon>mdi-delete</v-icon>
                       </v-btn>
@@ -483,9 +499,7 @@ export default {
       }).then(response =>{
           this.real_clienti = []
           for(let i = 0;i<response.data.data.length;i++){
-            console.log(response.data.data.length)
             this.real_clienti.push(JSON.parse(this.client_parser(response.data.data[i].id, response.data.data[i].name, response.data.data[i].vat)))
-            console.log(this.real_clienti)
           }
           
           this.loading= false
@@ -510,7 +524,8 @@ export default {
         (response) => { 
           this.responseData = response.data
           this.dialog_submit = false
-
+          
+          this.$refs.submit_form.validate();
           this.$refs.submit_form.reset();
           // take again the clients to save in the storage the id of the new client
           this.update_clients_array()
@@ -519,10 +534,16 @@ export default {
       
     },
 
-    modify_client: function(id, name, vat) {
-      axios.put('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id, { 
-        name: this.name, 
-        vat: this.vat
+    modify_client: function(id) {
+      console.log("L'id in modify è " + id)
+      if (typeof id === undefined || id === '') {
+        console.error("Errore durante l'eliminazione del cliente")
+        return
+      }
+
+      axios.put('http://195.231.3.173:8080/v1/customers/'+id, { 
+        name: this.editing_customer_name, 
+        vat: this.editing_customer_vat
       }, {
         headers: {
           'key':this.$session.get("key")
@@ -530,17 +551,17 @@ export default {
       })
       .then(
         response => { 
+          console.log("SRO QUAAA")
           this.responseData = response.data,
           this.dialog_modify = false
-          this.modify_from_storage(id, name, vat)
+          this.modify_from_storage(id, this.editing_customer_name, this.editing_customer_vat)
+          console.log(this.editing_customer_name + ' ' + this.editing_customer_vat)
         }
       )
     },
 
     delete_client: function(id) {
       
-      console.log("l'id è" + id)
-
       if (typeof id === undefined || id === '') {
         console.error("Errore durante l'eliminazione del cliente")
         return
@@ -606,17 +627,17 @@ export default {
       return str;
     },
 
-    save_id: function(id) {
+    get_data_to_edit: function(id) {
       this.editing_customer_id = id;
-      console.log("Il customer id è " + this.editing_customer_id)
-      this.get_name_by_id(id);
+
+      for (let i = 0; i < this.real_clienti.length; i++) {
+        if (this.real_clienti[i].id === id) {
+          this.editing_customer_name = this.real_clienti[i].name
+          this.editing_customer_vat = this.real_clienti[i].vat
+        }
+      }
     },
 
-    get_name_by_id: function(id) {
-      for (let i = 0; i < this.real_clienti.length; i++) {
-        if (this.real_clienti[i].id === id) this.editing_customer_name = this.real_clienti[i].name
-      }
-    }
   },
 
 };
