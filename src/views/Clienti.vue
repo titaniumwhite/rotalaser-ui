@@ -613,7 +613,7 @@ export default {
 
       this.real_clienti.splice(index, 1)
 
-      this.real_clienti.push(this.client_parser(id, name, vat))
+      this.real_clienti.push(JSON.parse(this.client_parser(id, name, vat)))
       this.$session.set("clienti", this.real_clienti)
     },
 

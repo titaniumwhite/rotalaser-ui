@@ -40,11 +40,11 @@
         >
           <template #activator="{ on: dialog_modify }">
           <v-tooltip bottom>
-          <template v-slot:activator="{ on: tooltip_add }">
+          <template v-slot:activator="{ on: tooltip_modify }">
             <v-btn
               icon
               color="secondary"
-              v-on="{ ...tooltip_add, ...dialog_modify }"
+              v-on="{ ...tooltip_modify, ...dialog_modify }"
             >
             <v-icon>mdi-pencil</v-icon>
             </v-btn>
@@ -139,6 +139,61 @@
             </v-card-actions>
           </v-form>
 
+          </v-card>
+
+        </v-dialog>
+
+        <v-dialog
+          v-model="dialog_delete"
+          max-width="600px"
+          :retain-focus="false"
+        >
+          <template #activator="{ on: dialog_delete }">
+          <v-tooltip bottom>
+          <template v-slot:activator="{ on: tooltip_delete }">
+            <v-btn
+              icon
+              color="secondary"
+              type="submit"
+              v-on="{ ...tooltip_delete, ...dialog_delete }"
+              @click="get_data_to_edit(item.id)"
+            >
+            <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+            <span>Elimina cliente</span>
+          </v-tooltip>
+        </template>
+
+
+          <v-card>
+            <v-card-title class="text-h5">
+              <b>Elimina {{editing_customer_name}}</b>
+            </v-card-title>
+
+            <v-card-text>
+              Sei sicuro di voler eliminare {{editing_customer_name}}? <br>
+              <b> Il processo è irreversibile e comporterà l'eliminazione di tutti i dati associati al cliente.</b>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+
+              <v-btn
+                text
+                @click="dialog_delete = false"
+              >
+                Annulla
+              </v-btn>
+
+              <v-btn
+                color="error"
+                text
+                @click="delete_client(editing_customer_id)"
+              >
+                Elimina
+              </v-btn>
+            </v-card-actions>
           </v-card>
 
         </v-dialog>
