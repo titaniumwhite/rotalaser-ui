@@ -345,8 +345,13 @@
 
 
                     <v-card>
+                      <v-form 
+                        v-model="valid" 
+                        ref="modify_form"
+                        @submit.prevent="modify_factory(editing_factory_id)"
+                      >
                       <v-card-title>
-                        <span class="text-h5"><b>Modifica {{item.name}}</b></span>
+                        <span class="text-h5"><b>Modifica {{editing_factory_name}}</b></span>
                       </v-card-title>
                       <v-card-text>
                         <v-container>
@@ -406,6 +411,7 @@
                                 label="Cliente"
                                 required
                                 :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                                :value="editing_factory_customerName"
                                 color="secondary"
                                 item-color="secondary"
                               ></v-select>
@@ -427,11 +433,12 @@
                         <v-btn
                           color="green darken-1"
                           text
-                          @click="modify_factory">
-                          Salva
+                          type="submit">
+                          Conferma
                         </v-btn>
 
                       </v-card-actions>
+                    </v-form>
                     </v-card>
 
                   </v-dialog>
@@ -533,6 +540,7 @@ export default {
       editing_factory_address: '',
       editing_factory_postalCode: '',
       editing_factory_customerId: '',
+      editing_factory_customerName: '',
       // Variabili per aggiungere fabbrica //
       name: '',
       country: '',
@@ -543,8 +551,8 @@ export default {
       postalCode: '',
       customerId: '',
       chosen_customer: '',
-      customers: [],
-      customers_name: []
+      customers_name: [],
+      customers_id: []
     }),
 
     watch: {
@@ -567,11 +575,8 @@ export default {
       }
     }).then(response =>{
       for(let i = 0; i < response.data.data.length; i++) {
-        let token = []
-        token[0] = response.data.data[i].id
-        token[1] = response.data.data[i].name
         this.customers_name[i] = response.data.data[i].name 
-        this.customers.push(token)
+        this.customers_id[i] = response.data.data[i].id 
       }
 
     }).catch( (error) => {
@@ -655,8 +660,8 @@ export default {
         )
       },
 
-      modify_factory: function() {
-        axios.post('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id, {
+      modify_factory: function(id) {
+        axios.post('http://195.231.3.173:8080/v1/factories/'+id, {
           
           name: this.name,
           country: this.country,
@@ -739,6 +744,14 @@ export default {
             this.editing_factory_address = this.real_factories[i].address
             this.editing_factory_postalCode = this.real_factories[i].postalCode
             this.editing_factory_customerId = this.real_factories[i].customerId
+            break
+          }
+        }
+
+        for (let i = 0; i < this.customers_id.length; i++) {
+          if (this.editing_factory_customerId === this.customers_id[i]) {
+            this.editing_factory_customerName = this.customers_name[i]
+            break
           }
         }
       },
