@@ -168,12 +168,12 @@
 
           <v-card>
             <v-card-title class="text-h5">
-              <b>Elimina {{editing_customer_name}}</b>
+              <b>Elimina {{diecutter_name}}</b>
             </v-card-title>
 
             <v-card-text>
-              Sei sicuro di voler eliminare {{editing_customer_name}}? <br>
-              <b> Il processo è irreversibile e comporterà l'eliminazione di tutti i dati associati al cliente.</b>
+              Sei sicuro di voler eliminare {{diecutter_name}}? <br>
+              <b> Il processo è irreversibile e comporterà l'eliminazione di tutti i dati associati alla fustella.</b>
             </v-card-text>
 
             <v-card-actions>
@@ -189,7 +189,6 @@
               <v-btn
                 color="error"
                 text
-                @click="delete_client(editing_customer_id)"
               >
                 Elimina
               </v-btn>

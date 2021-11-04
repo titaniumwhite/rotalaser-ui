@@ -73,7 +73,11 @@
         </template>
 
           <v-card>
-            <v-form v-model="valid">
+            <v-form 
+              v-model="valid" 
+              ref="submit_form"
+              @submit.prevent="submit_factory"
+            >
 
             <v-card-title class="text-h5">
               <b>Aggiungi fabbrica</b>
@@ -94,7 +98,7 @@
                   </v-col>
 
                   <v-col
-                    cols="6"
+                    cols="4"
                   >
                     <v-text-field
                       label="Stato"
@@ -105,7 +109,7 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="6">
+                  <v-col cols="4">
                     <v-text-field
                       label="Regione"
                       v-model="region"
@@ -115,7 +119,7 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="6">
+                  <v-col cols="4">
                     <v-text-field
                       label="Città"
                       v-model="city"
@@ -125,7 +129,7 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="6">
+                  <v-col cols="8">
                     <v-text-field
                       label="Indirizzo"
                       v-model="address"
@@ -134,6 +138,16 @@
                       color="secondary"
                     ></v-text-field>
                   </v-col>
+
+                  <v-col cols="4">
+                    <v-text-field
+                      label="Provincia"
+                      v-model="province"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
+                    ></v-text-field>
+                  </v-col>                  
 
                   <v-col cols="12">
                     <v-select
@@ -164,10 +178,10 @@
               <v-btn
                 color="green darken-1"
                 text
+                type="submit"
                 :disabled="!valid"
-                @click="submit_factory"
               >
-                Salva
+                Conferma
               </v-btn>
             </v-card-actions>
           </v-form>
@@ -269,7 +283,7 @@
         
         <v-row dense>
           <v-col 
-            v-for="item in real_fabbriche"
+            v-for="item in real_factories"
             :key="item.id"
             lg="4"
             md="4"
@@ -320,6 +334,7 @@
                         icon
                         color="secondary"
                         v-on="{ ...tooltip1, ...dialog_modify }"
+                        @click="get_data_to_edit(item.id)"
                       >
                       <v-icon>mdi-pencil</v-icon>
                       </v-btn>
@@ -433,6 +448,7 @@
                         icon
                         color="secondary"
                         v-on="{ ...tooltip2, ...dialog_delete }"
+                        @click="get_data_to_edit(item.id)"
                       >
                       <v-icon>mdi-delete</v-icon>
                       </v-btn>
@@ -444,11 +460,11 @@
 
                     <v-card>
                       <v-card-title class="text-h5">
-                        <b>Elimina {{item.name}}</b>
+                        <b>Elimina {{editing_factory_name}}</b>
                       </v-card-title>
 
                       <v-card-text>
-                        Sei sicuro di voler eliminare {{item.name}}? <br>
+                        Sei sicuro di voler eliminare {{editing_factory_name}}? <br>
                         <b> Il processo è irreversibile e comporterà l'eliminazione di tutti i dati associati alla fabbrica.</b>
                       </v-card-text>
 
@@ -465,7 +481,7 @@
                         <v-btn
                           color="error"
                           text
-                          @click="delete_factory"
+                          @click="delete_factory(editing_factory_id)"
                         >
                           Elimina
                         </v-btn>
@@ -503,11 +519,20 @@ export default {
       valid: true,
       loading: true,
       true: true,
-      real_fabbriche: [],
+      real_factories: [],
       items: [
         { title: 'Logout' },
       ],
       offset: true,
+      editing_factory_id: '',
+      editing_factory_name: '',
+      editing_factory_country: '',
+      editing_factory_region: '',
+      editing_factory_province: '',
+      editing_factory_city: '',
+      editing_factory_address: '',
+      editing_factory_postalCode: '',
+      editing_factory_customerId: '',
       // Variabili per aggiungere fabbrica //
       name: '',
       country: '',
@@ -530,43 +555,9 @@ export default {
 
     mounted(){
     if(!this.$session.exists("fabbriche")){
-      axios.get('http://195.231.3.173:8080/v1/factories/',{
-        headers:{
-          'key':this.$session.get("key")
-        }
-      }).then(response =>{
-          
-          
-          for(let i = 0;i<response.data.data.length;i++){
-              
-              let str = "{ "
-              str += '"name": "'     + response.data.data[i].name + '" , '
-              str += '"address": "' + response.data.data[i].address + '" , '
-              str += '"city": "' +response.data.data[i].city + '" , '
-              str += '"province": "' +' ('  + response.data.data[i].province + ')' + '" , '
-              str += '"region": "' +response.data.data[i].region + '" , '
-              str += '"postalCode": "'+ response.data.data[i].postalCode  + '" , '
-              str +=  '"country": "'+response.data.data[i].country + '" '
-              str+= " }"
-
-              console.log(str)
-              
-              this.real_fabbriche.push(JSON.parse(str))
-
-              console.log(this.real_fabbriche[0].address)
-              
-          }
-          
-          this.loading= false
-          
-          this.$session.set("fabbriche",this.real_fabbriche)
-          
-        }).catch( (error) => {
-          console.log(error)
-          this.$router.push("/")
-        })
+      this.update_factory_array();
     }else{
-      this.real_fabbriche = this.$session.get("fabbriche")
+      this.real_factories = this.$session.get("fabbriche")
       this.loading= false 
     }
 
@@ -598,6 +589,35 @@ export default {
         }
       },
 
+      update_factory_array: function() {
+        axios.get('http://195.231.3.173:8080/v1/factories/',{
+        headers:{
+          'key':this.$session.get("key")
+        }
+      }).then(response =>{
+          this.real_factories = []
+          for(let i = 0;i<response.data.data.length;i++){
+              this.real_factories.push(JSON.parse(this.factory_parser(response.data.data[i].id,
+                                                                      response.data.data[i].name,
+                                                                      response.data.data[i].country,
+                                                                      response.data.data[i].address,
+                                                                      response.data.data[i].region,
+                                                                      response.data.data[i].province,
+                                                                      response.data.data[i].city,
+                                                                      response.data.data[i].postalCode,
+                                                                      -1))) // da sistemare customerId
+              
+          }
+          
+          this.loading = false
+          this.$session.set("fabbriche", this.real_factories)
+          
+        }).catch( (error) => {
+          console.log(error)
+          this.$router.push("/")
+        })
+      },
+
       submit_factory: function() {
         let chosen_customerId = -1;
 
@@ -606,32 +626,46 @@ export default {
           if (temp[1] === this.chosen_customer) chosen_customerId = temp[0]
         }
 
+        console.log("The chosen customer is is " + chosen_customerId)
+
         axios.post('http://195.231.3.173:8080/v1/factories/', { 
+          name: this.name,
+          country: this.country,
+          region: this.region,
+          province: this.province,
+          city: this.city,
+          address: this.address,
+          postalCode: this.postalCode,        
+          CustomerId: chosen_customerId
+        }, {
           headers:{
             'key':this.$session.get("key")
           },
-          name: this.name, 
-          country: this.country,
-          region: this.region,
-          city: this.city,
-          address: this.address,
-          customerId: chosen_customerId
-        }, {})
+        })
         .then(
-          response => this.responseData = response.data,
-          this.dialog_submit = false
+          (response) => { 
+            this.responseData = response.data
+            this.dialog_submit = false
+            
+            this.$refs.submit_form.validate();
+            this.$refs.submit_form.reset();
+            // take again the clients to save in the storage the id of the new client
+            this.update_factory_array()
+          }
         )
       },
 
       modify_factory: function() {
         axios.post('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id, {
           
-          name: this.name, 
+          name: this.name,
           country: this.country,
           region: this.region,
+          province: this.province,
           city: this.city,
           address: this.address,
-          customerId: this.customerId
+          postalCode: this.postalCode,        
+          customerId: this.chosen_customerId
         })
         .then(
           response => this.responseData = response.data,
@@ -639,13 +673,76 @@ export default {
         )
       },
 
-      delete_factory: function() {
-        axios.delete('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id)
+      delete_factory: function(id) {
+
+        if (typeof id === undefined || id === '') {
+          console.error("Errore durante l'eliminazione della fabbrica")
+          return
+        }
+
+        axios.delete('http://195.231.3.173:8080/v1/factories/'+id, {
+          headers: {
+            'key':this.$session.get("key")
+          },
+        })
         .then(
-          response => this.responseData = response.data,
+          response => { 
+          this.responseData = response.data,
           this.dialog_delete = false
+          this.delete_from_storage(id)
+        }
         )
-      }
+      },
+
+      delete_from_storage: function(id) {
+        let old_storage = this.$session.get("fabbriche")
+        let index = -1
+
+        for (let i = 0; i < old_storage.length; i++) {
+          if (old_storage[i].id === id) index = i;
+        }
+        
+        if (index === -1) {
+          console.error("Errore durante l'eliminazione della fabbrica")
+          return
+        }
+
+        this.real_factories.splice(index, 1)
+        this.$session.set("fabbriche", this.real_factories)
+      },
+
+      factory_parser: function(id, name, country, address, region, province, city, postalCode, customerId) {
+        let str = "{ "
+            str += '"id": "' + id + '", '
+            str += '"name": "'     + name + '" , '
+            str += '"country": "'+ country + '" , '
+            str += '"region": "' + region + '" , '
+            str += '"province": "' +' ('  + province + ')' + '" , '
+            str += '"city": "' + city + '" , '
+            str += '"address": "' + address + '" , '
+            str += '"postalCode ": "'+ postalCode  + '" , '
+            str += '"CustomerId ": "' + customerId + '" '
+            str+= " }"
+        return str
+      },
+
+      get_data_to_edit: function(id) {
+        this.editing_factory_id = id;
+
+        for (let i = 0; i < this.real_factories.length; i++) {
+          if (this.real_factories[i].id === id) {
+            this.editing_factory_name = this.real_factories[i].name
+            this.editing_factory_country = this.real_factories[i].country
+            this.editing_factory_region = this.real_factories[i].region
+            this.editing_factory_province = this.real_factories[i].province
+            this.editing_factory_city = this.real_factories[i].city
+            this.editing_factory_address = this.real_factories[i].address
+            this.editing_factory_postalCode = this.real_factories[i].postalCode
+            this.editing_factory_customerId = this.real_factories[i].customerId
+          }
+        }
+      },
+
     }
 };
 </script>

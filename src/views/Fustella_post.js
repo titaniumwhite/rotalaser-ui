@@ -32,11 +32,12 @@ import axios from 'axios'
         to: 0,
         from_: [],
         to_: [],
-        dialog_modify: false,
         first_session: 0,
         last_session:0,
         annotation_loading : true,
         
+        dialog_modify: false,
+        dialog_delete: false,
 
         /* data per pagina 'modifica' */
         customers_name: [],
@@ -588,6 +589,7 @@ import axios from 'axios'
 
                                       last_session = parseInt(this.got[i].session.id)
 
+                                      console.log(this.got[i].session.href)
 
                                       axios.get('http://195.231.3.173:8080'+ this.got[i].session.href,{
                                         headers:{

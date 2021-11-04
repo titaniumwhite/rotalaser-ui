@@ -75,7 +75,11 @@
 
           
           <v-card>
-            <v-form v-model="valid">
+            <v-form 
+              v-model="valid" 
+              ref="submit_form"
+              @submit.prevent="getBase64"
+            >
 
             <v-card-title class="text-h5">
               <b>Aggiungi fustella</b>
@@ -109,7 +113,7 @@
                     <v-select
                       label="Fabbrica"
                       v-model="FactoryId"
-                      :items="factories"
+                      :items="factories_name"
                       :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
                       required
                       color="secondary"
@@ -122,6 +126,8 @@
                       label="CAD"
                       required
                       :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      v-model="cadFile"
+                      ref="cadFile"
                       prepend-icon="mdi-file-cad"
                       color="secondary"
                     ></v-file-input>
@@ -144,8 +150,8 @@
               <v-btn
                 color="green darken-1"
                 text
+                type="submit"
                 :disabled="!valid"
-                @click="submit_client"
               >
                 Conferma
               </v-btn>
@@ -239,7 +245,7 @@
         <v-card-title>Fustelle di {{$route.params.id}}</v-card-title>
         <v-row dense >
           <v-col 
-            v-for="item in secret"
+            v-for="item in real_diecutters"
             
             :key="item.message"
             lg="4"
@@ -336,17 +342,19 @@ export default {
       dialog: false,
       group: null,
       loading: true,
-      dialog_submit: false,
-      secret: null,
       valid: false,
       true: true,
 
+      dialog_submit: false,
+      real_diecutters: [],
       // Variabili per modifica fustella//
-      factories: [],
+      factories_id: [],
+      factories_name: [],
       id: '', 
       cadName: '',
       FactoryId: '',
-      cadFile: ''
+      cadFile: [],
+      cadFileBase64: ''
     }),
 
     watch: {
@@ -363,73 +371,50 @@ export default {
             }
           }).then(response =>{
                              
-                              let filtered = []
+            let filtered = []
+            
+            for(let i = 0;i<response.data.data.length;i++) {
+              let str = "{ "
+              str += '"id": "'     + response.data.data[i].id + '", '
+              str += '"cadName": "'   + response.data.data[i].cadName + '", '
+              str += '"FactoryId": "'   + response.data.data[i].factory.id + '", '
+              str += '"cad": "'    + response.data.data[i].cadImage.href + '", '
+              str += '"loading": "true"' 
+              str += " }"
+            
+              filtered.push(JSON.parse(str))   
+            }
 
-                             
-                              
-                              for(let i = 0;i<response.data.data.length;i++){
-                                    let name;
-                                    
-                                    if (response.data.data[i].id === "da:5b:93:12:58:30") {
-                                      name = "L02241"
-                                    } else if (response.data.data[i].id === "ee:ea:4b:24:65:33") {
-                                      name = "G02012"
-                                    } else if (response.data.data[i].id === "c7:02:8f:47:f2:0d") {
-                                      name = "2877"
-                                    } else if (response.data.data[i].id === "d5:65:e4:a8:89:60") {
-                                      name = "2147B"
-                                    } else if (response.data.data[i].id === "d7:05:4d:e8:6a:f9") {
-                                      name = "2771"
-                                    } else if (response.data.data[i].id === "c2:f3:33:08:5a:2f") {
-                                      name = "B02181"
-                                    } else if (response.data.data[i].id === "da:bc:6e:d4:80:73") {
-                                      name = "L02140"
-                                    }      
-                                    
-                                   
+            for(let i =0;i<response.data.data.length;i++){
+              let cad_bytes;
+              axios.get('http://195.231.3.173:8080'+response.data.data[i].cadImage.href,{
+                headers:{
+                  'key':this.$session.get("key")
+                }
+              }).then(response =>{
+                
+                cad_bytes = response.data.data
 
-                                    let str = "{ "
-                                      str += '"name": "'   + name + '", '
-                                      str += '"id": "'     + response.data.data[i].id + '", '
-                                      str += '"status": "' + response.data.data[i].status + '", '
-                                      str += '"cad": "'    + response.data.data[i].cadImage.href + '", '
-                                      str += '"loading": "true"' 
-                                      str+= " }"
-                              
-                                    
-                                      filtered.push(JSON.parse(str))
-                                    
-                              }
+                filtered[i].cad = cad_bytes
+                filtered[i].loading = false
+                
+              })
+              
+            }
 
-                              for(let i =0;i<response.data.data.length;i++){
-                               let cad_bytes;
-                                axios.get('http://195.231.3.173:8080'+response.data.data[i].cadImage.href,{
-                                  headers:{
-                                    'key':this.$session.get("key")
-                                  }
-                                }).then(response =>{
-                                  
-                                  cad_bytes = response.data.data
-
-                                  filtered[i].cad = cad_bytes
-                                  filtered[i].loading = false
-                                  
-                                })
-                                
-                              }
-                              //console.log(filtered)
-                              this.secret = filtered
-                              this.loading= false
-                              
-                              this.$session.set("fustelle",filtered)
-                              this.$session.set("pid",this.$route.params.id)
-                              
-                            }).catch( (error) => {
-                              console.log(error)
-                              this.$router.push("/")
-                            })
+            //console.log(filtered)
+            this.real_diecutters = filtered
+            this.loading= false
+            
+            this.$session.set("fustelle",filtered)
+            this.$session.set("pid",this.$route.params.id)
+            
+          }).catch( (error) => {
+            console.log(error)
+            this.$router.push("/")
+          })
         }else{
-          this.secret = this.$session.get("fustelle")
+          this.real_diecutters = this.$session.get("fustelle")
           this.loading= false 
         }
 
@@ -439,7 +424,8 @@ export default {
           }
         }).then(response =>{     
           for (let i = 0; i < response.data.data.length; i++) {
-            this.factories[i] = response.data.data[i].id
+            this.factories_id[i] = response.data.data[i].id
+            this.factories_name[i] = response.data.data[i].name
           }
           }).catch( (error) => {
             console.log(error)
@@ -455,33 +441,74 @@ export default {
         }
       },
 
-      submit_client: function() {
-      axios.post('http://195.231.3.173:8080/v1/customers/', { 
-        name: this.name, 
-        vat: this.vat
-      })
-      .then(
-        response => this.responseData = response.data,
-        this.dialog_submit = false
-      )
-    },
-    modify_client: function() {
-      axios.post('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id, { 
-        name: this.name, 
-        vat: this.vat
-      })
-      .then(
-        response => this.responseData = response.data,
-        this.dialog_modify = false
-      )
-    },
-    delete_client: function() {
-      axios.delete('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id)
-      .then(
-        response => this.responseData = response.data,
-        this.dialog_delete = false
-      )
-    },
+      getBase64: function() {
+        var reader = new FileReader();
+        reader.readAsDataURL(this.cadFile);
+        reader.onload = () => {
+          this.submit_diecutter(reader.result.split(',')[1]) 
+        };
+        reader.onerror = function (error) {
+          console.log('Error: ', error);
+        };
+      },
+
+      submit_diecutter: function(cadFileBase64) {
+
+        console.log(cadFileBase64.substring(0,100))
+
+        axios.post('http://195.231.3.173:8080/v1/diecutters/', { 
+          id: this.id, 
+          cadName: this.cadName,
+          factory: this.FactoryId,
+          cadFile: cadFileBase64
+          }, {
+          headers: {
+            'key':this.$session.get("key")
+          }
+        })
+        .then(
+          (response) => { 
+            this.responseData = response.data
+            this.dialog_submit = false
+
+            
+            this.$refs.submit_form.validate();
+            this.$refs.submit_form.reset();
+
+            let str = "{ "
+              str += '"id": "'     + this.id + '", '
+              str += '"cadName": "'   + this.cadName + '", '
+              str += '"FactoryId": "'   + this.FactoryId + '", '
+              str += '"cad": "'    + this.cadFileBase64 + '", '
+              str += '"loading": "true"' 
+              str += " }"
+
+            this.real_diecutters.push(JSON.parse(str))   
+            this.$session.set("fustelle",this.real_diecutters)
+          }
+        )
+      },
+/*
+      update_diecutters_array: function() {
+        axios.get('http://195.231.3.173:8080/v1/diecutters/',{
+          headers:{
+            'key':this.$session.get("key")
+          }
+        }).then(response =>{
+          this.real_customers = []
+          for(let i = 0;i<response.data.data.length;i++){
+            this.real_customers.push(JSON.parse(this.client_parser(response.data.data[i].id, response.data.data[i].name, response.data.data[i].vat)))
+          }
+          
+          this.loading = false
+          this.$session.set("clienti", this.real_customers)
+          
+        }).catch( (error) => {
+          console.log(error)
+          this.$router.push("/")
+        })
+      },
+*/
     reset: function() {
       this.$refs.textareaform.reset()
     },
@@ -490,18 +517,6 @@ export default {
         alert('ATTENZIONE\nQuesta funzionalità ancora non è attiva')
       },
 
-      submit_diecutter: function() {
-        axios.post('http://195.231.3.173:8080/v1/diecutters/', { 
-          id: this.id, 
-          cadName: this.cadName,
-          FactoryId: this.FactoryId,
-          cadFile: this.cadFile
-        })
-        .then(
-          response => this.responseData = response.data,
-          this.dialog_submit = false
-        )
-      }
     }
 };
 </script>

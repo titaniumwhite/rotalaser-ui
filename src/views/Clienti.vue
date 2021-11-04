@@ -79,7 +79,7 @@
             <v-form 
               v-model="valid" 
               ref="submit_form"
-              @submit.prevent="submit_client"
+              @submit.prevent="submit_customer"
             >
 
             <v-card-title class="text-h5">
@@ -239,7 +239,7 @@
         
         <v-row dense>
           <v-col 
-            v-for="item in real_clienti"
+            v-for="item in real_customers"
             :key="item.id"
             lg="4"
             md="4"
@@ -252,7 +252,7 @@
               <v-card-subtitle>P. IVA: {{item.vat}}</v-card-subtitle>
               <v-card-text></v-card-text>
               <v-card-actions>
-                <v-container :key="render">
+                <v-container>
                 <v-row>
                   <v-col
                     lg="6"
@@ -303,7 +303,7 @@
                       <v-form 
                         v-model="valid" 
                         ref="submit_form"
-                        @submit.prevent="modify_client(editing_customer_id)"
+                        @submit.prevent="modify_customer(editing_customer_id)"
                       >
                       <v-card-title>
                         <span class="text-h5"><b>Modifica</b></span>
@@ -412,7 +412,7 @@
                         <v-btn
                           color="error"
                           text
-                          @click="delete_client(editing_customer_id)"
+                          @click="delete_customer(editing_customer_id)"
                         >
                           Elimina
                         </v-btn>
@@ -456,10 +456,9 @@ export default {
       ],
       loading: true,
       valid: true,
-      real_clienti: [],
+      real_customers: [],
       offset: true,
       true: true,
-      render: 0,
       editing_customer_id: '',
       editing_customer_name: '',
       editing_customer_vat: '',
@@ -476,9 +475,9 @@ export default {
     },
   mounted(){
     if(!this.$session.exists("clienti")){
-      this.update_clients_array()
+      this.update_customers_array()
     }else{
-      this.real_clienti = this.$session.get("clienti")
+      this.real_customers = this.$session.get("clienti")
       this.loading= false 
     }   
 
@@ -491,19 +490,19 @@ export default {
       }
     },
 
-    update_clients_array: function() {
+    update_customers_array: function() {
       axios.get('http://195.231.3.173:8080/v1/customers/',{
         headers:{
           'key':this.$session.get("key")
         }
       }).then(response =>{
-          this.real_clienti = []
+          this.real_customers = []
           for(let i = 0;i<response.data.data.length;i++){
-            this.real_clienti.push(JSON.parse(this.client_parser(response.data.data[i].id, response.data.data[i].name, response.data.data[i].vat)))
+            this.real_customers.push(JSON.parse(this.client_parser(response.data.data[i].id, response.data.data[i].name, response.data.data[i].vat)))
           }
           
-          this.loading= false
-          this.$session.set("clienti",this.real_clienti)
+          this.loading = false
+          this.$session.set("clienti", this.real_customers)
           
         }).catch( (error) => {
           console.log(error)
@@ -511,7 +510,7 @@ export default {
         })
     },
 
-    submit_client: function() {
+    submit_customer: function() {
       axios.post('http://195.231.3.173:8080/v1/customers/', {
         name: this.name, 
         vat: this.vat
@@ -528,13 +527,13 @@ export default {
           this.$refs.submit_form.validate();
           this.$refs.submit_form.reset();
           // take again the clients to save in the storage the id of the new client
-          this.update_clients_array()
+          this.update_customers_array()
         }
       )
       
     },
 
-    modify_client: function(id) {
+    modify_customer: function(id) {
       console.log("L'id in modify è " + id)
       if (typeof id === undefined || id === '') {
         console.error("Errore durante l'eliminazione del cliente")
@@ -560,7 +559,7 @@ export default {
       )
     },
 
-    delete_client: function(id) {
+    delete_customer: function(id) {
       
       if (typeof id === undefined || id === '') {
         console.error("Errore durante l'eliminazione del cliente")
@@ -594,8 +593,8 @@ export default {
         return
       }
 
-      this.real_clienti.splice(index, 1)
-      this.$session.set("clienti", this.real_clienti)
+      this.real_customers.splice(index, 1)
+      this.$session.set("clienti", this.real_customers)
     },
 
     modify_from_storage: function(id, name, vat) {
@@ -611,10 +610,10 @@ export default {
         return
       }
 
-      this.real_clienti.splice(index, 1)
+      this.real_customers.splice(index, 1)
 
-      this.real_clienti.push(JSON.parse(this.client_parser(id, name, vat)))
-      this.$session.set("clienti", this.real_clienti)
+      this.real_customers.push(JSON.parse(this.client_parser(id, name, vat)))
+      this.$session.set("clienti", this.real_customers)
     },
 
     client_parser: function(id, name, vat) {
@@ -630,10 +629,10 @@ export default {
     get_data_to_edit: function(id) {
       this.editing_customer_id = id;
 
-      for (let i = 0; i < this.real_clienti.length; i++) {
-        if (this.real_clienti[i].id === id) {
-          this.editing_customer_name = this.real_clienti[i].name
-          this.editing_customer_vat = this.real_clienti[i].vat
+      for (let i = 0; i < this.real_customers.length; i++) {
+        if (this.real_customers[i].id === id) {
+          this.editing_customer_name = this.real_customers[i].name
+          this.editing_customer_vat = this.real_customers[i].vat
         }
       }
     },
