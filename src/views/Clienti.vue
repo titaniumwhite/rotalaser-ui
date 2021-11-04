@@ -550,11 +550,9 @@ export default {
       })
       .then(
         response => { 
-          console.log("SRO QUAAA")
           this.responseData = response.data,
           this.dialog_modify = false
           this.modify_from_storage(id, this.editing_customer_name, this.editing_customer_vat)
-          console.log(this.editing_customer_name + ' ' + this.editing_customer_vat)
         }
       )
     },

@@ -112,7 +112,7 @@
                   <v-col cols="12">
                     <v-select
                       label="Fabbrica"
-                      v-model="FactoryId"
+                      v-model="FactoryName"
                       :items="factories_name"
                       :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
                       required
@@ -257,7 +257,7 @@
               <div class="d-flex flex-no-wrap justify-space-between">
               <div>
               
-              <v-card-title v-text="item.name"></v-card-title>
+              <v-card-title v-text="item.cadName"></v-card-title>
               <v-card-subtitle v-text="item.id"></v-card-subtitle>
               <div>
                 <v-row>
@@ -352,7 +352,8 @@ export default {
       factories_name: [],
       id: '', 
       cadName: '',
-      FactoryId: '',
+      FactoryId: -1,
+      FactoryName: '',
       cadFile: [],
       cadFileBase64: ''
     }),
@@ -445,7 +446,9 @@ export default {
         var reader = new FileReader();
         reader.readAsDataURL(this.cadFile);
         reader.onload = () => {
-          this.submit_diecutter(reader.result.split(',')[1]) 
+          this.submit_diecutter(reader.result.split(',')[1])
+          this.dialog_submit = false
+          console.log("STO QUA")
         };
         reader.onerror = function (error) {
           console.log('Error: ', error);
@@ -454,12 +457,19 @@ export default {
 
       submit_diecutter: function(cadFileBase64) {
 
-        console.log(cadFileBase64.substring(0,100))
+        for (let i = 0; i < this.factories_name.length; i++) {
+          if (this.factories_name[i] === this.FactoryName) { 
+            this.FactoryId = parseInt(this.factories_id[i])
+            break
+          }
+        }
+
+                    console.log(this.id + ' ' + this.cadName + ' ' + this.FactoryId + ' ' + this.cadFileBase64)
 
         axios.post('http://195.231.3.173:8080/v1/diecutters/', { 
           id: this.id, 
           cadName: this.cadName,
-          factory: this.FactoryId,
+          FactoryId: this.FactoryId,
           cadFile: cadFileBase64
           }, {
           headers: {
@@ -469,22 +479,28 @@ export default {
         .then(
           (response) => { 
             this.responseData = response.data
-            this.dialog_submit = false
-
-            
-            this.$refs.submit_form.validate();
-            this.$refs.submit_form.reset();
+          
+            console.log(this.id + ' ' + this.cadName + ' ' + this.FactoryId + ' ' + this.cadFileBase64)
 
             let str = "{ "
               str += '"id": "'     + this.id + '", '
               str += '"cadName": "'   + this.cadName + '", '
               str += '"FactoryId": "'   + this.FactoryId + '", '
-              str += '"cad": "'    + this.cadFileBase64 + '", '
-              str += '"loading": "true"' 
+              str += '"cad": "'    + this.cadFileBase64 + '" '
               str += " }"
 
             this.real_diecutters.push(JSON.parse(str))   
             this.$session.set("fustelle",this.real_diecutters)
+
+            this.$refs.submit_form.reset();
+            this.$refs.submit_form.validate();
+            window.location.reload();
+          }
+        )
+        .catch(
+          function (error) {
+            console.log(error.response.data)
+            return Promise.reject(error)
           }
         )
       },

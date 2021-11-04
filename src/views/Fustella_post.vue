@@ -132,7 +132,7 @@
                 color="green darken-1"
                 text
                 :disabled="!valid"
-                @click="submit_factory"
+                @click="modify_diecutter"
               >
                 Salva
               </v-btn>
@@ -156,12 +156,11 @@
               color="secondary"
               type="submit"
               v-on="{ ...tooltip_delete, ...dialog_delete }"
-              @click="get_data_to_edit(item.id)"
             >
             <v-icon>mdi-delete</v-icon>
             </v-btn>
           </template>
-            <span>Elimina cliente</span>
+            <span>Elimina fustella</span>
           </v-tooltip>
         </template>
 
@@ -189,6 +188,7 @@
               <v-btn
                 color="error"
                 text
+                @click="delete_diecutter"
               >
                 Elimina
               </v-btn>

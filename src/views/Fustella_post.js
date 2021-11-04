@@ -17,7 +17,6 @@ import axios from 'axios'
         tab: null,
         datacollection: null,
         cad: undefined,
-        diecutter_name: '',
         session_id: 0,
         total_errors: 0,
         total_rotations: 0,
@@ -35,6 +34,9 @@ import axios from 'axios'
         first_session: 0,
         last_session:0,
         annotation_loading : true,
+
+        diecutter_name: '',
+        diecutter_id: -1,
         
         dialog_modify: false,
         dialog_delete: false,
@@ -477,6 +479,21 @@ import axios from 'axios'
       };
     },
     mounted(){
+
+      console.log(typeof this.$route.params.id)
+
+      axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id,{
+        headers:{
+          'key':this.$session.get("key")
+        }
+      }).then(response =>{
+
+        this.diecutter_name = response.data.data.cadName
+        this.diecutter_id = response.data.data.id
+      }).catch( (error) => {
+        console.log(error.response.data)
+      })
+      
       axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/sessions/latest',{
         headers:{
           'key':this.$session.get("key")
@@ -686,24 +703,6 @@ import axios from 'axios'
   
                                   }
                                 }
-                                /* SERIE DI IF ELSE DA RIMUOVERE NEL NUOVO BACKEND */
-
-                                if (this.$route.params.id === "da:5b:93:12:58:30") {
-                                  this.diecutter_name = "L02241"
-                                } else if (this.$route.params.id === "ee:ea:4b:24:65:33") {
-                                  this.diecutter_name = "G02012"
-                                } else if (this.$route.params.id === "c7:02:8f:47:f2:0d") {
-                                  this.diecutter_name = "2877"
-                                } else if (this.$route.params.id === "d5:65:e4:a8:89:60") {
-                                  this.diecutter_name = "2147B"
-                                } else if (this.$route.params.id === "d7:05:4d:e8:6a:f9") {
-                                  this.diecutter_name = "2771"
-                                } else if (this.$route.params.id === "c2:f3:33:08:5a:2f") {
-                                  this.diecutter_name = "B02181"
-                                } else if (this.$route.params.id === "da:bc:6e:d4:80:73") {
-                                  this.diecutter_name = "L02140"
-                                }    
-                                
 
                                 /*  SESSION STORAGE  */
                                 this.$session.set("fustellaR",rotationData)
@@ -1013,40 +1012,63 @@ import axios from 'axios'
         this.ses =  true
         this.ses_loading = false
       },
+
+      getBase64: function() {
+        var reader = new FileReader();
+        reader.readAsDataURL(this.cadFile);
+        reader.onload = () => {
+          this.modify_diecutter(reader.result.split(',')[1]) 
+        };
+        reader.onerror = function (error) {
+          console.log('Error: ', error);
+        };
+      },
       
 
-      submit_factory: function() {
-        axios.post('http://195.231.3.173:8080/v1/factories/', { 
-          name: this.name, 
-          country: this.country,
-          state: this.state,
-          city: this.city,
-          address: this.address
+      modify_diecutter: function(cadFileBase64) {
+
+        for (let i = 0; i < this.factories_name.length; i++) {
+          if (this.factories_name[i] === this.FactoryName) { 
+            this.FactoryId = parseInt(this.factories_id[i])
+            break
+          }
+        }
+
+        axios.put('http://195.231.3.173:8080/v1/factories/'+this.diecutter_id, { 
+          id: this.id, 
+          cadName: this.cadName,
+          FactoryId: this.FactoryId,
+          cadFile: cadFileBase64
+        }, {
+          headers: {
+            'key':this.$session.get("key")
+          },
         })
         .then(
-          response => this.responseData = response.data,
-          this.dialog_submit = false
+          response => { 
+            this.responseData = response.data,
+            this.dialog_modify = false
+            //this.modify_from_storage(id, this.editing_customer_name, this.editing_customer_vat)
+            //console.log(this.editing_customer_name + ' ' + this.editing_customer_vat)
+          }
         )
       },
-      modify_factory: function() {
-        axios.post('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id, { 
-          name: this.name, 
-          country: this.country,
-          state: this.state,
-          city: this.city,
-          address: this.address
+
+      delete_diecutter: function() {
+        axios.delete('http://195.231.3.173:8080/v1/diecutters/'+this.diecutter_id, {
+          headers: {
+            'key':this.$session.get("key")
+          },
         })
         .then(
-          response => this.responseData = response.data,
-          this.dialog_modify = false
-        )
-      },
-      delete_factory: function() {
-        axios.delete('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id)
-        .then(
-          response => this.responseData = response.data,
-          this.dialog_delete = false
-        )
+          response => { 
+            this.responseData = response.data,
+            this.dialog_delete = false
+            this.$router.go(-1) 
+          })
+        .catch( (error) => {
+          console.log(error)
+        })
       }
     },
   };
