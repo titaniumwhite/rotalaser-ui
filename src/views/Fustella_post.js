@@ -512,8 +512,8 @@ import axios from 'axios'
                                 let temperatureSesData = []
                                 let humiditySesData = []
 
-                                let cs_start_time = null
-                                let cs_finish_time = null
+                                //let cs_start_time = null
+                                //let cs_finish_time = null
 
                                 this.got = response.data.data
 
@@ -608,8 +608,8 @@ import axios from 'axios'
                                       let time_start  = new Date(this.got[i].session.startedAt)
                                       let time_finish = new Date(this.got[i].session.endedAt)
                                       
-                                      cs_start_time = time_start
-                                      cs_finish_time = time_finish
+                                      //cs_start_time = time_start
+                                      //cs_finish_time = time_finish
 
 
                                       let session_number = this.got[i].session.id - this.first_session
@@ -665,13 +665,13 @@ import axios from 'axios'
                                     timeCouple += '"x": ' + time.getTime() + ', '
                                     if(i%15 == 0 || session_started){
                                       
-                                      if(time>=cs_start_time && time<=cs_finish_time && session_started){
+                                      //if(time>=cs_start_time && time<=cs_finish_time && session_started){
                                         rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
                                         rotationData.push(JSON.parse(rotationCouple))
-                                      }else{
+                                      /*}else{
                                         rotationCouple = timeCouple + ' "y": '+ 0 + " }"
                                         rotationData.push(JSON.parse(rotationCouple))
-                                      }
+                                      }*/
 
                                       totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"
                                       totalRotationData.push(JSON.parse(totalRotationCouple))
