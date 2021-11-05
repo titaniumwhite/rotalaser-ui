@@ -33,7 +33,7 @@ import axios from 'axios'
         to_: [],
         first_session: 0,
         last_session:0,
-        annotation_loading : true,
+        annotation_loading : false,
 
         diecutter_name: '',
         diecutter_id: -1,
@@ -480,7 +480,7 @@ import axios from 'axios'
     },
     mounted(){
 
-      console.log(typeof this.$route.params.id)
+      //console.log(typeof this.$route.params.id)
 
       axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id,{
         headers:{
@@ -507,15 +507,13 @@ import axios from 'axios'
             }).then(response =>{
                                 let rotationData = []
                                 let totalRotationData = []
-
-                                
-                                let speedSesData = []
-                                
-                                
+                        
+                                let speedSesData = []        
                                 let temperatureSesData = []
-
-                                
                                 let humiditySesData = []
+
+                                let cs_start_time = null
+                                let cs_finish_time = null
 
                                 this.got = response.data.data
 
@@ -606,63 +604,47 @@ import axios from 'axios'
 
                                       last_session = parseInt(this.got[i].session.id)
 
-                                      console.log(this.got[i].session.href)
+    
+                                      let time_start  = new Date(this.got[i].session.startedAt)
+                                      let time_finish = new Date(this.got[i].session.endedAt)
+                                      
+                                      cs_start_time = time_start
+                                      cs_finish_time = time_finish
 
-                                      axios.get('http://195.231.3.173:8080'+ this.got[i].session.href,{
-                                        headers:{
-                                          'key':this.$session.get("key")
-                                        }
-                                      }).then(response =>{
+
+                                      let session_number = this.got[i].session.id - this.first_session
+                                      
+                                      this.from_[session_number] = time_start
+                                      this.to_[session_number] = time_finish
+                                      
+
+                                      let curr_text =     '{'+
+                                                          '"x": '+ time_start.getTime() +
+                                                          ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
+                                                          '"label": {' +
+                                                            '"borderColor": "#ff6090", "style":{' +
+                                                              '"color": "#fff", "background": "#ff6090"' +
+                                                              '},'+
+                                                            '"text":"'+ "Inizio sessione " + session_number
+                                                          +'"}'
+                                                        +'}'
 
                                     
-    
-                                        let time_start  = new Date(response.data.data.startedAt)
-                                        let time_finish = new Date(response.data.data.endedAt)
-                                        let session_number = response.data.data.id - this.first_session
-                                        
-                                        this.from_[session_number] = time_start
-                                        this.to_[session_number] = time_finish
-                                        
+                                      annotation_text.push(JSON.parse(curr_text))
 
-                                        let curr_text =     '{'+
-                                                            '"x": '+ time_start.getTime() +
-                                                            ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
-                                                            '"label": {' +
-                                                              '"borderColor": "#ff6090", "style":{' +
-                                                                '"color": "#fff", "background": "#ff6090"' +
-                                                                '},'+
-                                                              '"text":"'+ "Inizio sessione " + session_number
-                                                            +'"}'
-                                                          +'}'
+                                      curr_text =     '{'+
+                                        '"x": '+ time_finish.getTime() +
+                                        ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
+                                        '"label": {' +
+                                          '"borderColor": "#ff6090", "style":{' +
+                                            '"color": "#fff", "background": "#ff6090"' +
+                                            '},'+
+                                          '"text":"'+ "Fine sessione " +  session_number 
+                                        +'"}'
+                                      +'}'
 
-                                      
-                                        annotation_text.push(JSON.parse(curr_text))
-
-                                        curr_text =     '{'+
-                                          '"x": '+ time_finish.getTime() +
-                                          ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
-                                          '"label": {' +
-                                            '"borderColor": "#ff6090", "style":{' +
-                                              '"color": "#fff", "background": "#ff6090"' +
-                                              '},'+
-                                            '"text":"'+ "Fine sessione " +  session_number 
-                                          +'"}'
-                                        +'}'
-
-                
-                                        annotation_text.push(JSON.parse(curr_text))
-
-                                        this.$session.set("text",annotation_text)
-                                        this.$session.set("from_",this.from_)
-                                        this.$session.set("to_",this.to_)
-
-                                        if(response.data.data.id == this.last_session){
-                                          this.annotation_loading = false
-                                        }
-
-                                      })
-                                      
-                                      
+              
+                                      annotation_text.push(JSON.parse(curr_text)) 
                                       
                                     }
 
@@ -682,12 +664,16 @@ import axios from 'axios'
                                     
                                     timeCouple += '"x": ' + time.getTime() + ', '
                                     if(i%15 == 0 || session_started){
-                                  
-                                      rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
-                                      totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"
-                                     
+                                      
+                                      if(time>=cs_start_time && time<=cs_finish_time && session_started){
+                                        rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
+                                        rotationData.push(JSON.parse(rotationCouple))
+                                      }else{
+                                        rotationCouple = timeCouple + ' "y": '+ 0 + " }"
+                                        rotationData.push(JSON.parse(rotationCouple))
+                                      }
 
-                                      rotationData.push(JSON.parse(rotationCouple))
+                                      totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"
                                       totalRotationData.push(JSON.parse(totalRotationCouple))
 
                                     }          
@@ -718,6 +704,10 @@ import axios from 'axios'
                                 this.$session.set("total_sessions",total_session)
                                 this.$session.set("total_rotations",total_rotations)
                                 this.$session.set("diecutter_name",this.diecutter_name)
+
+                                this.$session.set("text",annotation_text)
+                                this.$session.set("from_",this.from_)
+                                this.$session.set("to_",this.to_)
                                 
                                 
                                 this.seriesAreaTemperatureSes = temperatureSesData
