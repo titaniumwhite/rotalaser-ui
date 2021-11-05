@@ -129,16 +129,6 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="8">
-                    <v-text-field
-                      label="Indirizzo"
-                      v-model="address"
-                      required
-                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
-                      color="secondary"
-                    ></v-text-field>
-                  </v-col>
-
                   <v-col cols="4">
                     <v-text-field
                       label="Provincia"
@@ -147,7 +137,27 @@
                       :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
                       color="secondary"
                     ></v-text-field>
-                  </v-col>                  
+                  </v-col>   
+
+                  <v-col cols="4">
+                    <v-text-field
+                      label="CAP"
+                      v-model="postalCode"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
+                    ></v-text-field>
+                  </v-col>   
+
+                  <v-col cols="4">
+                    <v-text-field
+                      label="Indirizzo"
+                      v-model="address"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
+                    ></v-text-field>
+                  </v-col>               
 
                   <v-col cols="12">
                     <v-select
@@ -296,7 +306,7 @@
               
               <v-card-title v-text="item.name"></v-card-title>
               
-              <v-card-text> {{item.address}} <br> {{item.city}} {{item.province}}, {{item.region}}
+              <v-card-text> {{item.address}} <br> {{item.city}} ({{item.province}}), {{item.region}}
               <br> {{item.postalCode}} <br> {{item.country}}</v-card-text>
               <v-card-actions>
                 <v-container>
@@ -351,7 +361,7 @@
                         @submit.prevent="modify_factory(editing_factory_id)"
                       >
                       <v-card-title>
-                        <span class="text-h5"><b>Modifica {{editing_factory_name}}</b></span>
+                        <span class="text-h5"><b>Modifica</b></span>
                       </v-card-title>
                       <v-card-text>
                         <v-container>
@@ -362,48 +372,76 @@
                               <v-text-field
                                 label="Nome"
                                 required
+                                v-model="editing_factory_name"
                                 :value="item.name"
                                 color="secondary"
                               ></v-text-field>
                             </v-col>
                             
                             <v-col
-                              cols="6"
+                              cols="4"
                             >
                               <v-text-field
                                 label="Stato"
                                 required
+                                v-model="editing_factory_country"
                                 :value="item.country"
                                 color="secondary"
                               ></v-text-field>
                             </v-col>
 
-                            <v-col cols="6">
+                            <v-col cols="4">
                               <v-text-field
                                 label="Regione"
                                 required
+                                v-model="editing_factory_region"
                                 :value="item.region"
                                 color="secondary"
                               ></v-text-field>
                             </v-col>
 
-                            <v-col cols="6">
+                            <v-col cols="4">
                               <v-text-field
                                 label="Città"
                                 required
+                                v-model="editing_factory_city"
                                 :value="item.city"
                                 color="secondary"
                               ></v-text-field>
                             </v-col>
 
-                            <v-col cols="6">
+                            <v-col cols="4">
                               <v-text-field
-                                label="Indirizzo"
-                                :value="item.address"
+                                label="Provincia"
+                                v-model="editing_factory_province"
+                                :value="item.province"
                                 required
+                                :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
                                 color="secondary"
                               ></v-text-field>
-                            </v-col>
+                            </v-col>   
+
+                            <v-col cols="4">
+                              <v-text-field
+                                label="CAP"
+                                v-model="editing_factory_postalCode"
+                                :value="item.postalCode"
+                                required
+                                :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                                color="secondary"
+                              ></v-text-field>
+                            </v-col>   
+
+                            <v-col cols="4">
+                              <v-text-field
+                                label="Indirizzo"
+                                v-model="editing_factory_address"
+                                :value="item.address"
+                                required
+                                :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                                color="secondary"
+                              ></v-text-field>
+                            </v-col>          
 
                             <v-col cols="12">
                               <v-select
@@ -411,7 +449,8 @@
                                 label="Cliente"
                                 required
                                 :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
-                                :value="editing_factory_customerName"
+                                v-model="editing_factory_customerName"
+                                :value="item.CustomerId"
                                 color="secondary"
                                 item-color="secondary"
                               ></v-select>
@@ -539,7 +578,7 @@ export default {
       editing_factory_city: '',
       editing_factory_address: '',
       editing_factory_postalCode: '',
-      editing_factory_customerId: '',
+      editing_factory_customerId: -1,
       editing_factory_customerName: '',
       // Variabili per aggiungere fabbrica //
       name: '',
@@ -610,8 +649,7 @@ export default {
                                                                       response.data.data[i].province,
                                                                       response.data.data[i].city,
                                                                       response.data.data[i].postalCode,
-                                                                      -1))) // da sistemare customerId
-              
+                                                                      response.data.data[i].customer.id))) // da sistemare customerId
           }
           
           this.loading = false
@@ -626,12 +664,9 @@ export default {
       submit_factory: function() {
         let chosen_customerId = -1;
 
-        for (let i = 0; i < this.customers.length; i++) {
-          let temp = this.customers[i]
-          if (temp[1] === this.chosen_customer) chosen_customerId = temp[0]
+        for (let i = 0; i < this.customers_id.length; i++) {
+          if (this.customers_name[i] === this.chosen_customer) chosen_customerId = this.customers_id[i]
         }
-
-        console.log("The chosen customer is is " + chosen_customerId)
 
         axios.post('http://195.231.3.173:8080/v1/factories/', { 
           name: this.name,
@@ -661,21 +696,35 @@ export default {
       },
 
       modify_factory: function(id) {
-        axios.post('http://195.231.3.173:8080/v1/factories/'+id, {
-          
-          name: this.name,
-          country: this.country,
-          region: this.region,
-          province: this.province,
-          city: this.city,
-          address: this.address,
-          postalCode: this.postalCode,        
-          customerId: this.chosen_customerId
+
+        this.editing_factory_customerId = parseInt(this.editing_factory_customerId)
+
+        axios.put('http://195.231.3.173:8080/v1/factories/'+id, {
+          name: this.editing_factory_name,
+          country: this.editing_factory_country,
+          region: this.editing_factory_region,
+          province: this.editing_factory_province,
+          city: this.editing_factory_city,
+          address: this.editing_factory_address,
+          postalCode: this.editing_factory_postalCode,        
+          CustomerId: this.editing_factory_customerId
+        }, {
+          headers: {
+            'key':this.$session.get("key")
+          }
         })
         .then(
-          response => this.responseData = response.data,
-          this.dialog_modify = false
-        )
+          response => { 
+            this.responseData = response.data
+            this.dialog_modify = false
+            
+            this.modify_from_storage (this.editing_factory_id, this.editing_factory_name, this.editing_factory_country, 
+                                      this.editing_factory_region, this.editing_factory_province, this.editing_factory_city,
+                                      this.editing_factory_address, this.editing_factory_postalCode, this.editing_factory_customerId)
+        
+        }).catch( (error) => {
+          console.log(error.response.data)
+        })
       },
 
       delete_factory: function(id) {
@@ -698,6 +747,25 @@ export default {
         }
         )
       },
+
+      modify_from_storage: function(id, name, country, region, province, city, address, postalCode, customerId) {
+      let old_storage = this.$session.get("fabbriche")
+      let index = -1
+
+      for (let i = 0; i < old_storage.length; i++) {
+        if (old_storage[i].id === id) index = i;
+      }
+      
+      if (index === -1) {
+        console.error("Errore nell'eliminazione di una fabbrica")
+        return
+      }
+
+      this.real_factories.splice(index, 1)
+
+      this.real_factories.push(JSON.parse(this.factory_parser(id, name, country, address, region, province, city, postalCode, customerId)))
+      this.$session.set("fabbriche", this.real_factories)
+    },
 
       delete_from_storage: function(id) {
         let old_storage = this.$session.get("fabbriche")
@@ -722,11 +790,11 @@ export default {
             str += '"name": "'     + name + '" , '
             str += '"country": "'+ country + '" , '
             str += '"region": "' + region + '" , '
-            str += '"province": "' +' ('  + province + ')' + '" , '
+            str += '"province": "' + province + '" , '
             str += '"city": "' + city + '" , '
             str += '"address": "' + address + '" , '
-            str += '"postalCode ": "'+ postalCode  + '" , '
-            str += '"CustomerId ": "' + customerId + '" '
+            str += '"postalCode": "'+ postalCode  + '" , '
+            str += '"customerId": "' + customerId + '" '
             str+= " }"
         return str
       },
@@ -749,7 +817,7 @@ export default {
         }
 
         for (let i = 0; i < this.customers_id.length; i++) {
-          if (this.editing_factory_customerId === this.customers_id[i]) {
+          if (this.editing_factory_customerId == this.customers_id[i]) {
             this.editing_factory_customerName = this.customers_name[i]
             break
           }
