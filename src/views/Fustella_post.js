@@ -665,7 +665,7 @@ import axios from 'axios'
                                     timeCouple += '"x": ' + time.getTime() + ', '
                                     if(i%15 == 0 || session_started){
                                       
-                                      if(time>=cs_start_time && time<=cs_finish_time){
+                                      if(time>=cs_start_time && time<=cs_finish_time && session_started){
                                         rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
                                         rotationData.push(JSON.parse(rotationCouple))
                                       }else{
