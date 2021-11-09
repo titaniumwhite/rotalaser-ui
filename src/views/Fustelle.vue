@@ -259,8 +259,8 @@
               
               <v-card-title v-text="item.cadName"></v-card-title>
               <v-card-subtitle v-text="item.id"></v-card-subtitle>
-              <div>
-                <v-row>
+              <div v-if="!item.status_loading">
+                <v-row v-if="!item.active">
                 <v-chip
                   class="ma-6"
                   color="red"
@@ -270,7 +270,18 @@
                   Fustella non attiva
                 </v-chip>
                 </v-row>
-                </div>
+
+                <v-row v-if="item.active">
+                <v-chip
+                  class="ma-6"
+                  color="green"
+                  text-color="white"
+                  @click="alarm"
+                  >
+                  Fustella attiva
+                </v-chip>
+                </v-row>
+              </div>
 
               <v-card-actions>
                 <v-container>
@@ -297,6 +308,7 @@
                     cols="12"
                   >
                 <v-btn
+                  v-if="item.active"
                   text
                   color="secondary"
                   @click="$router.push('/fustella/live/'+item.id)">
@@ -342,6 +354,7 @@ export default {
       dialog: false,
       group: null,
       loading: true,
+      status_loading: true,
       valid: false,
       true: true,
 
@@ -380,6 +393,8 @@ export default {
               str += '"cadName": "'   + response.data.data[i].cadName + '", '
               str += '"FactoryId": "'   + response.data.data[i].factory.id + '", '
               str += '"cad": "'    + response.data.data[i].cadImage.href + '", '
+              str += '"status_loading": "false",' 
+              str += '"active": "false",' 
               str += '"loading": "true"' 
               str += " }"
             
@@ -403,12 +418,13 @@ export default {
               
             }
 
-            //console.log(filtered)
             this.real_diecutters = filtered
-            this.loading= false
+            this.loading = false
             
             this.$session.set("fustelle",filtered)
             this.$session.set("pid",this.$route.params.id)
+
+            this.get_active_diecutters()
             
           }).catch( (error) => {
             console.log(error)
@@ -416,6 +432,7 @@ export default {
           })
         }else{
           this.real_diecutters = this.$session.get("fustelle")
+          this.get_active_diecutters()
           this.loading= false 
         }
 
@@ -524,14 +541,35 @@ export default {
           this.$router.push("/")
         })
       },
-*/
+*/  
+    get_active_diecutters(){
+
+        /* Determine if active */
+        for(let i in this.real_diecutters){
+          axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.real_diecutters[i].id+'/sessions/latest',{
+            headers:{
+              'key':this.$session.get("key")
+            }
+          }).then(response =>{
+              console.log(response.data.data.endedAt)
+              if((response.data.data.endedAt == null || response.data.data.endedAt == undefined) 
+              && response.data.data.startedAt != undefined){
+                  this.real_diecutters[i].status_loading = false
+                  this.real_diecutters[i].active = this.true
+              }else{
+                  this.real_diecutters[i].status_loading = false
+                  this.real_diecutters[i].active = this.false
+              }
+            })
+        }
+    },
     reset: function() {
       this.$refs.textareaform.reset()
     },
 
-      alarm () {
-        alert('ATTENZIONE\nQuesta funzionalità ancora non è attiva')
-      },
+    alarm () {
+      alert('ATTENZIONE\nQuesta funzionalità ancora non è attiva')
+    },
 
     }
 };
