@@ -41,6 +41,10 @@ import axios from 'axios'
         dialog_modify: false,
         dialog_delete: false,
 
+        t: [],
+        h: [],
+        s: [],
+
         /* data per pagina 'modifica' */
         customers_name: [],
         customers: [],
@@ -55,7 +59,7 @@ import axios from 'axios'
 
 
         items: [
-          'informazioni', 'grafici', 'cad', 'modifica'
+          'informazioni', 'grafici', 'cad', 'modifica', 'tagli a campione'
         ],
 
         seriesAreaRotation: [],
@@ -539,20 +543,12 @@ import axios from 'axios'
                                 let last_session = -1
                                 let total_session = 0
 
-                                /* Buffer measurement per session */
-                                let temp_t_list_ses = []
-                                let temp_h_list_ses = []
-                                let temp_s_list_ses = []
-
                                 
                                 for(let i=0; i<this.got.length-1;i++){
 
                                   let rotationCouple;
                                   let totalRotationCouple;
-                                  let speedCouple;    
-                                  
-                                  let humidityCouple;
-                                  let temperatureCouple; 
+                                   
 
                                   let session_started = false
                                   
@@ -592,14 +588,6 @@ import axios from 'axios'
 
                                       session_started = true
                                                                      
-                                      temperatureSesData.push(temp_t_list_ses)
-                                      humiditySesData.push(temp_h_list_ses)
-                                      speedSesData.push(temp_s_list_ses)
-                                      
-                                      temp_t_list_ses = []
-                                      temp_h_list_ses = []
-                                      temp_s_list_ses = []
-                                      
                                       total_session+= 1
 
                                       last_session = parseInt(this.got[i].session.id)
@@ -612,10 +600,10 @@ import axios from 'axios'
                                       //cs_finish_time = time_finish
 
 
-                                      let session_number = this.got[i].session.id - this.first_session
+                                      let session_number = (this.got[i].session.id - this.first_session) + 1
                                       
-                                      this.from_[session_number] = time_start
-                                      this.to_[session_number] = time_finish
+                                      this.from_[session_number] = this.got[i].session.startedAt
+                                      this.to_[session_number] = this.got[i].session.endedAt
                                       
 
                                       let curr_text =     '{'+
@@ -677,15 +665,7 @@ import axios from 'axios'
                                       totalRotationData.push(JSON.parse(totalRotationCouple))
 
                                     }          
-                                    speedCouple = timeCouple + ' "y": '   + this.got[i].rotationSpeed + " }"
-                                    temperatureCouple = timeCouple + ' "y": ' + this.got[i].temperature + " }"
-                                    humidityCouple = timeCouple + ' "y": ' + this.got[i].humidity + " }"      
-
-                                    temp_t_list_ses.push(JSON.parse(temperatureCouple))
-                                    temp_h_list_ses.push(JSON.parse(humidityCouple))
-                                    temp_s_list_ses.push(JSON.parse(speedCouple))
-
-                                     
+                                   
   
                                   }
                                 }
@@ -693,9 +673,7 @@ import axios from 'axios'
                                 /*  SESSION STORAGE  */
                                 this.$session.set("fustellaR",rotationData)
                                 this.$session.set("fustellaRT",totalRotationData)
-                                this.$session.set("speed",speedSesData)
-                                this.$session.set("temperature",temperatureSesData)
-                                this.$session.set("humidity",humiditySesData)
+                                
                                 this.$session.set("id",this.$route.params.id)
                                 
                                 this.$session.set("min",my_min)
@@ -984,19 +962,47 @@ import axios from 'axios'
         this.from = this.timeConverter(this.from_[n-1])
         this.to   = this.timeConverter(this.to_[n-1])
 
+        
+        
+        axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/measurements',{
+          headers:{
+            'key':this.$session.get("key")
+          },
+          params:{
+            startDate : this.from_[n-1],
+            endDate: this.to_[n-1]
+          }
+        }).then(response =>{     
+          
+          for (let i = 0; i < response.data.data.length; i++){
+            let rsp = response.data.data
+            let timeCouple = "{ "                        
+            timeCouple += '"x": ' + new Date(rsp[i].timestamp).getTime() + ', '
+            let speedCouple = timeCouple + ' "y": '   + rsp[i].rotationSpeed + " }"
+            let temperatureCouple = timeCouple + ' "y": ' + rsp[i].temperature + " }"
+            let humidityCouple = timeCouple + ' "y": ' + rsp[i].humidity + " }"  
+            
+            this.t.push(JSON.parse(temperatureCouple))
+            this.h.push(JSON.parse(humidityCouple))
+            this.s.push(JSON.parse(speedCouple))
+          }
+          }).catch( (error) => {
+            console.log(error)
+            this.$router.push("/")
+        })
         this.seriesAreaTemperature = [{
           name: "Temperatura",
-          data: this.seriesAreaTemperatureSes[n-1]
+          data: this.t
         }]
 
         this.seriesAreaHumidity = [{
           name: "Umidità",
-          data: this.seriesAreaHumiditySes[n-1]
+          data: this.h
         }]
 
         this.seriesAreaSpeed = [{
           name: "Velocità",
-          data: this.seriesAreaSpeedSes[n-1]
+          data: this.s
         }]
 
         this.ses =  true

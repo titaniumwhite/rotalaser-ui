@@ -551,7 +551,7 @@ export default {
               'key':this.$session.get("key")
             }
           }).then(response =>{
-              console.log(response.data.data.endedAt)
+              
               if((response.data.data.endedAt == null || response.data.data.endedAt == undefined) 
               && response.data.data.startedAt != undefined){
                   this.real_diecutters[i].status_loading = false

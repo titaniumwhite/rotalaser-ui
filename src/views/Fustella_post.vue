@@ -342,11 +342,12 @@
               cols="12"
               >   <v-card  v-if="!totali">
                     <div>
+                      <!-- ROTAZIONI PER SESSIONE -->
                       <div id="chart-line1">
                         <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaRotation" :series="seriesAreaRotation"></apexchart>
                       </div>
                       
-                    
+                      <!-- ROTAZIONI BRUSH -->
                       <div id="chart-line2" >
                         <apexchart width='100%' height="100" type="area" :options="chartOptionsLineBrush" :series="seriesLineBrush"></apexchart>
                       </div>
@@ -363,6 +364,7 @@
                     </v-card-actions>
                   </v-card>
                   <v-card v-else >
+                    <!-- ROTAZIONI TOTALI -->
                     <div id="chart-line3" >
                         <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaTotalRotation" :series="seriesAreaTotalRotation"></apexchart>
                     </div>
@@ -399,6 +401,7 @@
               md="4"
               sm="12"
               cols="12" >
+                    <!-- UMIDITÀ -->
                     <div id="chart-line">
                       <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaHumidity" :series="seriesAreaHumidity"></apexchart>
                     </div>
@@ -408,6 +411,7 @@
                 sm="12"
                 cols="12" 
               >
+                    <!-- TEMPERATURA -->
                     <div id="chart-line">
                       <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaTemperature" :series="seriesAreaTemperature"></apexchart>
                     </div>
@@ -418,6 +422,7 @@
                 sm="12"
                 cols="12" 
               >
+                    <!-- VELOCITÀ -->
                     <div id="chart-line">
                       <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaSpeed" :series="seriesAreaSpeed"></apexchart>
                     </div>
@@ -435,7 +440,7 @@
           </v-card>
 
           <!-- PAGINA CAD -->
-          <v-col v-if="item=='cad'" 
+          <v-col v-if="item =='cad'" 
             lg="6"
             md="12" 
             sm="12" 
