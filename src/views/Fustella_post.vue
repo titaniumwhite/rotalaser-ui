@@ -391,6 +391,15 @@
 
             </v-row>
 
+            <v-row>
+                <v-col 
+                lg="2"
+                md="2"
+                sm="1"
+                cols="1"
+              > </v-col>
+            </v-row>
+
 
             <v-card v-if="ses && !ses_loading">
             <v-card-title>Sessione {{numero_sessione}}</v-card-title>

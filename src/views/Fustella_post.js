@@ -952,6 +952,7 @@ import axios from 'axios'
         return time;
       },
       grafico_per_sessione(n){
+
         this.ses =  false
         this.ses_loading = true
 
@@ -973,40 +974,47 @@ import axios from 'axios'
             endDate: this.to_[n-1]
           }
         }).then(response =>{     
-          
+          let t = []
+          let h = []
+          let s = []
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
+
+            
+
             let timeCouple = "{ "                        
             timeCouple += '"x": ' + new Date(rsp[i].timestamp).getTime() + ', '
             let speedCouple = timeCouple + ' "y": '   + rsp[i].rotationSpeed + " }"
             let temperatureCouple = timeCouple + ' "y": ' + rsp[i].temperature + " }"
             let humidityCouple = timeCouple + ' "y": ' + rsp[i].humidity + " }"  
             
-            this.t.push(JSON.parse(temperatureCouple))
-            this.h.push(JSON.parse(humidityCouple))
-            this.s.push(JSON.parse(speedCouple))
+            t.push(JSON.parse(temperatureCouple))
+            h.push(JSON.parse(humidityCouple))
+            s.push(JSON.parse(speedCouple))
+            
           }
+          this.seriesAreaTemperature = [{
+            name: "Temperatura",
+            data: t
+          }]
+  
+          this.seriesAreaHumidity = [{
+            name: "Umidità",
+            data: h
+          }]
+  
+          this.seriesAreaSpeed = [{
+            name: "Velocità",
+            data: s
+          }]
+  
+          this.ses =  true
+          this.ses_loading = false
           }).catch( (error) => {
             console.log(error)
             this.$router.push("/")
         })
-        this.seriesAreaTemperature = [{
-          name: "Temperatura",
-          data: this.t
-        }]
-
-        this.seriesAreaHumidity = [{
-          name: "Umidità",
-          data: this.h
-        }]
-
-        this.seriesAreaSpeed = [{
-          name: "Velocità",
-          data: this.s
-        }]
-
-        this.ses =  true
-        this.ses_loading = false
+        
       },
 
       getBase64: function() {

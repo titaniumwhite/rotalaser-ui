@@ -78,7 +78,9 @@
 
           <v-card-title>Fustella {{$route.params.id}} Live</v-card-title>
           <v-card-text><h3>Ultimo aggiornamento: {{last_update}}</h3></v-card-text>
+          
             <v-row centered>
+              
 
               <v-col
                 lg="2"
@@ -103,13 +105,17 @@
               
               </v-col>
 
-              <v-col 
+              
+
+            </v-row>
+
+            <v-row>
+                <v-col 
                 lg="2"
                 md="2"
                 sm="1"
                 cols="1"
               > </v-col>
-
             </v-row>
 
 
