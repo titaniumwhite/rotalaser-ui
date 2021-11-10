@@ -590,30 +590,30 @@ import axios from 'axios'
                                                                      
                                       total_session+= 1
 
-                                      last_session = parseInt(this.got[i].session.id)
+                                     
 
     
-                                      let time_start  = new Date(this.got[i].session.startedAt)
-                                      let time_finish = new Date(this.got[i].session.endedAt)
+                                      //let time_start  = new Date(this.got[i].session.startedAt)
+                                      //let time_finish = new Date(this.got[i].session.endedAt)
                                       
                                       //cs_start_time = time_start
                                       //cs_finish_time = time_finish
 
 
-                                      let session_number = (this.got[i].session.id - this.first_session) + 1
+                                      //let session_number = (this.got[i].session.id - this.first_session) + 1
                                       
-                                      this.from_[session_number] = this.got[i].session.startedAt
-                                      this.to_[session_number] = this.got[i].session.endedAt
+                                      this.from_[this.got[i].session.id] = this.got[i].session.startedAt
+                                      this.to_[this.got[i].session.id] = this.got[i].session.endedAt
                                       
 
                                       let curr_text =     '{'+
-                                                          '"x": '+ time_start.getTime() +
+                                                          '"x": '+ new Date(this.got[i].session.startedAt).getTime() +
                                                           ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
                                                           '"label": {' +
                                                             '"borderColor": "#ff6090", "style":{' +
                                                               '"color": "#fff", "background": "#ff6090"' +
                                                               '},'+
-                                                            '"text":"'+ "Inizio sessione " + session_number
+                                                            '"text":"'+ "Inizio sessione " + this.got[i].session.id
                                                           +'"}'
                                                         +'}'
 
@@ -621,13 +621,13 @@ import axios from 'axios'
                                       annotation_text.push(JSON.parse(curr_text))
 
                                       curr_text =     '{'+
-                                        '"x": '+ time_finish.getTime() +
+                                        '"x": '+ new Date(this.got[i].session.endedAt).getTime() +
                                         ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
                                         '"label": {' +
                                           '"borderColor": "#ff6090", "style":{' +
                                             '"color": "#fff", "background": "#ff6090"' +
                                             '},'+
-                                          '"text":"'+ "Fine sessione " +  session_number 
+                                          '"text":"'+ "Fine sessione " +  this.got[i].session.id 
                                         +'"}'
                                       +'}'
 
@@ -635,6 +635,7 @@ import axios from 'axios'
                                       annotation_text.push(JSON.parse(curr_text)) 
                                       
                                     }
+                                    last_session = parseInt(this.got[i].session.id)
 
                                     /* Settaggio window slider, ultimo quarto di dati  */
                                     if (i == Math.floor(((this.got.length*3)/4))){ 
