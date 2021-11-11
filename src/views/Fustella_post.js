@@ -642,8 +642,6 @@ import axios from 'axios'
                                       
                                       if(session_started && parseInt(this.got[i].session.localSessionId)-1 > 0){
                                        
-                                        console.log(parseInt(this.got[i].session.localSessionId)-1)
-                                        console.log(this.to_[parseInt(this.got[i].session.localSessionId)-1])
                                         let timeCouple_ = "{ "
                                         timeCouple_ += '"x": ' + new Date(
                                           new Date(this.to_[parseInt(this.got[i].session.localSessionId)-1])
