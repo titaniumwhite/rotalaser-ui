@@ -25,7 +25,7 @@ import axios from 'axios'
         my_max:0,
         created: false,
         ses: false,
-        ses_loading: true,
+        ses_loading: false,
         numero_sessione : -1,
         from: 0,
         to: 0,
@@ -85,8 +85,8 @@ import axios from 'axios'
                     console.log(config.config.series[config.seriesIndex].name)
                     
                     console.log(event.target.innerHTML)
-                
-                    this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[2]))
+                    if(!this.ses_loading)
+                      this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[2]))
                 }
             },
             //group: 'sync',
@@ -168,8 +168,8 @@ import axios from 'axios'
                 console.log(config.config.series[config.seriesIndex].name)
                 
                 console.log(event.target.innerHTML)
-            
-                this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[2]))
+                if(!this.ses_loading)
+                  this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[2]))
               }
             },
             //group: 'sync',
@@ -602,8 +602,8 @@ import axios from 'axios'
 
                                       //let session_number = (this.got[i].session.id - this.first_session) + 1
                                       
-                                      this.from_[this.got[i].session.id] = this.got[i].session.startedAt
-                                      this.to_[this.got[i].session.id] = this.got[i].session.endedAt
+                                      this.from_[this.got[i].session.localSessionId] = this.got[i].session.startedAt
+                                      this.to_[this.got[i].session.localSessionId] = this.got[i].session.endedAt
                                       
 
                                       let curr_text =     '{'+
@@ -613,7 +613,7 @@ import axios from 'axios'
                                                             '"borderColor": "#ff6090", "style":{' +
                                                               '"color": "#fff", "background": "#ff6090"' +
                                                               '},'+
-                                                            '"text":"'+ "Inizio sessione " + this.got[i].session.id
+                                                            '"text":"'+ "Inizio sessione " + this.got[i].session.localSessionId
                                                           +'"}'
                                                         +'}'
 
@@ -627,7 +627,7 @@ import axios from 'axios'
                                           '"borderColor": "#ff6090", "style":{' +
                                             '"color": "#fff", "background": "#ff6090"' +
                                             '},'+
-                                          '"text":"'+ "Fine sessione " +  this.got[i].session.id 
+                                          '"text":"'+ "Fine sessione " +  this.got[i].session.localSessionId 
                                         +'"}'
                                       +'}'
 
