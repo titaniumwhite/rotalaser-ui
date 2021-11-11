@@ -85,7 +85,7 @@ import axios from 'axios'
                     console.log(config.config.series[config.seriesIndex].name)
                     
                     console.log(event.target.innerHTML)
-                    if(!this.ses_loading)
+                    if(!this.ses_loading && !isNaN(parseInt(event.target.innerHTML.split(" ")[2])))
                       this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[2]))
                 }
             },
@@ -168,7 +168,7 @@ import axios from 'axios'
                 console.log(config.config.series[config.seriesIndex].name)
                 
                 console.log(event.target.innerHTML)
-                if(!this.ses_loading)
+                if(!this.ses_loading && !isNaN(parseInt(event.target.innerHTML.split(" ")[2])))
                   this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[2]))
               }
             },
@@ -516,8 +516,6 @@ import axios from 'axios'
                                 let temperatureSesData = []
                                 let humiditySesData = []
 
-                                //let cs_start_time = null
-                                //let cs_finish_time = null
 
                                 this.got = response.data.data
 
@@ -581,26 +579,14 @@ import axios from 'axios'
                                     }
                                     
                                     prev_rotations = this.got[i].rotationCount
-                                   
+                                    
                                     
                                     /* Sessioni totali */
                                     if(parseInt(this.got[i].session.id) != last_session){
 
                                       session_started = true
                                                                      
-                                      total_session+= 1
-
-                                     
-
-    
-                                      //let time_start  = new Date(this.got[i].session.startedAt)
-                                      //let time_finish = new Date(this.got[i].session.endedAt)
-                                      
-                                      //cs_start_time = time_start
-                                      //cs_finish_time = time_finish
-
-
-                                      //let session_number = (this.got[i].session.id - this.first_session) + 1
+                                      total_session += 1
                                       
                                       this.from_[this.got[i].session.localSessionId] = this.got[i].session.startedAt
                                       this.to_[this.got[i].session.localSessionId] = this.got[i].session.endedAt
@@ -654,13 +640,21 @@ import axios from 'axios'
                                     timeCouple += '"x": ' + time.getTime() + ', '
                                     if(i%15 == 0 || session_started){
                                       
-                                      //if(time>=cs_start_time && time<=cs_finish_time && session_started){
-                                        rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
+                                      if(session_started && parseInt(this.got[i].session.localSessionId)-1 > 0){
+                                       
+                                        console.log(parseInt(this.got[i].session.localSessionId)-1)
+                                        console.log(this.to_[parseInt(this.got[i].session.localSessionId)-1])
+                                        let timeCouple_ = "{ "
+                                        timeCouple_ += '"x": ' + new Date(
+                                          new Date(this.to_[parseInt(this.got[i].session.localSessionId)-1])
+                                          .getTime() + 10*60000).getTime() + ', '
+                                        rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
                                         rotationData.push(JSON.parse(rotationCouple))
-                                      /*}else{
-                                        rotationCouple = timeCouple + ' "y": '+ 0 + " }"
-                                        rotationData.push(JSON.parse(rotationCouple))
-                                      }*/
+
+                                      }
+
+                                      rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
+                                      rotationData.push(JSON.parse(rotationCouple))
 
                                       totalRotationCouple = timeCouple + ' "y": '+ total_rotations + " }"
                                       totalRotationData.push(JSON.parse(totalRotationCouple))

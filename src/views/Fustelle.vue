@@ -271,7 +271,7 @@
                 </v-chip>
                 </v-row>
 
-                <v-row v-if="item.active">
+                <v-row v-else>
                 <v-chip
                   class="ma-6"
                   color="green"
@@ -306,9 +306,10 @@
                     md="6"
                     sm="12"
                     cols="12"
+                    v-if="item.active"
                   >
                 <v-btn
-                  v-if="item.active"
+                  
                   text
                   color="secondary"
                   @click="$router.push('/fustella/live/'+item.id)">
@@ -379,7 +380,7 @@ export default {
     mounted(){
         if(this.true/*!this.$session.exists("fustelle") && 
         (!this.$session.exists("pid") || this.$route.params.id == this.$session.get("pid"))*/){
-          axios.get('http://195.231.3.173:8080/v1/diecutters/',{
+          axios.get('http://195.231.3.173:8080/v1/diecutters/'/*+this.route.params.id*/,{
             headers:{
               'key':this.$session.get("key")
             }
