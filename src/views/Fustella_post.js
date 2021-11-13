@@ -536,7 +536,7 @@ import axios from 'axios'
           'key':this.$session.get("key")
         }
       }).then(response =>{this.last_session = response.data.data.id})
-          if(!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id) && this.true){
+          if(/*!this.$session.exists("fustellaR") || (this.$session.get("id") !== this.$route.params.id) &&*/ this.true){
             axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/measurements',{
               headers:{
                 'key':this.$session.get("key")
@@ -699,6 +699,7 @@ import axios from 'axios'
                                 }
 
                                 /*  SESSION STORAGE  */
+                                /*
                                 this.$session.set("fustellaR",rotationData)
                                 this.$session.set("fustellaRT",totalRotationData)
                                 
@@ -714,6 +715,7 @@ import axios from 'axios'
                                 this.$session.set("text",annotation_text)
                                 this.$session.set("from_",this.from_)
                                 this.$session.set("to_",this.to_)
+                                */
                                 
                                 
                                 this.seriesAreaTemperatureSes = temperatureSesData
