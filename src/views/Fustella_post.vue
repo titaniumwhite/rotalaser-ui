@@ -295,7 +295,7 @@
                       sm="6"
                     >
                       <v-text-field
-                        value="IN ATTESA DI API"
+                        :value="diecutter_factory"
                         label="Fabbrica"
                         outlined
                         readonly
@@ -438,6 +438,16 @@
                 
               </v-col>
             </v-row>
+            </v-card>
+
+            <v-card v-if="ses && !ses_loading">
+            <v-card-title>Errori</v-card-title>          
+              <v-data-table
+                :headers="errortable_headers"
+                :items="errors"
+                :items-per-page="5"
+                class="elevation-1"
+              ></v-data-table>
             </v-card>
 
           </v-card>

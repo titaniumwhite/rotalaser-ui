@@ -37,6 +37,7 @@ import axios from 'axios'
 
         diecutter_name: '',
         diecutter_id: -1,
+        diecutter_factory: '',
         
         dialog_modify: false,
         dialog_delete: false,
@@ -59,7 +60,7 @@ import axios from 'axios'
 
 
         items: [
-          'informazioni', 'grafici', 'cad', 'modifica', 'tagli a campione'
+          'informazioni', 'grafici', 'cad', 'tagli a campione'
         ],
 
         seriesAreaRotation: [],
@@ -72,7 +73,19 @@ import axios from 'axios'
         seriesAreaTemperatureSes: [],
         seriesAreaHumiditySes: [],
         seriesAreaSpeedSes: [],
-       
+
+        errortable_headers: [
+          {
+            text: 'Numero',
+            align: 'start',
+            sortable: false,
+            value: 'id',
+          },
+          { text: 'Tipo', value: 'kind' },
+        ],
+
+        errors: [],
+
         chartOptionsAreaRotation: {
           chart: {
             id: 'rotazioni',
@@ -491,9 +504,29 @@ import axios from 'axios'
           'key':this.$session.get("key")
         }
       }).then(response =>{
-
         this.diecutter_name = response.data.data.cadName
         this.diecutter_id = response.data.data.id
+
+        axios.get('http://195.231.3.173:8080' + response.data.data.factory.href,{
+          headers:{
+            'key':this.$session.get("key")
+          }
+        }).then(response =>{
+          this.diecutter_factory = response.data.data.name
+        }).catch( (error) => {
+          console.log(error.response.data)
+        })
+
+      }).catch( (error) => {
+        console.log(error.response.data)
+      })
+
+      axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/warnings',{
+        headers:{
+          'key':this.$session.get("key")
+        }
+      }).then(response =>{
+        this.total_errors = response.data.data.length
       }).catch( (error) => {
         console.log(error.response.data)
       })
@@ -559,6 +592,8 @@ import axios from 'axios'
 
                        
                                   if(!isNaN(time)){
+
+      
                                     
                                     
                                     //time.setHours(time.getHours() + 2);
@@ -955,6 +990,42 @@ import axios from 'axios'
    
         this.from = this.timeConverter(this.from_[n-1])
         this.to   = this.timeConverter(this.to_[n-1])
+
+        // Errori per sessione
+        axios.get('http://195.231.3.173:8080/v1/sessions/'+this.numero_sessione+'/warnings',{
+          headers:{
+            'key':this.$session.get("key")
+          },
+          params:{
+            startDate : this.from_[n-1],
+            endDate: this.to_[n-1]
+          }
+        }).then(response =>{
+          let e = []     
+          for (let i = 0; i < response.data.data.length; i++){
+            let rsp = response.data.data
+            console.log(rsp[i])
+            
+            let errorCouple = "{ "
+            errorCouple += '"id": "' + rsp[i].cardboard.id + '", '
+            errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '" '
+            errorCouple += " }"
+            e.push(JSON.parse(errorCouple))
+          }
+
+          this.errors = e
+
+          this.seriesError = [{
+            name: "Errori",
+            data: e
+          }]
+  
+          this.ses =  true
+          this.ses_loading = false
+          }).catch( (error) => {
+            console.log(error)
+            this.$router.push("/")
+        })
 
         
         
