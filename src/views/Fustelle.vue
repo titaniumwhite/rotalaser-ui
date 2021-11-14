@@ -265,7 +265,6 @@
                   class="ma-6"
                   color="red"
                   text-color="white"
-                  @click="alarm"
                   >
                   Fustella non attiva
                 </v-chip>
@@ -306,13 +305,14 @@
                     md="6"
                     sm="12"
                     cols="12"
-                    v-if="item.active"
                   >
                 <v-btn
                   
                   text
                   color="secondary"
-                  @click="$router.push('/fustella/live/'+item.id)">
+                  @click="$router.push('/fustella/live/'+item.id)"
+                  :disabled="!(item.active)"
+                  >
                   Live
                 </v-btn>
                   </v-col>
@@ -566,10 +566,6 @@ export default {
     },
     reset: function() {
       this.$refs.textareaform.reset()
-    },
-
-    alarm () {
-      alert('ATTENZIONE\nQuesta funzionalità ancora non è attiva')
     },
 
     }

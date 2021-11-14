@@ -269,7 +269,7 @@
                       sm="6"
                     >
                       <v-text-field
-                        value="IN ATTESA DI API"
+                        :value="diecutter_customer"
                         label="Cliente"
                         outlined
                         readonly

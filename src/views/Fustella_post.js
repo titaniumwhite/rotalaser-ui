@@ -38,6 +38,7 @@ import axios from 'axios'
         diecutter_name: '',
         diecutter_id: -1,
         diecutter_factory: '',
+        diecutter_customer: '',
         
         dialog_modify: false,
         dialog_delete: false,
@@ -506,16 +507,10 @@ import axios from 'axios'
       }).then(response =>{
         this.diecutter_name = response.data.data.cadName
         this.diecutter_id = response.data.data.id
+        this.diecutter_factory = response.data.data.factory.name
+        this.diecutter_customer = response.data.data.customer.name
 
-        axios.get('http://195.231.3.173:8080' + response.data.data.factory.href,{
-          headers:{
-            'key':this.$session.get("key")
-          }
-        }).then(response =>{
-          this.diecutter_factory = response.data.data.name
-        }).catch( (error) => {
-          console.log(error.response.data)
-        })
+        //console.log(response.data.data)
 
       }).catch( (error) => {
         console.log(error.response.data)
@@ -526,6 +521,7 @@ import axios from 'axios'
           'key':this.$session.get("key")
         }
       }).then(response =>{
+        console.log(response.data.data)
         this.total_errors = response.data.data.length
       }).catch( (error) => {
         console.log(error.response.data)
@@ -561,7 +557,7 @@ import axios from 'axios'
                                 let my_min = 0
                                 let my_max = 0
 
-                                let total_errors = 0
+                                //let total_errors = 0
                                 //let prev_errors  = 0;
 
                                 let total_rotations = 0
@@ -618,6 +614,7 @@ import axios from 'axios'
                                     
                                     /* Sessioni totali */
                                     if(parseInt(this.got[i].session.id) != last_session){
+                                      console.log(this.got[i].session)
 
                                       session_started = true
                                                                      
@@ -777,7 +774,7 @@ import axios from 'axios'
                               }
                                 
 
-                                this.total_errors = total_errors;
+                                //this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
                                 this.total_sessions = total_session;
                                 this.my_min = my_min
@@ -1006,7 +1003,7 @@ import axios from 'axios'
           let e = []     
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
-            console.log(rsp[i])
+            //console.log(rsp[i])
             
             let errorCouple = "{ "
             errorCouple += '"id": "' + rsp[i].cardboard.id + '", '
@@ -1043,6 +1040,7 @@ import axios from 'axios'
           let t = []
           let h = []
           let s = []
+          console.log(response.data.data)
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
 
