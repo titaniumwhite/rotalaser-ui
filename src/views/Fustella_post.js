@@ -628,7 +628,7 @@ import axios from 'axios'
                                       }
                                       
                                       console.log("f" + this.from_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
-                                      console.log(this.to_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
+                                      console.log("t" +this.to_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
                                       
                                       if(this.got[i].session.startedAt !== null && this.got[i].session.startedAt !== undefined){
                                         let curr_text =     '{'+
@@ -998,8 +998,8 @@ import axios from 'axios'
         this.numero_sessione = n
 
    
-        this.from = this.timeConverter(this.from_[n-1])
-        this.to   = this.timeConverter(this.to_[n-1])
+        this.from = this.timeConverter(this.from_[n])
+        this.to   = this.timeConverter(this.to_[n])
 
         // Errori per sessione
         axios.get('http://195.231.3.173:8080/v1/sessions/'+this.numero_sessione+'/warnings',{
@@ -1007,8 +1007,8 @@ import axios from 'axios'
             'key':this.$session.get("key")
           },
           params:{
-            startDate : this.from_[n-1],
-            endDate: this.to_[n-1]
+            startDate : this.from_[n],
+            endDate: this.to_[n]
           }
         }).then(response =>{
           let e = []     
@@ -1044,8 +1044,8 @@ import axios from 'axios'
             'key':this.$session.get("key")
           },
           params:{
-            startDate : this.from_[n-1],
-            endDate: this.to_[n-1]
+            startDate : this.from_[n],
+            endDate: this.to_[n]
           }
         }).then(response =>{     
           let t = []
