@@ -637,20 +637,21 @@ import axios from 'axios'
 
                                     
                                       annotation_text.push(JSON.parse(curr_text))
+                                      if(this.got[i].session.endedAt == null || this.got[i].session.endedAt == undefined){
+                                        curr_text =     '{'+
+                                          '"x": '+ new Date(this.got[i].session.endedAt).getTime() +
+                                          ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
+                                          '"label": {' +
+                                            '"borderColor": "#ff6090", "style":{' +
+                                              '"color": "#fff", "background": "#ff6090"' +
+                                              '},'+
+                                            '"text":"'+ "Fine sessione " +  this.got[i].session.localSessionId 
+                                          +'"}'
+                                        +'}'
 
-                                      curr_text =     '{'+
-                                        '"x": '+ new Date(this.got[i].session.endedAt).getTime() +
-                                        ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
-                                        '"label": {' +
-                                          '"borderColor": "#ff6090", "style":{' +
-                                            '"color": "#fff", "background": "#ff6090"' +
-                                            '},'+
-                                          '"text":"'+ "Fine sessione " +  this.got[i].session.localSessionId 
-                                        +'"}'
-                                      +'}'
-
-              
-                                      annotation_text.push(JSON.parse(curr_text)) 
+                
+                                        annotation_text.push(JSON.parse(curr_text)) 
+                                      }
                                       
                                     }
                                     last_session = parseInt(this.got[i].session.id)
