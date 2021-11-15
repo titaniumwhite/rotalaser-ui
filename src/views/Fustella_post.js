@@ -587,7 +587,7 @@ import axios from 'axios'
                                   let time = new Date(this.got[i].timestamp)
 
                        
-                                  if(!isNaN(time)){
+                                  if(!isNaN(time) && time.getTime() !== 0){
 
       
                                     
@@ -614,7 +614,7 @@ import axios from 'axios'
                                     
                                     /* Sessioni totali */
                                     if(parseInt(this.got[i].session.id) != last_session){
-                                      console.log(this.got[i].session)
+                                      //console.log(this.got[i].session)
 
                                       session_started = true
                                                                      
@@ -622,23 +622,31 @@ import axios from 'axios'
                                       
                                       this.from_[this.got[i].session.localSessionId] = this.got[i].session.startedAt
                                       this.to_[this.got[i].session.localSessionId] = this.got[i].session.endedAt
+                                      if(this.got[i].session.startedAt == this.got[i].session.endedAt){
+                                        //this.to_[this.got[i].session.localSessionId] = new Date(this.got[i].session.endedAt).getTime() +  1 
+                                        console.log(this.got[i].session.localSessionId)
+                                      }
                                       
+                                      console.log("f" + this.from_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
+                                      console.log(this.to_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
+                                      
+                                      if(this.got[i].session.startedAt !== null && this.got[i].session.startedAt !== undefined){
+                                        let curr_text =     '{'+
+                                                            '"x": '+ new Date(this.got[i].session.startedAt).getTime() +
+                                                            ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
+                                                            '"label": {' +
+                                                              '"borderColor": "#ff6090", "style":{' +
+                                                                '"color": "#fff", "background": "#ff6090"' +
+                                                                '},'+
+                                                              '"text":"'+ "Inizio sessione " + this.got[i].session.localSessionId
+                                                            +'"}'
+                                                          +'}'
 
-                                      let curr_text =     '{'+
-                                                          '"x": '+ new Date(this.got[i].session.startedAt).getTime() +
-                                                          ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
-                                                          '"label": {' +
-                                                            '"borderColor": "#ff6090", "style":{' +
-                                                              '"color": "#fff", "background": "#ff6090"' +
-                                                              '},'+
-                                                            '"text":"'+ "Inizio sessione " + this.got[i].session.localSessionId
-                                                          +'"}'
-                                                        +'}'
-
-                                    
-                                      annotation_text.push(JSON.parse(curr_text))
-                                      if(this.got[i].session.endedAt == null || this.got[i].session.endedAt == undefined){
-                                        curr_text =     '{'+
+                                      
+                                        annotation_text.push(JSON.parse(curr_text))
+                                      }
+                                      if(this.got[i].session.endedAt !== null && this.got[i].session.endedAt !== undefined){
+                                        let curr_text =     '{'+
                                           '"x": '+ new Date(this.got[i].session.endedAt).getTime() +
                                           ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
                                           '"label": {' +
@@ -673,7 +681,9 @@ import axios from 'axios'
                                     timeCouple += '"x": ' + time.getTime() + ', '
                                     if(i%15 == 0 || session_started){
                                       
-                                      if(session_started && parseInt(this.got[i].session.localSessionId)-1 > 0){
+                                      if(session_started && parseInt(this.got[i].session.localSessionId)-1 > 0
+                                      && this.from_[parseInt(this.got[i].session.localSessionId)-1] !== null 
+                                      && this.to_[parseInt(this.got[i].session.localSessionId)-1] !== null){
                                        
                                         let timeCouple_ = "{ "
                                         timeCouple_ += '"x": ' + new Date(
@@ -1041,7 +1051,7 @@ import axios from 'axios'
           let t = []
           let h = []
           let s = []
-          console.log(response.data.data)
+          //console.log(response.data.data)
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
 
