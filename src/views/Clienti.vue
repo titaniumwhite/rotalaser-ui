@@ -264,7 +264,7 @@
                   <v-btn
                     text
                     color="secondary"
-                    @click="$router.push('/fustelle/'+item.name)">
+                    @click="$router.push('/fustelle/c/'+item.id)">
                     Fustelle
                   </v-btn>
                   </v-col>
@@ -474,6 +474,7 @@ export default {
       },
     },
   mounted(){
+    
     if(!this.$session.exists("clienti")){
       this.update_customers_array()
     }else{

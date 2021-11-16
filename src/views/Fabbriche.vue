@@ -320,7 +320,7 @@
                  <v-btn
                   text
                   color="secondary"
-                  @click="$router.push('/fustelle/'+item.name)">
+                  @click="$router.push('/fustelle/f/'+item.id)">
                   Fustelle
                 </v-btn>
                     </v-col>

@@ -32,8 +32,13 @@ const routes = [
     component: Inserisci
   },
   {
-    path: '/fustelle/:id',
-    name: 'fustelle',
+    path: '/fustelle/c/:id',
+    name: 'fustelle_c',
+    component: Fustelle
+  },
+  {
+    path: '/fustelle/f/:id',
+    name: 'fustelle_f',
     component: Fustelle
   },
   {

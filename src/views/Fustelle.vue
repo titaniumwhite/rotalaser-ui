@@ -242,7 +242,7 @@
         </div>
         <v-fade-transition>
         <v-card v-if="!loading">
-        <v-card-title>Fustelle di {{$route.params.id}}</v-card-title>
+        <v-card-title>Fustelle di {{name}}</v-card-title>
         <v-row dense >
           <v-col 
             v-for="item in real_diecutters"
@@ -332,10 +332,15 @@
               ></v-img>
               </v-avatar>
               </div>
-              
+            
             </v-card>
           </v-col>
         </v-row>
+        <v-card-text
+              v-if="empty"
+            >
+            Ancora nessuna fustella per {{name}}
+            </v-card-text>
         </v-card>
         </v-fade-transition>
       </v-container>
@@ -359,6 +364,9 @@ export default {
       valid: false,
       true: true,
 
+      name:"",
+      empty: false,
+
       dialog_submit: false,
       real_diecutters: [],
       // Variabili per modifica fustella//
@@ -378,15 +386,93 @@ export default {
       },
     },
     mounted(){
-        if(this.true/*!this.$session.exists("fustelle") && 
+        let is_client = this.$route.path.split("/")[2] == 'c'
+        if(this.true && is_client/*!this.$session.exists("fustelle") && 
         (!this.$session.exists("pid") || this.$route.params.id == this.$session.get("pid"))*/){
-          axios.get('http://195.231.3.173:8080/v1/diecutters/'/*+this.route.params.id*/,{
+          axios.get('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id+'/diecutters',{
             headers:{
               'key':this.$session.get("key")
             }
           }).then(response =>{
+          
+            axios.get('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id,{
+            headers:{
+              'key':this.$session.get("key")
+            }
+          }).then(response =>{
+              this.name = response.data.data.name
+          })
+            
+            let filtered = []
+            
+            if(response.data.data.length == undefined){
+              this.empty = true
+            }
+
+            for(let i = 0;i<response.data.data.length;i++) {
+              let str = "{ "
+              str += '"id": "'     + response.data.data[i].id + '", '
+              str += '"cadName": "'   + response.data.data[i].cadName + '", '
+              str += '"FactoryId": "'   + response.data.data[i].factory.id + '", '
+              str += '"cad": "'    + response.data.data[i].cadImage.href + '", '
+              str += '"status_loading": "false",' 
+              str += '"active": "false",' 
+              str += '"loading": "true"' 
+              str += " }"
+            
+              filtered.push(JSON.parse(str))   
+            }
+
+            for(let i =0;i<response.data.data.length;i++){
+              let cad_bytes;
+              axios.get('http://195.231.3.173:8080'+response.data.data[i].cadImage.href,{
+                headers:{
+                  'key':this.$session.get("key")
+                }
+              }).then(response =>{
+                
+                cad_bytes = response.data.data
+
+                filtered[i].cad = cad_bytes
+                filtered[i].loading = false
+                
+              })
+              
+            }
+
+            this.real_diecutters = filtered
+            this.loading = false
+            /*
+            this.$session.set("fustelle",filtered)
+            this.$session.set("pid",this.$route.params.id)
+            */
+
+            this.get_active_diecutters()
+            
+          }).catch( (error) => {
+            console.log(error)
+            this.$router.push("/")
+          })
+        }else{
+         axios.get('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id+'/diecutters',{
+            headers:{
+              'key':this.$session.get("key")
+            }
+          }).then(response =>{
+
+            axios.get('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id,{
+            headers:{
+              'key':this.$session.get("key")
+            }
+          }).then(response =>{
+              this.name = response.data.data.name
+          })
                              
             let filtered = []
+
+            if(response.data.data.length == undefined){
+              this.empty = true
+            }
             
             for(let i = 0;i<response.data.data.length;i++) {
               let str = "{ "
@@ -421,20 +507,8 @@ export default {
 
             this.real_diecutters = filtered
             this.loading = false
-            
-            this.$session.set("fustelle",filtered)
-            this.$session.set("pid",this.$route.params.id)
-
             this.get_active_diecutters()
-            
-          }).catch( (error) => {
-            console.log(error)
-            this.$router.push("/")
           })
-        }else{
-          this.real_diecutters = this.$session.get("fustelle")
-          this.get_active_diecutters()
-          this.loading= false 
         }
 
         axios.get('http://195.231.3.173:8080/v1/factories',{
