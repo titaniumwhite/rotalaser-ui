@@ -275,7 +275,7 @@
                   class="ma-6"
                   color="green"
                   text-color="white"
-                  @click="alarm"
+                  
                   >
                   Fustella attiva
                 </v-chip>

@@ -441,6 +441,7 @@ import axios from 'axios'
             'key':this.$session.get("key")
           }
         }).then(response =>{
+        
         let rotationData = []
         let h = []
         let s = []
@@ -448,15 +449,13 @@ import axios from 'axios'
                           
 
         this.got = response.data.data
-
       
         if(this.got.length<1){
           this.loading = false
           this.err=true
-          return
         }
                                                                     
-        for(let i=0; i<this.got.length-1;i++){
+        for(let i=0; i<this.got.length;i++){
 
           let rotationCouple;
           
