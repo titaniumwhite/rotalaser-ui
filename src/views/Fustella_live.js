@@ -47,7 +47,17 @@ import axios from 'axios'
         t: [],
         h: [],
         s: [],
+        errors: [],
 
+        errortable_headers: [
+          {
+            text: 'Numero',
+            align: 'start',
+            sortable: false,
+            value: 'id',
+          },
+          { text: 'Tipo', value: 'kind' },
+        ],
         /* data per pagina 'modifica' */
         customers_name: [],
         customers: [],
@@ -459,7 +469,7 @@ import axios from 'axios'
 
           let rotationCouple;
           
-          
+        
 
           let time = new Date(this.got[i].timestamp)
 
@@ -512,7 +522,34 @@ import axios from 'axios'
           name: "Velocità",
           data: s
         }]
+        /*
+        axios.get('http://195.231.3.173:8080/v1/sessions/'+session__+'/warnings',{
+          headers:{
+            'key':this.$session.get("key")
+          }
+        }).then(response =>{
+          let e = []     
+          for (let i = 0; i < response.data.data.length; i++){
+            let rsp = response.data.data
+            console.log(rsp[i])
+            
+            let errorCouple = "{ "
+            errorCouple += '"id": "' + rsp[i].cardboard.id + '", '
+            errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '" '
+            errorCouple += " }"
+            e.push(JSON.parse(errorCouple))
+          }
 
+          this.errors = e
+
+          this.seriesError = [{
+            name: "Errori",
+            data: e
+          }]
+          }).catch( (error) => {
+            console.log(error)
+            this.$router.push("/")
+        })*/
 
         this.loading=false 
         

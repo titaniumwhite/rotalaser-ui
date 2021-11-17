@@ -155,7 +155,19 @@
             </v-row>
             </v-card>
 
+            <v-card>
+            <v-card-title>Errori</v-card-title>          
+              <v-data-table
+                :headers="errortable_headers"
+                :items="errors"
+                :items-per-page="5"
+                class="elevation-1"
+              ></v-data-table>
+            </v-card>
+
           </v-card>
+
+          
 
           <v-card v-if="err">
             <v-card-text>
