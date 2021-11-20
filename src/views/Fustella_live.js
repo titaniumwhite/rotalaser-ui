@@ -36,6 +36,11 @@ import axios from 'axios'
         last_session:0,
         annotation_loading : false,
 
+        live: true,
+        name_: '',
+
+        overlay: false,
+
         diecutter_name: '',
         diecutter_id: -1,
 
@@ -51,12 +56,14 @@ import axios from 'axios'
 
         errortable_headers: [
           {
-            text: 'Numero',
+            text: 'Timestamp',
             align: 'start',
             sortable: false,
-            value: 'id',
+            value: 'timestamp',
           },
+          { text: 'Id errore', value: 'errorId'},
           { text: 'Tipo', value: 'kind' },
+          { text: 'Id elemento', value: 'elemId' },
         ],
         /* data per pagina 'modifica' */
         customers_name: [],
@@ -451,6 +458,9 @@ import axios from 'axios'
             'key':this.$session.get("key")
           }
         }).then(response =>{
+
+        
+
         
         let rotationData = []
         let h = []
@@ -464,6 +474,12 @@ import axios from 'axios'
           this.loading = false
           this.err=true
         }
+
+        if(this.got[0].session.endedAt != null){
+          this.live = false
+        }
+        
+        this.name_ = this.got[0].session.localSessionId
                                                                     
         for(let i=0; i<this.got.length;i++){
 
@@ -522,7 +538,7 @@ import axios from 'axios'
           name: "Velocità",
           data: s
         }]
-        /*
+        
         axios.get('http://195.231.3.173:8080/v1/sessions/'+session__+'/warnings',{
           headers:{
             'key':this.$session.get("key")
@@ -534,22 +550,21 @@ import axios from 'axios'
             console.log(rsp[i])
             
             let errorCouple = "{ "
-            errorCouple += '"id": "' + rsp[i].cardboard.id + '", '
-            errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '" '
+            errorCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '
+            errorCouple += '"errorId": "' + rsp[i].cardboard.id + '", '
+            errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '", '
+            errorCouple += '"elemId": "' + rsp[i].diecutterpart.elemId + '", '
+            errorCouple += '"warningImage": "' + rsp[i].cardboardImage.href + '" '
             errorCouple += " }"
             e.push(JSON.parse(errorCouple))
           }
 
           this.errors = e
 
-          this.seriesError = [{
-            name: "Errori",
-            data: e
-          }]
           }).catch( (error) => {
             console.log(error)
             this.$router.push("/")
-        })*/
+        })
 
         this.loading=false 
         
@@ -559,8 +574,22 @@ import axios from 'axios'
       console.log(error)
       this.$router.push("/")
       })
-    }
+    },
+    rowClick(item){
+      console.log('row ' + item.warningImage + ' clicked')
+      this.overlay = !this.overlay
+      /*axios.get('http://195.231.3.173:8080/' + item.warningImage,{
+        headers:{
+          'key':this.$session.get("key")
+        },
+      }).then(response =>{
+        console.log(response)
+      }).catch( (error) => {
+        console.log(error)
+      })*/
+    },
   },
+  
 };
 
   

@@ -45,6 +45,7 @@ import axios from 'axios'
         
         dialog_modify: false,
         dialog_delete: false,
+        
 
         t: [],
         h: [],
@@ -621,7 +622,7 @@ import axios from 'axios'
                                     
                                     /* Sessioni totali */
                                     if(parseInt(this.got[i].session.id) != last_session){
-                                      console.log(this.got[i].session)
+                                      //console.log(this.got[i].session)
 
                                       session_started = true
                                                                      
@@ -699,6 +700,15 @@ import axios from 'axios'
                                           .getTime() + 10*60000).getTime() + ', '
                                         rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
                                         rotationData.push(JSON.parse(rotationCouple))
+                                        
+                                        /*
+                                        timeCouple_ = "{ "
+                                        timeCouple_ += '"x": ' + new Date(
+                                          new Date(this.to_[parseInt(this.got[i].session.localSessionId)])
+                                          .getTime() - 1*60000).getTime() + ', '
+                                        rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
+                                        rotationData.push(JSON.parse(rotationCouple))
+                                        */
 
                                       }
 
@@ -1002,6 +1012,8 @@ import axios from 'axios'
         this.ses =  false
         this.ses_loading = true
 
+        this.numero_sessione = n 
+
         this.session_id_unique = this.session_id_unique_[n]
         this.from = this.timeConverter(this.from_[n])
         this.to   = this.timeConverter(this.to_[n])
@@ -1019,7 +1031,7 @@ import axios from 'axios'
           let e = []     
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
-            console.log(rsp[i])
+            //console.log(rsp[i])
             
             let errorCouple = "{ "
             errorCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '

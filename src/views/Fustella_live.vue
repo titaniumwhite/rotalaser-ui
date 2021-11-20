@@ -77,6 +77,9 @@
           <v-card v-if="!loading && !err && item=='grafici'">
 
           <v-card-title>Fustella {{$route.params.id}} Live</v-card-title>
+          <v-card-text v-if='live'><h2>Sessione in corso: {{name_}}</h2></v-card-text>
+          <v-card-text v-else><h2>Sessione {{name_}} terminata, quando inizierà
+            una nuova sessione la pagina verrà aggiornata in automatico</h2></v-card-text>
           <v-card-text><h3>Ultimo aggiornamento: {{last_update}}</h3></v-card-text>
           
             <v-row centered>
@@ -162,7 +165,24 @@
                 :items="errors"
                 :items-per-page="5"
                 class="elevation-1"
-              ></v-data-table>
+                @click:row="rowClick"
+              >
+              </v-data-table>
+
+              <v-overlay
+                :value="overlay"
+                @click.native="overlay = false"
+              >
+                <v-card
+                  height="256"
+                  rounded="xl"
+                  width="256"
+                >
+                  <v-img >
+                  </v-img>
+                </v-card>
+              </v-overlay>
+            
             </v-card>
 
           </v-card>
