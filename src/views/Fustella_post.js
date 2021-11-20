@@ -17,7 +17,7 @@ import axios from 'axios'
         tab: null,
         datacollection: null,
         cad: undefined,
-        session_id: 0,
+        localSessionId: -1,
         total_errors: 0,
         total_rotations: 0,
         total_sessions: 0,
@@ -27,13 +27,16 @@ import axios from 'axios'
         ses: false,
         ses_loading: false,
         numero_sessione : -1,
+        session_id_unique: 0,
         from: 0,
         to: 0,
+        session_id_unique_: [],
         from_: [],
         to_: [],
         first_session: 0,
         last_session:0,
         annotation_loading : false,
+        overlay: false,
 
         diecutter_name: '',
         diecutter_id: -1,
@@ -77,12 +80,14 @@ import axios from 'axios'
 
         errortable_headers: [
           {
-            text: 'Numero',
+            text: 'Timestamp',
             align: 'start',
             sortable: false,
-            value: 'id',
+            value: 'timestamp',
           },
+          { text: 'Id errore', value: 'errorId'},
           { text: 'Tipo', value: 'kind' },
+          { text: 'Id elemento', value: 'elemId' },
         ],
 
         errors: [],
@@ -94,13 +99,15 @@ import axios from 'axios'
             type: 'area',
             
             events: {
-                click: (event, chartContext, config) => {
+                click: (event/*, chartContext, config*/) => {
                     
-                    console.log(config.config.series[config.seriesIndex].name)
+                    //console.log(config.config.series[config.seriesIndex].name)
                     
-                    console.log(event.target.innerHTML)
-                    if(!this.ses_loading && !isNaN(parseInt(event.target.innerHTML.split(" ")[2])))
+                    //console.log(event.target.innerHTML)
+                    if(!this.ses_loading && !isNaN(parseInt(event.target.innerHTML.split(" ")[2]))) {
+                      //console.log("La sessione chiamata è " + event.target.innerHTML)
                       this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[2]))
+                    }
                 }
             },
             //group: 'sync',
@@ -177,11 +184,11 @@ import axios from 'axios'
             type: 'area',
             
             events: {
-              click: (event, chartContext, config) => {
+              click: (event/*, chartContext, config*/) => {
                     
-                console.log(config.config.series[config.seriesIndex].name)
+                //console.log(config.config.series[config.seriesIndex].name)
                 
-                console.log(event.target.innerHTML)
+                //console.log(event.target.innerHTML)
                 if(!this.ses_loading && !isNaN(parseInt(event.target.innerHTML.split(" ")[2])))
                   this.grafico_per_sessione(parseInt(event.target.innerHTML.split(" ")[2]))
               }
@@ -521,7 +528,7 @@ import axios from 'axios'
           'key':this.$session.get("key")
         }
       }).then(response =>{
-        console.log(response.data.data)
+        //console.log(response.data.data)
         this.total_errors = response.data.data.length
       }).catch( (error) => {
         console.log(error.response.data)
@@ -614,21 +621,22 @@ import axios from 'axios'
                                     
                                     /* Sessioni totali */
                                     if(parseInt(this.got[i].session.id) != last_session){
-                                      //console.log(this.got[i].session)
+                                      console.log(this.got[i].session)
 
                                       session_started = true
                                                                      
                                       total_session += 1
                                       
+                                      this.session_id_unique_[this.got[i].session.localSessionId] = this.got[i].session.id
                                       this.from_[this.got[i].session.localSessionId] = this.got[i].session.startedAt
                                       this.to_[this.got[i].session.localSessionId] = this.got[i].session.endedAt
                                       if(this.got[i].session.startedAt == this.got[i].session.endedAt){
                                         //this.to_[this.got[i].session.localSessionId] = new Date(this.got[i].session.endedAt).getTime() +  1 
-                                        console.log(this.got[i].session.localSessionId)
+                                        //console.log(this.got[i].session.localSessionId)
                                       }
                                       
-                                      console.log("f" + this.from_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
-                                      console.log("t" +this.to_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
+                                      //console.log("f" + this.from_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
+                                      //console.log("t" +this.to_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
                                       
                                       if(this.got[i].session.startedAt !== null && this.got[i].session.startedAt !== undefined){
                                         let curr_text =     '{'+
@@ -994,15 +1002,12 @@ import axios from 'axios'
         this.ses =  false
         this.ses_loading = true
 
-
-        this.numero_sessione = n
-
-   
+        this.session_id_unique = this.session_id_unique_[n]
         this.from = this.timeConverter(this.from_[n])
         this.to   = this.timeConverter(this.to_[n])
 
         // Errori per sessione
-        axios.get('http://195.231.3.173:8080/v1/sessions/'+this.numero_sessione+'/warnings',{
+        axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_id_unique+'/warnings',{
           headers:{
             'key':this.$session.get("key")
           },
@@ -1014,11 +1019,14 @@ import axios from 'axios'
           let e = []     
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
-            //console.log(rsp[i])
+            console.log(rsp[i])
             
             let errorCouple = "{ "
-            errorCouple += '"id": "' + rsp[i].cardboard.id + '", '
-            errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '" '
+            errorCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '
+            errorCouple += '"errorId": "' + rsp[i].cardboard.id + '", '
+            errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '", '
+            errorCouple += '"elemId": "' + rsp[i].diecutterpart.elemId + '", '
+            errorCouple += '"warningImage": "' + rsp[i].cardboardImage.href + '" '
             errorCouple += " }"
             e.push(JSON.parse(errorCouple))
           }
@@ -1148,7 +1156,21 @@ import axios from 'axios'
         .catch( (error) => {
           console.log(error)
         })
-      }
+      },
+
+      rowClick(item){
+        console.log('row ' + item.warningImage + ' clicked')
+        this.overlay = !this.overlay
+        /*axios.get('http://195.231.3.173:8080/' + item.warningImage,{
+          headers:{
+            'key':this.$session.get("key")
+          },
+        }).then(response =>{
+          console.log(response)
+        }).catch( (error) => {
+          console.log(error)
+        })*/
+    },
     },
   };
 

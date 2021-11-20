@@ -447,9 +447,25 @@
                 :items="errors"
                 :items-per-page="5"
                 class="elevation-1"
-              ></v-data-table>
-            </v-card>
+                @click:row="rowClick"
+              >
+              </v-data-table>
 
+              <v-overlay
+                :value="overlay"
+                @click.native="overlay = false"
+              >
+                <v-card
+                  height="256"
+                  rounded="xl"
+                  width="256"
+                >
+                  <v-img >
+                  </v-img>
+                </v-card>
+              </v-overlay>
+            
+            </v-card>
           </v-card>
 
           <v-card v-if="err">
