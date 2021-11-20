@@ -596,20 +596,8 @@ import axios from 'axios'
 
                        
                                   if(!isNaN(time) && time.getTime() !== 0){
-
-      
-                                    
-                                    
-                                    //time.setHours(time.getHours() + 2);
-                                   
-                                    /* Total Count S**T */
-
-                                    /* Errori totali */
-                                    /*if(this.got[i].errors != 0){
-                                      total_errors += this.got[i].errors //- prev_errors
-                                      //prev_errors = this.got[i].errors
-                                    }*/
-                                    
+                           
+                                                                       
                                     /* Rotazioni totali */
                                     if(this.got[i].rotationCount < prev_rotations && prev_rotations > 0){
                                       
@@ -692,6 +680,7 @@ import axios from 'axios'
                                       
                                       if(session_started && parseInt(this.got[i].session.localSessionId)-1 > 0
                                       && this.from_[parseInt(this.got[i].session.localSessionId)-1] !== null 
+                                      && this.from_[parseInt(this.got[i].session.localSessionId)] !== null 
                                       && this.to_[parseInt(this.got[i].session.localSessionId)-1] !== null){
                                        
                                         let timeCouple_ = "{ "
@@ -701,14 +690,14 @@ import axios from 'axios'
                                         rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
                                         rotationData.push(JSON.parse(rotationCouple))
                                         
-                                        /*
+                                       
                                         timeCouple_ = "{ "
                                         timeCouple_ += '"x": ' + new Date(
-                                          new Date(this.to_[parseInt(this.got[i].session.localSessionId)])
+                                          new Date(this.from_[parseInt(this.got[i].session.localSessionId)])
                                           .getTime() - 1*60000).getTime() + ', '
                                         rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
                                         rotationData.push(JSON.parse(rotationCouple))
-                                        */
+                                        
 
                                       }
 

@@ -65,6 +65,7 @@ import axios from 'axios'
           { text: 'Tipo', value: 'kind' },
           { text: 'Id elemento', value: 'elemId' },
         ],
+
         /* data per pagina 'modifica' */
         customers_name: [],
         customers: [],
@@ -547,7 +548,7 @@ import axios from 'axios'
           let e = []     
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
-            console.log(rsp[i])
+            //console.log(rsp[i])
             
             let errorCouple = "{ "
             errorCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '
