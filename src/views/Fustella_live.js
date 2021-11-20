@@ -53,6 +53,7 @@ import axios from 'axios'
         h: [],
         s: [],
         errors: [],
+        warningCad: undefined,
 
         errortable_headers: [
           {
@@ -579,15 +580,18 @@ import axios from 'axios'
     rowClick(item){
       console.log('row ' + item.warningImage + ' clicked')
       this.overlay = !this.overlay
-      /*axios.get('http://195.231.3.173:8080/' + item.warningImage,{
+      axios.get('http://195.231.3.173:8080/' + item.warningImage,{
         headers:{
           'key':this.$session.get("key")
         },
       }).then(response =>{
         console.log(response)
+        this.warningCad = response.data.data
       }).catch( (error) => {
+        alert("Non è presente alcuna immagine")
+        this.overlay = false
         console.log(error)
-      })*/
+      })
     },
   },
   
