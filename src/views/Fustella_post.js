@@ -46,6 +46,7 @@ import axios from 'axios'
         
         dialog_modify: false,
         dialog_delete: false,
+        
 
         t: [],
         h: [],
@@ -596,20 +597,8 @@ import axios from 'axios'
 
                        
                                   if(!isNaN(time) && time.getTime() !== 0){
-
-      
-                                    
-                                    
-                                    //time.setHours(time.getHours() + 2);
-                                   
-                                    /* Total Count S**T */
-
-                                    /* Errori totali */
-                                    /*if(this.got[i].errors != 0){
-                                      total_errors += this.got[i].errors //- prev_errors
-                                      //prev_errors = this.got[i].errors
-                                    }*/
-                                    
+                           
+                                                                       
                                     /* Rotazioni totali */
                                     if(this.got[i].rotationCount < prev_rotations && prev_rotations > 0){
                                       
@@ -622,7 +611,7 @@ import axios from 'axios'
                                     
                                     /* Sessioni totali */
                                     if(parseInt(this.got[i].session.id) != last_session){
-                                      console.log(this.got[i].session)
+                                      //console.log(this.got[i].session)
 
                                       session_started = true
                                                                      
@@ -692,6 +681,7 @@ import axios from 'axios'
                                       
                                       if(session_started && parseInt(this.got[i].session.localSessionId)-1 > 0
                                       && this.from_[parseInt(this.got[i].session.localSessionId)-1] !== null 
+                                      && this.from_[parseInt(this.got[i].session.localSessionId)] !== null 
                                       && this.to_[parseInt(this.got[i].session.localSessionId)-1] !== null){
                                        
                                         let timeCouple_ = "{ "
@@ -700,6 +690,15 @@ import axios from 'axios'
                                           .getTime() + 10*60000).getTime() + ', '
                                         rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
                                         rotationData.push(JSON.parse(rotationCouple))
+                                        
+                                       
+                                        timeCouple_ = "{ "
+                                        timeCouple_ += '"x": ' + new Date(
+                                          new Date(this.from_[parseInt(this.got[i].session.localSessionId)])
+                                          .getTime() - 1*60000).getTime() + ', '
+                                        rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
+                                        rotationData.push(JSON.parse(rotationCouple))
+                                        
 
                                       }
 
@@ -1003,6 +1002,8 @@ import axios from 'axios'
         this.ses =  false
         this.ses_loading = true
 
+        this.numero_sessione = n 
+
         this.session_id_unique = this.session_id_unique_[n]
         this.from = this.timeConverter(this.from_[n])
         this.to   = this.timeConverter(this.to_[n])
@@ -1020,7 +1021,7 @@ import axios from 'axios'
           let e = []     
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
-            console.log(rsp[i])
+            //console.log(rsp[i])
             
             let errorCouple = "{ "
             errorCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '
