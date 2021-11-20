@@ -37,6 +37,7 @@ import axios from 'axios'
         last_session:0,
         annotation_loading : false,
         overlay: false,
+        warningCad: undefined,
 
         diecutter_name: '',
         diecutter_id: -1,
@@ -1161,15 +1162,18 @@ import axios from 'axios'
       rowClick(item){
         console.log('row ' + item.warningImage + ' clicked')
         this.overlay = !this.overlay
-        /*axios.get('http://195.231.3.173:8080/' + item.warningImage,{
+        axios.get('http://195.231.3.173:8080/' + item.warningImage,{
           headers:{
             'key':this.$session.get("key")
           },
         }).then(response =>{
           console.log(response)
+          this.warningCad = response.data.data
         }).catch( (error) => {
+          alert("Non è presente alcuna immagine")
+          this.overlay = false
           console.log(error)
-        })*/
+        })
     },
     },
   };

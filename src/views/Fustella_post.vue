@@ -455,12 +455,11 @@
                 :value="overlay"
                 @click.native="overlay = false"
               >
-                <v-card
-                  height="256"
-                  rounded="xl"
-                  width="256"
-                >
-                  <v-img >
+                <v-card>
+                  <v-img
+                    v-bind:src="'data:image/jpeg;base64,'+warningCad"
+                    max-height="1000px"
+                  >
                   </v-img>
                 </v-card>
               </v-overlay>
