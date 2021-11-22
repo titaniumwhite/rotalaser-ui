@@ -6,7 +6,6 @@ import Fabbriche from '../views/Fabbriche.vue'
 import Fustelle from '../views/Fustelle.vue'
 import Fustella_post from '../views/Fustella_post.vue'
 import Fustella_live from '../views/Fustella_live.vue'
-import Inserisci from '../views/Inserisci.vue'
 
 Vue.use(VueRouter)
 
@@ -25,11 +24,6 @@ const routes = [
     path: '/fabbriche',
     name: 'fabbriche',
     component: Fabbriche
-  },
-  {
-    path: '/inserisci',
-    name: 'inserisci',
-    component: Inserisci
   },
   {
     path: '/fustelle/c/:id',
