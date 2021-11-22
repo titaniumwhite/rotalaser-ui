@@ -454,7 +454,7 @@
                 :headers="errortable_headers"
                 :items="errors"
                 :items-per-page="5"
-                class="elevation-1"
+                class="row-pointer"
                 @click:row="rowClick"
               >
               </v-data-table>
@@ -589,11 +589,8 @@
   opacity: 0.9;
 }
 
-.basil {
-  background-color: #caa900 !important;
-}
-.basil--text {
-  color: #356859 !important;
+.row-pointer > .v-data-table__wrapper > table > tbody > tr:hover {  
+  cursor: pointer;
 }
 
 </style>

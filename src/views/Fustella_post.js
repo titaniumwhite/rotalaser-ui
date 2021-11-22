@@ -84,13 +84,14 @@ import axios from 'axios'
         seriesAreaSpeedSes: [],
 
         errortable_headers: [
+          { text: 'Id errore', value: 'errorId'},
           {
             text: 'Timestamp',
             align: 'start',
             sortable: false,
             value: 'timestamp',
           },
-          { text: 'Id errore', value: 'errorId'},
+          { text: 'Id cartone', value: 'cardboardId'},
           { text: 'Tipo', value: 'kind' },
           { text: 'Id elemento', value: 'elemId' },
         ],
@@ -1028,7 +1029,8 @@ import axios from 'axios'
             
             let errorCouple = "{ "
             errorCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '
-            errorCouple += '"errorId": "' + rsp[i].cardboard.id + '", '
+            errorCouple += '"errorId": "' + rsp[i].id + '", '
+            errorCouple += '"cardboardId": "' + rsp[i].cardboard.id + '", '
             errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '", '
             errorCouple += '"elemId": "' + rsp[i].diecutterpart.elemId + '", '
             errorCouple += '"warningImage": "' + rsp[i].cardboardImage.href + '" '
