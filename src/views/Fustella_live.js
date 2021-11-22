@@ -58,6 +58,8 @@ import axios from 'axios'
         switch1: true,
         switch1_text: "colpi al secondo",
 
+        hour: false,
+
         errortable_headers: [
           {
             text: 'Timestamp',
@@ -507,8 +509,13 @@ import axios from 'axios'
                                                   
             rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
             
-
-            let speedCouple = timeCouple + ' "y": '   + this.got[i].rotationSpeed + " }"
+            let speedCouple
+            
+            if(!this.hour){
+              speedCouple = timeCouple + ' "y": '   + this.got[i].rotationSpeed + " }"
+            }else{
+              speedCouple = timeCouple + ' "y": '   + this.got[i].rotationSpeed*3600 + " }"
+            }
             let temperatureCouple = timeCouple + ' "y": ' + this.got[i].temperature + " }"
             let humidityCouple = timeCouple + ' "y": ' + this.got[i].humidity + " }"  
                 
@@ -600,6 +607,7 @@ import axios from 'axios'
       !this.switch1
       
       if(this.switch1){
+        this.hour = false
         this.switch1_text = "colpi al secondo" 
         let computed = this.seriesAreaSpeed[0].data.map(item =>  JSON.parse('{ "x": '+item.x +', "y": '+ (item.y/3600).toFixed(5)+'}'))
         
@@ -608,6 +616,7 @@ import axios from 'axios'
           data: computed
         }]
       }else{
+        this.hour = true
         this.switch1_text = "colpi all'ora" 
         let computed = this.seriesAreaSpeed[0].data.map(item => JSON.parse('{ "x": '+item.x.toString() +', "y": '+ (item.y*3600).toFixed(5)+"}"))
        
