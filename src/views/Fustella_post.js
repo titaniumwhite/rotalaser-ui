@@ -69,7 +69,7 @@ import axios from 'axios'
 
 
         items: [
-          'informazioni', 'grafici', 'cad', 'tagli a campione'
+          'informazioni', 'grafici', 'cad', 'produzione a campione'
         ],
 
         seriesAreaRotation: [],
