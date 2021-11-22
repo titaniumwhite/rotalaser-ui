@@ -4,10 +4,8 @@ import Login from '../views/Login.vue'
 import Clienti from '../views/Clienti.vue'
 import Fabbriche from '../views/Fabbriche.vue'
 import Fustelle from '../views/Fustelle.vue'
-import Fustella from '../views/Fustella.vue'
-import Inserisci from '../views/Inserisci.vue'
-
-
+import Fustella_post from '../views/Fustella_post.vue'
+import Fustella_live from '../views/Fustella_live.vue'
 
 Vue.use(VueRouter)
 
@@ -28,19 +26,24 @@ const routes = [
     component: Fabbriche
   },
   {
-    path: '/inserisci',
-    name: 'inserisci',
-    component: Inserisci
-  },
-  {
-    path: '/fustelle/:id',
-    name: 'fustelle',
+    path: '/fustelle/c/:id',
+    name: 'fustelle_c',
     component: Fustelle
   },
   {
-    path: '/fustella/:id',
-    name: 'fustella',
-    component: Fustella
+    path: '/fustelle/f/:id',
+    name: 'fustelle_f',
+    component: Fustelle
+  },
+  {
+    path: '/fustella/postanalisi/:id',
+    name: 'fustella_post',
+    component: Fustella_post
+  },
+  {
+    path: '/fustella/live/:id',
+    name: 'fustella_live',
+    component: Fustella_live
   }
 ]
 

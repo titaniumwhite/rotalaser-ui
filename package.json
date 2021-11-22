@@ -9,20 +9,32 @@
   },
   "dependencies": {
     "@mdi/font": "^6.1.95",
+    "apexcharts": "^3.29.0",
+    "chart.js": "^2.9.4",
     "core-js": "^3.6.5",
+    "dateformat": "^5.0.2",
+    "echarts": "^5.2.1",
     "mdbvue": "^6.7.3",
+    "prettier": "^2.4.1",
+    "vee-validate": "^3.4.13",
     "vue": "^2.6.11",
+    "vue-apexcharts": "^1.6.2",
+    "vue-sessionstorage": "^1.0.0",
     "vuetify": "^2.5.8"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "@vue/composition-api": "^1.2.3",
     "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-vue": "^6.2.2",
     "material-design-icons-iconfont": "^6.1.0",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "zingchart-vue": "^2.0.3"
   },
   "eslintConfig": {
     "root": true,

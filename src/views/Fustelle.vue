@@ -1,21 +1,19 @@
 <template>
    <v-app>
      <v-main>
-      <v-system-bar 
-        color="primary darken-3"
-        height="30"
-        window
-        dark
-      >
-      </v-system-bar>
 
       <v-toolbar
         color="primary"
-        dark
-        flat
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <v-toolbar-title>Fustelle di {{$route.params.id}}</v-toolbar-title>
+        
+        <v-toolbar-title></v-toolbar-title>
+
+        <v-img
+          src="../rotalaser-logo.png"
+          max-height="50"
+          max-width="100">
+        </v-img>
   
         <v-spacer></v-spacer>
   
@@ -30,10 +28,11 @@
             rounded
             single-line
             autofocus
-            background-color="primary darken-3"
+            color="secondary"
             label="Cerca"
             prepend-inner-icon="mdi-magnify"
             @blur="is_text_empty($event, $event.target.value)"
+
           > 
           </v-text-field>
         </v-scroll-x-reverse-transition>
@@ -42,22 +41,135 @@
 
         <v-btn icon 
           @click="searching=!searching"
-          v-show="!searching">
+          v-show="!searching"
+          color="secondary"
+        >
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
 
-        <v-btn icon>
+        <v-btn icon
+          color="secondary"
+        >
           <v-icon>mdi-filter</v-icon>
         </v-btn>
+
+        <v-dialog
+          v-model="dialog_submit"
+          max-width="600px"
+          :retain-focus="false"
+        >
+          <template #activator="{ on: dialog_submit }">
+          <v-tooltip bottom>
+          <template v-slot:activator="{ on: tooltip_add }">
+            <v-btn
+              icon
+              color="secondary"
+              v-on="{ ...tooltip_add, ...dialog_submit }"
+            >
+            <v-icon>mdi-database-plus</v-icon>
+            </v-btn>
+          </template>
+            <span>Aggiungi fustella</span>
+          </v-tooltip>
+        </template>
+
+          
+          <v-card>
+            <v-form 
+              v-model="valid" 
+              ref="submit_form"
+              @submit.prevent="getBase64"
+            >
+
+            <v-card-title class="text-h5">
+              <b>Aggiungi fustella</b>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                
+                  <v-col cols="12">
+                    <v-text-field
+                      label="Identificativo MAC"
+                      v-model="id"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      color="secondary"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-text-field
+                      label="Nominativo fustella"
+                      v-model="cadName"
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      required
+                      color="secondary"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-select
+                      label="Fabbrica"
+                      v-model="FactoryName"
+                      :items="factories_name"
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      required
+                      color="secondary"
+                      item-color="secondary"                     
+                    ></v-select>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-file-input
+                      label="CAD"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      v-model="cadFile"
+                      ref="cadFile"
+                      prepend-icon="mdi-file-cad"
+                      color="secondary"
+                    ></v-file-input>
+                  </v-col>
+                  
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+
+              <v-btn
+                text
+                @click="dialog_submit = false"
+              >
+                Annulla
+              </v-btn>
+
+              <v-btn
+                color="green darken-1"
+                text
+                type="submit"
+                :disabled="!valid"
+              >
+                Conferma
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+
+          </v-card>
+
+        </v-dialog>
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              color="white"
               icon
               v-bind="attrs"
               v-on="on"
               @click="$router.push('/')"
+              color="secondary"
             >
               <v-icon>mdi-logout-variant</v-icon>
             </v-btn>
@@ -94,13 +206,6 @@
                 <v-list-item-title>Fabbriche</v-list-item-title>
               </v-list-item>
 
-              <v-list-item to="/inserisci">
-                <v-list-item-icon>
-                  <v-icon>mdi-plus-thick</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>Inserisci</v-list-item-title>
-              </v-list-item>
-
             </v-list-item-group>
           </v-list>
 
@@ -120,113 +225,117 @@
       </v-navigation-drawer>
       
       <v-container  fluid>
-        <v-row dense>
+        <div class="text-center">
+        <v-progress-circular
+        v-if="loading"
+        :size="50"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+        </div>
+        <v-fade-transition>
+        <v-card v-if="!loading">
+        <v-card-title>Fustelle di {{name}}</v-card-title>
+        <v-row dense >
           <v-col 
-            v-for="item in fustelle"
-            :key="item.message"
-            :cols="item.flex"
-          >
-            <v-card
+            v-for="item in real_diecutters"
             
-             >
+            :key="item.message"
+            lg="4"
+            md="4"
+            sm="12"
+            cols="12"
+          >
+            <v-card>
+              <div class="d-flex flex-no-wrap justify-space-between">
+              <div>
               
-              <v-card-title v-text="item.message"></v-card-title>
-              <v-card-subtitle>info fustella</v-card-subtitle>
-              <v-card-text>Cose a caso?</v-card-text>
+              <v-card-title v-text="item.cadName"></v-card-title>
+              <v-card-subtitle v-text="item.id"></v-card-subtitle>
+              <div v-if="!item.status_loading">
+                <v-row v-if="!item.active">
+                <v-chip
+                  class="ma-6"
+                  color="red"
+                  text-color="white"
+                  >
+                  Fustella non attiva
+                </v-chip>
+                </v-row>
+
+                <v-row v-else>
+                <v-chip
+                  class="ma-6"
+                  color="green"
+                  text-color="white"
+                  
+                  >
+                  Fustella attiva
+                </v-chip>
+                </v-row>
+              </div>
+
               <v-card-actions>
-                 <v-btn
+                <v-container>
+                <v-row dense>
+                  <v-col
+                    lg="6"
+                    md="6"
+                    sm="12"
+                    cols="12"
+                  >
+
+                <v-btn
                   text
                   color="secondary"
-                  @click="$router.push('/fustella/'+item.message)">
-                  Info
+                  @click="$router.push('/fustella/postanalisi/'+item.id)">
+                  Storico
                 </v-btn>
-
-                <v-spacer></v-spacer>
-    
-                <v-dialog
-                  v-model="dialog"
-                  max-width="600px"
-                  :retain-focus="false"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      color="secondary"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-card>
-                    <v-card-title>
-                    <span class="text-h5">Fustella</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                          >
-                            <v-text-field
-                              label="Nome"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          
-                          <v-col
-                            cols="12"
-                            sm="6"
-                            md="4"
-                          >
-                            <v-text-field
-                              label="Cognome"
-                              hint
-                              required
-                            ></v-text-field>
-                          </v-col>
-
-                          <v-col cols="12">
-                            <v-text-field
-                              label="Email"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12">
-                            <v-text-field
-                              label="Password"
-                              type="password"
-                              required
-                            ></v-text-field>
-                          </v-col>
-                          
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        color="secondary darken-1"
-                        text
-                        @click="dialog = false">
-                        Chiudi
-                      </v-btn>
-                      <v-btn
-                        color="secondary darken-1"
-                        text
-                        @click="$router.go()">
-                        Salva
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-  
+                  </v-col>
+                  <v-spacer></v-spacer>
+                  <v-col
+                    lg="6"
+                    md="6"
+                    sm="12"
+                    cols="12"
+                  >
+                <v-btn
+                  
+                  text
+                  color="secondary"
+                  @click="$router.push('/fustella/live/'+item.id)"
+                  :disabled="!(item.active)"
+                  >
+                  Live
+                </v-btn>
+                  </v-col>
+                </v-row>
+                </v-container>
+                
               </v-card-actions>
+              </div>
+
+              <v-avatar
+                size="180"
+                tile
+              >
+              <v-img 
+                v-if="!item.loading"
+                v-bind:src="'data:image/jpeg;base64,'+item.cad"
+              ></v-img>
+              </v-avatar>
+              </div>
+            
             </v-card>
           </v-col>
         </v-row>
+        <v-card-text
+              v-if="empty"
+            >
+            Ancora nessuna fustella per {{name}}
+            </v-card-text>
+        </v-card>
+        </v-fade-transition>
       </v-container>
     </v-main>  
   </v-app>
@@ -236,21 +345,32 @@
 
 
 <script>
+import axios from 'axios'
 export default {
    data: () => ({
       searching: false,
       drawer: false,
       dialog: false,
       group: null,
-      text: "Clienti",
-      fustelle: [
-        { message: 'Fustella 1',flex:4 },
-        { message: 'Fustella 2',flex:4 },
-        { message: 'Fustella 3',flex:4 },
-        { message: 'Fustella 4',flex:4 },
-        { message: 'Fustella 5',flex:4 },
-        { message: 'Fustella 6',flex:4 },
-      ],
+      loading: true,
+      status_loading: true,
+      valid: false,
+      true: true,
+
+      name:"",
+      empty: false,
+
+      dialog_submit: false,
+      real_diecutters: [],
+      // Variabili per modifica fustella//
+      factories_id: [],
+      factories_name: [],
+      id: '', 
+      cadName: '',
+      FactoryId: -1,
+      FactoryName: '',
+      cadFile: [],
+      cadFileBase64: ''
     }),
 
     watch: {
@@ -258,7 +378,147 @@ export default {
         this.drawer = false
       },
     },
+    mounted(){
+        let is_client = this.$route.path.split("/")[2] == 'c'
+        if(this.true && is_client/*!this.$session.exists("fustelle") && 
+        (!this.$session.exists("pid") || this.$route.params.id == this.$session.get("pid"))*/){
+          axios.get('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id+'/diecutters',{
+            headers:{
+              'key':this.$session.get("key")
+            }
+          }).then(response =>{
+          
+            axios.get('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id,{
+            headers:{
+              'key':this.$session.get("key")
+            }
+          }).then(response =>{
+              this.name = response.data.data.name
+          })
+            
+            let filtered = []
+            
+            if(response.data.data.length == undefined){
+              this.empty = true
+            }
 
+            for(let i = 0;i<response.data.data.length;i++) {
+              let str = "{ "
+              str += '"id": "'     + response.data.data[i].id + '", '
+              str += '"cadName": "'   + response.data.data[i].cadName + '", '
+              str += '"FactoryId": "'   + response.data.data[i].factory.id + '", '
+              str += '"cad": "'    + response.data.data[i].cadImage.href + '", '
+              str += '"status_loading": "false",' 
+              str += '"active": "false",' 
+              str += '"loading": "true"' 
+              str += " }"
+            
+              filtered.push(JSON.parse(str))   
+            }
+
+            for(let i =0;i<response.data.data.length;i++){
+              let cad_bytes;
+              axios.get('http://195.231.3.173:8080'+response.data.data[i].cadImage.href,{
+                headers:{
+                  'key':this.$session.get("key")
+                }
+              }).then(response =>{
+                
+                cad_bytes = response.data.data
+
+                filtered[i].cad = cad_bytes
+                filtered[i].loading = false
+                
+              })
+              
+            }
+
+            this.real_diecutters = filtered
+            this.loading = false
+            /*
+            this.$session.set("fustelle",filtered)
+            this.$session.set("pid",this.$route.params.id)
+            */
+
+            this.get_active_diecutters()
+            
+          }).catch( (error) => {
+            console.log(error)
+            this.$router.push("/")
+          })
+        }else{
+         axios.get('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id+'/diecutters',{
+            headers:{
+              'key':this.$session.get("key")
+            }
+          }).then(response =>{
+
+            axios.get('http://195.231.3.173:8080/v1/factories/'+this.$route.params.id,{
+            headers:{
+              'key':this.$session.get("key")
+            }
+          }).then(response =>{
+              this.name = response.data.data.name
+          })
+                             
+            let filtered = []
+
+            if(response.data.data.length == undefined){
+              this.empty = true
+            }
+            
+            for(let i = 0;i<response.data.data.length;i++) {
+              let str = "{ "
+              str += '"id": "'     + response.data.data[i].id + '", '
+              str += '"cadName": "'   + response.data.data[i].cadName + '", '
+              str += '"FactoryId": "'   + response.data.data[i].factory.id + '", '
+              str += '"cad": "'    + response.data.data[i].cadImage.href + '", '
+              str += '"status_loading": "false",' 
+              str += '"active": "false",' 
+              str += '"loading": "true"' 
+              str += " }"
+            
+              filtered.push(JSON.parse(str))   
+            }
+
+            for(let i =0;i<response.data.data.length;i++){
+              let cad_bytes;
+              axios.get('http://195.231.3.173:8080'+response.data.data[i].cadImage.href,{
+                headers:{
+                  'key':this.$session.get("key")
+                }
+              }).then(response =>{
+                
+                cad_bytes = response.data.data
+
+                filtered[i].cad = cad_bytes
+                filtered[i].loading = false
+                
+              })
+              
+            }
+
+            this.real_diecutters = filtered
+            this.loading = false
+            this.get_active_diecutters()
+          })
+        }
+
+        axios.get('http://195.231.3.173:8080/v1/factories',{
+          headers:{
+            'key':this.$session.get("key")
+          }
+        }).then(response =>{     
+          for (let i = 0; i < response.data.data.length; i++) {
+            this.factories_id[i] = response.data.data[i].id
+            this.factories_name[i] = response.data.data[i].name
+          }
+          }).catch( (error) => {
+            console.log(error)
+            this.$router.push("/")
+        })
+
+    },
     methods: {
       // when blur the searchbox, if there is no text, just make the box disappear
       is_text_empty: function (event, value) {
@@ -266,6 +526,115 @@ export default {
           this.searching =! this.searching
         }
       },
+
+      getBase64: function() {
+        var reader = new FileReader();
+        reader.readAsDataURL(this.cadFile);
+        reader.onload = () => {
+          this.submit_diecutter(reader.result.split(',')[1])
+          this.dialog_submit = false
+          console.log("STO QUA")
+        };
+        reader.onerror = function (error) {
+          console.log('Error: ', error);
+        };
+      },
+
+      submit_diecutter: function(cadFileBase64) {
+
+        for (let i = 0; i < this.factories_name.length; i++) {
+          if (this.factories_name[i] === this.FactoryName) { 
+            this.FactoryId = parseInt(this.factories_id[i])
+            break
+          }
+        }
+
+                    console.log(this.id + ' ' + this.cadName + ' ' + this.FactoryId + ' ' + this.cadFileBase64)
+
+        axios.post('http://195.231.3.173:8080/v1/diecutters/', { 
+          id: this.id, 
+          cadName: this.cadName,
+          FactoryId: this.FactoryId,
+          cadFile: cadFileBase64
+          }, {
+          headers: {
+            'key':this.$session.get("key")
+          }
+        })
+        .then(
+          (response) => { 
+            this.responseData = response.data
+          
+            console.log(this.id + ' ' + this.cadName + ' ' + this.FactoryId + ' ' + this.cadFileBase64)
+
+            let str = "{ "
+              str += '"id": "'     + this.id + '", '
+              str += '"cadName": "'   + this.cadName + '", '
+              str += '"FactoryId": "'   + this.FactoryId + '", '
+              str += '"cad": "'    + this.cadFileBase64 + '" '
+              str += " }"
+
+            this.real_diecutters.push(JSON.parse(str))   
+            this.$session.set("fustelle",this.real_diecutters)
+
+            this.$refs.submit_form.reset();
+            this.$refs.submit_form.validate();
+            window.location.reload();
+          }
+        )
+        .catch(
+          function (error) {
+            console.log(error.response.data)
+            return Promise.reject(error)
+          }
+        )
+      },
+/*
+      update_diecutters_array: function() {
+        axios.get('http://195.231.3.173:8080/v1/diecutters/',{
+          headers:{
+            'key':this.$session.get("key")
+          }
+        }).then(response =>{
+          this.real_customers = []
+          for(let i = 0;i<response.data.data.length;i++){
+            this.real_customers.push(JSON.parse(this.client_parser(response.data.data[i].id, response.data.data[i].name, response.data.data[i].vat)))
+          }
+          
+          this.loading = false
+          this.$session.set("clienti", this.real_customers)
+          
+        }).catch( (error) => {
+          console.log(error)
+          this.$router.push("/")
+        })
+      },
+*/  
+    get_active_diecutters(){
+
+        /* Determine if active */
+        for(let i in this.real_diecutters){
+          axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.real_diecutters[i].id+'/sessions/latest',{
+            headers:{
+              'key':this.$session.get("key")
+            }
+          }).then(response =>{
+              
+              if((response.data.data.endedAt == null || response.data.data.endedAt == undefined) 
+              && response.data.data.startedAt != undefined){
+                  this.real_diecutters[i].status_loading = false
+                  this.real_diecutters[i].active = this.true
+              }else{
+                  this.real_diecutters[i].status_loading = false
+                  this.real_diecutters[i].active = this.false
+              }
+            })
+        }
+    },
+    reset: function() {
+      this.$refs.textareaform.reset()
+    },
+
     }
 };
 </script>
