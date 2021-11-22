@@ -245,13 +245,6 @@
                 <v-list-item-title>Fabbriche</v-list-item-title>
               </v-list-item>
 
-              <v-list-item to="/inserisci" disabled>
-                <v-list-item-icon>
-                  <v-icon>mdi-plus-thick</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>Inserisci</v-list-item-title>
-              </v-list-item>
-
             </v-list-item-group>
           </v-list>
 
