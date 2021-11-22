@@ -199,7 +199,7 @@ import axios from 'axios'
             }
           },
           title: {
-            text: "Velocità (rotazioni/secondo)",
+            text: "Velocità",
             align: 'left',
             margin: 10,
             offsetX: 0,
