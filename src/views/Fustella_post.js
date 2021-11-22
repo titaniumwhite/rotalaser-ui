@@ -1185,7 +1185,7 @@ import axios from 'axios'
         
         if(this.switch1){
           this.switch1_text = "colpi al secondo" 
-          let computed = this.seriesAreaSpeed[0].data.map(item =>  JSON.parse('{ "x": '+item.x +', "y": '+ (item.y*60).toFixed(5)+'}'))
+          let computed = this.seriesAreaSpeed[0].data.map(item =>  JSON.parse('{ "x": '+item.x +', "y": '+ (item.y/3600).toFixed(5)+'}'))
           
           this.seriesAreaSpeed = [{
             name: "Velocità",
@@ -1193,7 +1193,7 @@ import axios from 'axios'
           }]
         }else{
           this.switch1_text = "colpi all'ora" 
-          let computed = this.seriesAreaSpeed[0].data.map(item => JSON.parse('{ "x": '+item.x.toString() +', "y": '+ (item.y/60).toFixed(5)+"}"))
+          let computed = this.seriesAreaSpeed[0].data.map(item => JSON.parse('{ "x": '+item.x.toString() +', "y": '+ (item.y*3600).toFixed(5)+"}"))
          
           this.seriesAreaSpeed = [{
             name: "Velocità",
