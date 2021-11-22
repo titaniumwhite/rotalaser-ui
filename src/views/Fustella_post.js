@@ -52,6 +52,9 @@ import axios from 'axios'
         h: [],
         s: [],
 
+        switch1: true,
+        switch1_text: "colpi al secondo",
+
         /* data per pagina 'modifica' */
         customers_name: [],
         customers: [],
@@ -1175,7 +1178,29 @@ import axios from 'axios'
           this.overlay = false
           console.log(error)
         })
-    },
+      },
+      
+      switchClick(){
+        !this.switch1
+        
+        if(this.switch1){
+          this.switch1_text = "colpi al secondo" 
+          let computed = this.seriesAreaSpeed[0].data.map(item =>  JSON.parse('{ "x": '+item.x +', "y": '+ (item.y*60).toFixed(5)+'}'))
+          
+          this.seriesAreaSpeed = [{
+            name: "Velocità",
+            data: computed
+          }]
+        }else{
+          this.switch1_text = "colpi all'ora" 
+          let computed = this.seriesAreaSpeed[0].data.map(item => JSON.parse('{ "x": '+item.x.toString() +', "y": '+ (item.y/60).toFixed(5)+"}"))
+         
+          this.seriesAreaSpeed = [{
+            name: "Velocità",
+            data: computed
+          }]
+        }
+      }
     },
   };
 

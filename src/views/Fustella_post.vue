@@ -430,11 +430,19 @@
                 md="4"
                 sm="12"
                 cols="12" 
-              >
+              >      
+                     
                     <!-- VELOCITÀ -->
                     <div id="chart-line">
                       <apexchart width='100%' height="300" type="area" :options="chartOptionsAreaSpeed" :series="seriesAreaSpeed"></apexchart>
                     </div>
+
+                    <v-switch
+                      v-model="switch1"
+                      color="secondary"
+                      :label="`Unità di misura: ${switch1_text}`"
+                      @change="switchClick()"
+                    ></v-switch>
                 
               </v-col>
             </v-row>
