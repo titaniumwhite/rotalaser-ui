@@ -60,7 +60,8 @@ import axios from 'axios'
         customers: [],
         chosen_customer: '',
         chosen_factory: '',
-        customer_factories: [],
+        customer_factories_id: [],
+        customer_factories_name: [],
         selectCustomer: false,
         chosen_diecuttername: '',
         render: false,
@@ -834,7 +835,7 @@ import axios from 'axios'
             }).then(response =>{
               for(let i = 0; i < response.data.data.length; i++) {
                 let token = []
-                token[0] = response.data.data[i].vat
+                token[0] = response.data.data[i].id
                 token[1] = response.data.data[i].name
                 this.customers_name[i] = response.data.data[i].name 
                 this.customers.push(token)
@@ -934,28 +935,28 @@ import axios from 'axios'
         this.render = false
         for (let i = 0; i < this.customers.length; i++) {
           let customer = this.customers[i];
+          
           if (this.chosen_customer === customer[1]) customer_id = customer[0];
         }
 
         if (customer_id == 0) {
           console.log("[ERROR] Errore in get_factory_of_customer")
-          this.$router.push("/")
         }
         //console.log("Here we are " + customer_id[0])
 
-        axios.get('http://195.231.3.173:5002/v1/customers/'+customer_id+'/factories',{
+        axios.get('http://195.231.3.173:8080/v1/customers/'+customer_id+'/factories',{
           headers:{
             'key':this.$session.get("key")
           }
         }).then(response =>{     
-          for (let i = 0; i < response.data.length; i++) {
-            this.customer_factories[i] = response.data[i].id
+          for (let i = 0; i < response.data.data.length; i++) {
+            this.customer_factories_id[i] = response.data.data[i].id
+            this.customer_factories_name[i] = response.data.data[i].name
           }
           this.selectCustomer = true
           this.render = true
           }).catch( (error) => {
           console.log(error)
-          this.$router.push("/")
         })
       },
       validate () {
@@ -1110,16 +1111,13 @@ import axios from 'axios'
       getBase64: function() {
         var reader = new FileReader();
         reader.readAsDataURL(this.cadFile);
-        reader.onload = () => {
-          this.modify_diecutter(reader.result.split(',')[1]) 
-        };
         reader.onerror = function (error) {
           console.log('Error: ', error);
         };
       },
       
 
-      modify_diecutter: function(cadFileBase64) {
+      modify_diecutter: function() {
 
         for (let i = 0; i < this.factories_name.length; i++) {
           if (this.factories_name[i] === this.FactoryName) { 
@@ -1130,9 +1128,7 @@ import axios from 'axios'
 
         axios.put('http://195.231.3.173:8080/v1/factories/'+this.diecutter_id, { 
           id: this.id, 
-          cadName: this.cadName,
           FactoryId: this.FactoryId,
-          cadFile: cadFileBase64
         }, {
           headers: {
             'key':this.$session.get("key")

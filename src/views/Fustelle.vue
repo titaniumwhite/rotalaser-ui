@@ -65,6 +65,7 @@
               icon
               color="secondary"
               v-on="{ ...tooltip_add, ...dialog_submit }"
+              disabled
             >
             <v-icon>mdi-database-plus</v-icon>
             </v-btn>
@@ -548,8 +549,8 @@ export default {
             break
           }
         }
-
-                    console.log(this.id + ' ' + this.cadName + ' ' + this.FactoryId + ' ' + this.cadFileBase64)
+         
+        console.log(this.id + ' ' + this.cadName + ' ' + this.FactoryId + ' ' + cadFileBase64)
 
         axios.post('http://195.231.3.173:8080/v1/diecutters/', { 
           id: this.id, 

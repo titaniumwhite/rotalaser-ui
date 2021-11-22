@@ -45,6 +45,7 @@
               icon
               color="secondary"
               v-on="{ ...tooltip_modify, ...dialog_modify }"
+              disabled
             >
             <v-icon>mdi-pencil</v-icon>
             </v-btn>
@@ -85,6 +86,7 @@
                         required
                         :rules="rules"
                         v-on:change="get_factory_of_customer"
+                        @click="customer_factories_name = [], customer_factories_id = []"
                         color="secondary"
                         item-color="secondary"
                       ></v-select>
@@ -93,7 +95,7 @@
                   <v-col cols="12">
                     <v-select
                         v-model="chosen_factory"
-                        :items="customer_factories"
+                        :items="customer_factories_name"
                         :key="render"
                         label="Fabbrica"
                         required
@@ -103,17 +105,6 @@
                         item-color="secondary"
                       ></v-select>
                   </v-col>
-
-                  <v-col cols="12">
-                    <v-file-input
-                      label="CAD"
-                      required
-                      :rules="rules"
-                      prepend-icon="mdi-file-cad"
-                      color="secondary"
-                    ></v-file-input>
-                  </v-col>
-
                 </v-row>
               </v-container>
             </v-card-text>
@@ -498,73 +489,6 @@
             </v-img>
           </v-card>
           </v-col>
-
-          <!-- PAGINA MODIFICA -->
-          
-              <v-form 
-                v-if="!loading && !err && item=='modifica'"
-                ref="form"
-                v-model="valid"
-              >
-                <v-container>
-                  <v-row>
-                      <v-col
-                      cols="12"
-                      sm="12"
-                    >
-
-                      <v-text-field
-                        v-model="chosen_diecuttername"
-                        label="Nome fustella"
-                        required
-                        outlined
-                        :rules="rules"
-                        color="secondary"
-                      ></v-text-field>
-                    
-                      <v-select
-                        v-model="chosen_customer"
-                        :items="customers_name"
-                        label="Cliente"
-                        required
-                        :rules="rules"
-                        v-on:change="get_factory_of_customer"
-                        color="secondary"
-                        item-color="secondary"
-                      ></v-select>  
-
-                      <v-select
-                        v-model="chosen_factory"
-                        :items="customer_factories"
-                        :key="render"
-                        label="Fabbrica"
-                        required
-                        :rules="rules"
-                        :disabled="!selectCustomer"
-                        color="secondary"
-                        item-color="secondary"
-                      ></v-select>
-
-                    <v-file-input
-                      label="CAD"
-                      required
-                      :rules="rules"
-                      prepend-icon="mdi-file-cad"
-                      color="secondary"
-                    ></v-file-input>
-                    
-                    <v-btn
-                      :disabled="!valid"
-                      @click="validate"
-                      color="secondary"
-                    >
-                      Conferma
-                    </v-btn>
-                    
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-form>     
           </v-fade-transition>
           </v-container>
         </v-tab-item>
