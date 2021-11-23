@@ -10,7 +10,7 @@
         <v-toolbar-title></v-toolbar-title>
 
         <v-img
-          src="../rotalaser-logo.png"
+          src="../../../rotalaser-logo.png"
           max-height="50"
           max-width="100">
         </v-img>
