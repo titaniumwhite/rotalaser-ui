@@ -65,7 +65,6 @@
               icon
               color="secondary"
               v-on="{ ...tooltip_add, ...dialog_submit }"
-              disabled
             >
             <v-icon>mdi-database-plus</v-icon>
             </v-btn>

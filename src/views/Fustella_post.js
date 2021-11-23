@@ -524,6 +524,9 @@ import axios from 'axios'
         this.diecutter_factory = response.data.data.factory.name
         this.diecutter_customer = response.data.data.customer.name
 
+        this.chosen_diecuttername = response.data.data.cadName
+        this.chosen_factory = response.data.data.factory.name
+
         //console.log(response.data.data)
 
       }).catch( (error) => {
@@ -930,7 +933,7 @@ import axios from 'axios'
       this.totali = !this.totali
         
       },
-      get_factory_of_customer: function() {
+      /*get_factory_of_customer: function() {
         let customer_id = 0;
         this.render = false
         for (let i = 0; i < this.customers.length; i++) {
@@ -958,7 +961,7 @@ import axios from 'axios'
           }).catch( (error) => {
           console.log(error)
         })
-      },
+      },*/
       validate () {
         //this.$refs.form.validate()
         console.log("Inviato")
@@ -1164,7 +1167,7 @@ import axios from 'axios'
       rowClick(item){
         console.log('row ' + item.warningImage + ' clicked')
         this.overlay = !this.overlay
-        axios.get('http://195.231.3.173:8080/' + item.warningImage,{
+        axios.get('http://195.231.3.173:8080' + item.warningImage,{
           headers:{
             'key':this.$session.get("key")
           },
