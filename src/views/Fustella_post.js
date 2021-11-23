@@ -40,7 +40,7 @@ import axios from 'axios'
         warningCad: undefined,
 
         diecutter_name: '',
-        diecutter_id: -1,
+        diecutter_mac: -1,
         diecutter_factory: '',
         diecutter_customer: '',
         
@@ -60,10 +60,11 @@ import axios from 'axios'
         customers: [],
         chosen_customer: '',
         chosen_factory: '',
-        customer_factories_id: [],
-        customer_factories_name: [],
+        factories_id: [],
+        factories_name: [],
         selectCustomer: false,
         chosen_diecuttername: '',
+        chosen_mac: '',
         render: false,
         valid: true,
         rules: [value => !!value || 'È obbligatorio compilare questo campo'],
@@ -519,13 +520,15 @@ import axios from 'axios'
           'key':this.$session.get("key")
         }
       }).then(response =>{
+        console.log(response.data.data)
         this.diecutter_name = response.data.data.cadName
-        this.diecutter_id = response.data.data.id
+        this.diecutter_mac = response.data.data.id
         this.diecutter_factory = response.data.data.factory.name
         this.diecutter_customer = response.data.data.customer.name
 
         this.chosen_diecuttername = response.data.data.cadName
         this.chosen_factory = response.data.data.factory.name
+        this.chosen_mac = response.data.data.id
 
         //console.log(response.data.data)
 
@@ -831,22 +834,18 @@ import axios from 'axios'
             })
 
              /* CHIAMATE API PER MODIFICA FUSTELLA */
-            axios.get('http://195.231.3.173:8080/v1/customers/',{
+            axios.get('http://195.231.3.173:8080/v1/factories/',{
               headers:{
                 'key':this.$session.get("key")
               }
             }).then(response =>{
               for(let i = 0; i < response.data.data.length; i++) {
-                let token = []
-                token[0] = response.data.data[i].id
-                token[1] = response.data.data[i].name
-                this.customers_name[i] = response.data.data[i].name 
-                this.customers.push(token)
-                
+                this.factories_id[i] = response.data.data[i].id
+                this.factories_name[i] = response.data.data[i].name                 
               }
 
-              this.$session.set("customers_name",JSON.stringify(this.customers_name))
-              this.$session.set("customers",JSON.stringify(this.customers))
+              //this.$session.set("customers_name",JSON.stringify(this.customers_name))
+              //this.$session.set("customers",JSON.stringify(this.customers))
 
 
             }).catch( (error) => {
@@ -1129,9 +1128,10 @@ import axios from 'axios'
           }
         }
 
-        axios.put('http://195.231.3.173:8080/v1/factories/'+this.diecutter_id, { 
-          id: this.id, 
-          FactoryId: this.FactoryId,
+        axios.put('http://195.231.3.173:8080/v1/factories/'+this.diecutter_mac, { 
+          id: this.chosen_mac, 
+          cadName: this.chosen_diecuttername,
+          FactoryId: this.chosen_factory,
         }, {
           headers: {
             'key':this.$session.get("key")
@@ -1148,7 +1148,7 @@ import axios from 'axios'
       },
 
       delete_diecutter: function() {
-        axios.delete('http://195.231.3.173:8080/v1/diecutters/'+this.diecutter_id, {
+        axios.delete('http://195.231.3.173:8080/v1/diecutters/'+this.diecutter_mac, {
           headers: {
             'key':this.$session.get("key")
           },

@@ -77,9 +77,22 @@
                   </v-col>
 
                   <v-col cols="12">
+                    <v-text-field
+                        v-model="chosen_mac"
+                        label="Identificativo MAC"
+                        required
+                        outlined
+                        :rules="rules"
+                        :value="diecutter_mac"
+                        color="secondary"
+                      ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="12">
                     <v-autocomplete
                         v-model="chosen_factory"
-                        :items="customer_factories_name"
+                        :value="chosen_factory"
+                        :items="factories_name"
                         label="Fabbrica"
                         required
                         :rules="rules"
