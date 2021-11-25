@@ -183,6 +183,24 @@
 
         </v-dialog>
 
+        <v-dialog
+          v-model="dialog_confirm_modify"
+          max-width="600px"
+          :retain-focus="false"
+        >
+
+          <v-card>
+            <v-card-title class="text-h5">
+              La fustella è stata modificata correttamente.
+            </v-card-title>
+
+            <v-card-text>
+              <big>Verrai reindirizzato alla pagina precedente.</big>
+            </v-card-text>
+          </v-card>
+
+        </v-dialog>
+
         <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
                 <v-btn

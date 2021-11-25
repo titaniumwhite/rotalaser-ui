@@ -46,6 +46,7 @@ import axios from 'axios'
         
         dialog_modify: false,
         dialog_delete: false,
+        dialog_confirm_modify: false,
         
 
         t: [],
@@ -1142,13 +1143,21 @@ import axios from 'axios'
           },
         })
         .then(
-          response => { 
-            this.responseData = response.data,
+          (response) => { 
+            this.responseData = response.data
             this.dialog_modify = false
+            this.dialog_confirm_modify = true
             //this.modify_from_storage(id, this.editing_customer_name, this.editing_customer_vat)
             //console.log(this.editing_customer_name + ' ' + this.editing_customer_vat)
+            setTimeout(function(){ 
+              this.dialog_confirm_modify = false;              
+            }, 3000);
+            this.$router.go(-1) 
           }
         )
+        .catch( (error) => {
+          console.log(error)
+        })
       },
 
       delete_diecutter: function() {
