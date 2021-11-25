@@ -1122,13 +1122,17 @@ import axios from 'axios'
       modify_diecutter: function() {
 
         for (let i = 0; i < this.factories_name.length; i++) {
-          if (this.factories_name[i] === this.FactoryName) { 
-            this.FactoryId = parseInt(this.factories_id[i])
+          if (this.factories_name[i] === this.chosen_factory) { 
+            this.chosen_factory = parseInt(this.factories_id[i])
             break
           }
         }
 
-        axios.put('http://195.231.3.173:8080/v1/factories/'+this.diecutter_mac, { 
+        console.log("MAC " + this.chosen_mac)
+        console.log("cadName " + this.chosen_diecuttername)
+        console.log("FactoryId " + this.chosen_factory)
+
+        axios.put('http://195.231.3.173:8080/v1/diecutters/'+this.diecutter_mac, { 
           id: this.chosen_mac, 
           cadName: this.chosen_diecuttername,
           FactoryId: this.chosen_factory,
