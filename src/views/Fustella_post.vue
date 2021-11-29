@@ -301,7 +301,30 @@
                         color="secondary"
                       ></v-text-field>
                     </v-col>
-            
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        :value="n_cardboards"
+                        label="Cartoni totali"
+                        outlined
+                        readonly
+                        color="secondary"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      sm="6"
+                    >
+                      <v-text-field
+                        :value="cr_ratio"
+                        label="Cartoni per rotazioni"
+                        outlined
+                        readonly
+                        color="secondary"
+                      ></v-text-field>
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card>
@@ -484,6 +507,35 @@
             </v-img>
           </v-card>
           </v-col>
+
+          <!-- PAGINA TAGLI A CAMPIONE -->
+          <v-container v-if="item =='produzione a campione'" 
+          >
+            <v-row dense v-if="!no_cardboards">
+              <v-col 
+                v-for="item in campione"
+                
+                :key="item.message"
+                lg="4"
+                md="4"
+                sm="12"
+                cols="12"
+              >
+                <v-card>
+                  <v-img
+                    v-bind:src="'data:image/jpeg;base64,'+item.url"
+                    height="200px">
+                  </v-img>
+                  <v-card-title v-text="item.title"></v-card-title>
+                
+                    <v-card-subtitle v-text="item.text"></v-card-subtitle>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row v-else>
+              Ancora nessun Taglio a Campione da mostrare
+            </v-row>
+          </v-container>
           </v-fade-transition>
           </v-container>
         </v-tab-item>

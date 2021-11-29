@@ -46,6 +46,9 @@ import axios from 'axios'
         
         dialog_modify: false,
         dialog_delete: false,
+
+        campione: [],
+        no_cardboards: false,
         
 
         t: [],
@@ -54,6 +57,9 @@ import axios from 'axios'
 
         switch1: true,
         switch1_text: "colpi al secondo",
+
+        cr_ratio:0,
+        n_cardboards: 0,
 
         /* data per pagina 'modifica' */
         customers_name: [],
@@ -513,8 +519,7 @@ import axios from 'axios'
     },
     mounted(){
 
-      //console.log(typeof this.$route.params.id)
-
+      // GET INFO
       axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id,{
         headers:{
           'key':this.$session.get("key")
@@ -530,23 +535,80 @@ import axios from 'axios'
         this.chosen_factory = response.data.data.factory.name
         this.chosen_mac = response.data.data.id
 
-        //console.log(response.data.data)
+        
+        axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/cardboardstats',{
+          headers:{
+            'key':this.$session.get("key")
+          },
+          params:{
+            'offset' : 1,
+            'limit' : 1,
+            'sortingOrder' : 'DESC',
+            'sortingField' : 'timestamp'
+          }
+        }).then(response =>{
+          this.cr_ratio = response.data.data[0].cardboardCount 
+          this.n_cardboards = this.cr_ratio 
+
+          }).catch( (error) => {
+            console.log(error.response.data)
+          })
 
       }).catch( (error) => {
         console.log(error.response.data)
       })
 
+      // TAGLI A CAMPIONE
+      axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/cardboards',{
+          headers:{
+            'key':this.$session.get("key")
+          },
+          params:{
+            'offset' : 1,
+            'limit' : 10,
+            'sortingOrder' : 'DESC',
+            'sortingField' : 'timestamp',
+            'filter' : 'NoFault'
+          }
+        }).then(response1 =>{
+            if(response1.data.data.length == 0){
+              this.no_cardboards = true
+            }
+            for(let i=0; i < response1.data.data.length; i++){
+              axios.get('http://195.231.3.173:8080' + response1.data.data[i].cardboardImage.href,{
+                headers:{
+                  'key':this.$session.get("key")
+                },
+              }).then(response =>{
+                
+                let str = "{ "
+                str += '"url": "' + response.data.data + '", '
+                str += '"title": "Cartone del ' + this.timeConverter(new Date(response1.data.data[i].timestamp).getTime()) + '", '
+                str += '"text": "Sessione: '   + response1.data.data[i].session.id + '" '
+                str += " }"
+
+              this.campione.push(JSON.parse(str))
+              }).catch( (error) => {
+                console.log(error)
+              })
+  
+            }
+
+          }).catch( (error) => {
+            console.log(error.response.data)
+          })
+      // ERRORI TOTALI
       axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/warnings',{
         headers:{
           'key':this.$session.get("key")
         }
       }).then(response =>{
-        //console.log(response.data.data)
         this.total_errors = response.data.data.length
       }).catch( (error) => {
         console.log(error.response.data)
       })
       
+      // GRAFICI
       axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/sessions/latest',{
         headers:{
           'key':this.$session.get("key")
@@ -806,6 +868,9 @@ import axios from 'axios'
 
                                 //this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
+                                console.log("Cr " + this.cr_ratio)
+                                this.cr_ratio /= this.total_rotations;
+                                console.log("Cr " + this.cr_ratio)
                                 this.total_sessions = total_session;
                                 this.my_min = my_min
                                 this.my_max = my_max
