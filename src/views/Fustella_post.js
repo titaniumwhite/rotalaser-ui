@@ -566,7 +566,7 @@ import axios from 'axios'
                 let str = "{ "
                 str += '"url": "' + response.data.data + '", '
                 str += '"title": "Cartone del ' + this.timeConverter(new Date(response1.data.data[i].timestamp).getTime()) + '", '
-                str += '"text": "Sessione: '   + response1.data.data[i].session.id + '" '
+                str += '"text": "ID Cartone: '   + response1.data.data[i].id + '" '
                 str += " }"
 
               this.campione.push(JSON.parse(str))
