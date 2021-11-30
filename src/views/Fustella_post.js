@@ -536,24 +536,6 @@ import axios from 'axios'
         this.chosen_mac = response.data.data.id
 
         
-        axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/cardboardstats',{
-          headers:{
-            'key':this.$session.get("key")
-          },
-          params:{
-            'offset' : 1,
-            'limit' : 1,
-            'sortingOrder' : 'DESC',
-            'sortingField' : 'timestamp'
-          }
-        }).then(response =>{
-          this.cr_ratio = response.data.data[0].cardboardCount 
-          this.n_cardboards = this.cr_ratio 
-
-          }).catch( (error) => {
-            console.log(error.response.data)
-          })
-
       }).catch( (error) => {
         console.log(error.response.data)
       })
@@ -868,9 +850,28 @@ import axios from 'axios'
 
                                 //this.total_errors = total_errors;
                                 this.total_rotations = total_rotations;
-                                console.log("Cr " + this.cr_ratio)
-                                this.cr_ratio /= this.total_rotations;
-                                console.log("Cr " + this.cr_ratio)
+                                
+                                
+                                // CARTONE PER ROTAZIONI
+                                axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/cardboardstats',{
+                                  headers:{
+                                    'key':this.$session.get("key")
+                                  },
+                                  params:{
+                                    'offset' : 1,
+                                    'limit' : 1,
+                                    'sortingOrder' : 'DESC',
+                                    'sortingField' : 'timestamp'
+                                  }
+                                }).then(response =>{
+                                  this.cr_ratio = response.data.data[0].cardboardCount/this.total_rotations
+                                  this.n_cardboards = response.data.data[0].cardboardCount
+
+                                }).catch( (error) => {
+                                    console.log(error.response.data)
+                                })
+
+                                
                                 this.total_sessions = total_session;
                                 this.my_min = my_min
                                 this.my_max = my_max
