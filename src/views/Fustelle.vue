@@ -132,6 +132,28 @@
                       color="secondary"
                     ></v-file-input>
                   </v-col>
+
+                  <v-col cols="6">
+                    <v-text-field
+                      label="Altezza"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      v-model="cardboardHeight"
+                      color="secondary"
+                      type="number"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-text-field
+                      label="Larghezza"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      v-model="cardboardWidth"
+                      color="secondary"
+                      type="number"
+                    ></v-text-field>
+                  </v-col>
                   
                 </v-row>
               </v-container>
@@ -370,7 +392,9 @@ export default {
       FactoryId: -1,
       FactoryName: '',
       cadFile: [],
-      cadFileBase64: ''
+      cadFileBase64: '',
+      cardboardHeight: '',
+      cardboardWidth: ''
     }),
 
     watch: {
@@ -549,13 +573,13 @@ export default {
           }
         }
          
-        console.log(this.id + ' ' + this.cadName + ' ' + this.FactoryId + ' ' + cadFileBase64)
-
         axios.post('http://195.231.3.173:8080/v1/diecutters/', { 
           id: this.id, 
           cadName: this.cadName,
           FactoryId: this.FactoryId,
-          cadFile: cadFileBase64
+          cadFile: cadFileBase64,
+          cardboardHeight: parseFloat(this.cardboardHeight),
+          cardboardWidth: parseFloat(this.cardboardWidth)
           }, {
           headers: {
             'key':this.$session.get("key")
@@ -565,13 +589,13 @@ export default {
           (response) => { 
             this.responseData = response.data
           
-            console.log(this.id + ' ' + this.cadName + ' ' + this.FactoryId + ' ' + this.cadFileBase64)
-
             let str = "{ "
               str += '"id": "'     + this.id + '", '
               str += '"cadName": "'   + this.cadName + '", '
               str += '"FactoryId": "'   + this.FactoryId + '", '
-              str += '"cad": "'    + this.cadFileBase64 + '" '
+              str += '"cad": "'    + this.cadFileBase64 + '", '
+              str += '"cardboardHeight": "' + this.cardboardHeight + '", '
+              str += '"cardboardWidth": "' + this.cardboardWidth + '" '
               str += " }"
 
             this.real_diecutters.push(JSON.parse(str))   
