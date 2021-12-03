@@ -1102,7 +1102,7 @@ import axios from 'axios'
             errorCouple += '"cardboardId": "' + rsp[i].cardboard.id + '", '
             errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '", '
             errorCouple += '"elemId": "' + rsp[i].diecutterpart.elemId + '", '
-            errorCouple += '"warningImage": "' + rsp[i].cardboardImage.href + '" '
+            errorCouple += '"warningImage": "' + rsp[i].cardboard.cardboardImage.href + '" '
             errorCouple += " }"
             e.push(JSON.parse(errorCouple))
           }
