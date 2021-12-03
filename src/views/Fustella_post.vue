@@ -100,6 +100,30 @@
                         item-color="secondary"
                       ></v-autocomplete>
                   </v-col>
+
+                  <v-col cols="6">
+                    <v-text-field
+                      label="Altezza"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      v-model="chosen_cardboardHeight"
+                      :value="cardboardHeight"
+                      color="secondary"
+                      type="number"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-text-field
+                      label="Larghezza"
+                      required
+                      :rules="[value => !!value || 'È obbligatorio compilare questo campo']"
+                      v-model="chosen_cardboardWidth"
+                      :value="cardboardWidth"
+                      color="secondary"
+                      type="number"
+                    ></v-text-field>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>

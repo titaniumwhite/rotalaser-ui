@@ -43,6 +43,8 @@ import axios from 'axios'
         diecutter_mac: -1,
         diecutter_factory: '',
         diecutter_customer: '',
+        cardboardHeight: '',
+        cardboardWidth: '',
         
         dialog_modify: false,
         dialog_delete: false,
@@ -70,6 +72,8 @@ import axios from 'axios'
         factories_name: [],
         selectCustomer: false,
         chosen_diecuttername: '',
+        chosen_cardboardHeight: '',
+        chosen_cardboardWidth: '',
         chosen_mac: '',
         render: false,
         valid: true,
@@ -530,6 +534,8 @@ import axios from 'axios'
         this.diecutter_mac = response.data.data.id
         this.diecutter_factory = response.data.data.factory.name
         this.diecutter_customer = response.data.data.customer.name
+        this.cardboardHeight = response.data.data.cardboardHeight
+        this.cardboardWidth = response.data.data.cardboardWidth
 
         this.chosen_diecuttername = response.data.data.cadName
         this.chosen_factory = response.data.data.factory.name
@@ -1202,6 +1208,8 @@ import axios from 'axios'
           id: this.chosen_mac, 
           cadName: this.chosen_diecuttername,
           FactoryId: this.chosen_factory,
+          cardboardHeight: parseFloat(this.chosen_cardboardHeight),
+          cardboardWidth: parseFloat(this.chosen_cardboardWidth)
         }, {
           headers: {
             'key':this.$session.get("key")
