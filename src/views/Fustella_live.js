@@ -391,24 +391,15 @@ import axios from 'axios'
           'key':this.$session.get("key")
         }
       }).then(response =>{
-
         this.diecutter_name = response.data.data.cadName
         this.diecutter_id = response.data.data.id
       }).catch( (error) => {
         console.log(error.response.data)
       })
       
-     axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/sessions/latest',{
-      headers:{
-        'key':this.$session.get("key")
-      }
-    }).then(response =>{
-        this.session_ = response.data.data.id
-
-        this.update(this.session_)
-        this.wrapper(this.session_)
-          
-      })    
+      this.update()
+      this.wrapper()
+      
 
     },
     methods :{
@@ -452,79 +443,85 @@ import axios from 'axios'
         var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
         return time;
       },
-      wrapper(session__){
-        setInterval(() => this.update(session__),10000) 
+      wrapper(){
+        setInterval(() => this.update(),10000) 
       },
-      update(session__){
+      update(){
+        axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/sessions/latest',{
+          headers:{
+            'key':this.$session.get("key")
+          }
+        }).then(response =>{
+          this.session_ = response.data.data.id
 
-        this.last_update = this.timeConverter(Date.now())
+        
+          
+       
+          this.last_update = this.timeConverter(Date.now())
 
 
-        axios.get('http://195.231.3.173:8080/v1/sessions/'+session__+'/measurements',{
+        axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_+'/measurements',{
           headers:{
             'key':this.$session.get("key")
           }
         }).then(response =>{
 
+          let rotationData = []
+          let h = []
+          let s = []
+          let t = []
+                            
+
+          this.got = response.data.data
         
+          if(this.got.length<1){
+            this.loading = false
+            this.err=true
+          }
 
-        
-        let rotationData = []
-        let h = []
-        let s = []
-        let t = []
-                          
-
-        this.got = response.data.data
-      
-        if(this.got.length<1){
-          this.loading = false
-          this.err=true
-        }
-
-        if(this.got[0].session.endedAt != null){
-          this.live = false
-        }
-        
-        this.name_ = this.got[0].session.localSessionId
-                                                                    
-        for(let i=0; i<this.got.length;i++){
-
-          let rotationCouple;
+          if(this.got[0].session.endedAt != null){
+            this.live = false
+          }
           
-        
+          this.name_ = this.got[0].session.localSessionId
+                                                                      
+          for(let i=0; i<this.got.length;i++){
 
-          let time = new Date(this.got[i].timestamp)
-
-
-          if(!isNaN(time)){
+            let rotationCouple;
+            
           
 
-            /* INSERIMENTO DATI NEI GRAFICI */
+            let time = new Date(this.got[i].timestamp)
+
+
+            if(!isNaN(time)){
             
 
-            let timeCouple = "{ "
-            
-            timeCouple += '"x": ' + time.getTime() + ', '
-                                                  
-            rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
-            
-            let speedCouple
-            
-            if(!this.hour){
-              speedCouple = timeCouple + ' "y": '   + this.got[i].rotationSpeed + " }"
-            }else{
-              speedCouple = timeCouple + ' "y": '   + this.got[i].rotationSpeed*3600 + " }"
-            }
-            let temperatureCouple = timeCouple + ' "y": ' + this.got[i].temperature + " }"
-            let humidityCouple = timeCouple + ' "y": ' + this.got[i].humidity + " }"  
+              /* INSERIMENTO DATI NEI GRAFICI */
+              
+
+              let timeCouple = "{ "
+              
+              timeCouple += '"x": ' + time.getTime() + ', '
+                                                    
+              rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
+              
+              let speedCouple
+              
+              if(!this.hour){
+                speedCouple = timeCouple + ' "y": '   + this.got[i].rotationSpeed + " }"
+              }else{
+                speedCouple = timeCouple + ' "y": '   + this.got[i].rotationSpeed*3600 + " }"
+              }
+              let temperatureCouple = timeCouple + ' "y": ' + this.got[i].temperature + " }"
+              let humidityCouple = timeCouple + ' "y": ' + this.got[i].humidity + " }"  
+                  
                 
-              
-            rotationData.push(JSON.parse(rotationCouple))
-            t.push(JSON.parse(temperatureCouple))
-            h.push(JSON.parse(humidityCouple))
-            s.push(JSON.parse(speedCouple))
-              
+              rotationData.push(JSON.parse(rotationCouple))
+              t.push(JSON.parse(temperatureCouple))
+              h.push(JSON.parse(humidityCouple))
+              s.push(JSON.parse(speedCouple))
+                
 
           }
         }
@@ -551,7 +548,7 @@ import axios from 'axios'
           data: s
         }]
         
-        axios.get('http://195.231.3.173:8080/v1/sessions/'+session__+'/warnings',{
+        axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_+'/warnings',{
           headers:{
             'key':this.$session.get("key")
           }
@@ -579,9 +576,12 @@ import axios from 'axios'
         })
 
         this.loading=false 
-        
-                              
+                                
       
+    }).catch( (error) => {
+      console.log(error)
+      this.$router.push("/")
+      })
     }).catch( (error) => {
       console.log(error)
       this.$router.push("/")
