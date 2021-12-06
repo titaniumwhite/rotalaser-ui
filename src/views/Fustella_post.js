@@ -621,7 +621,7 @@ import axios from 'axios'
 
                                 if(this.got.length<1){
                                   this.loading = false
-                                  this.err=true
+                                  //this.err=true
                                   return
                                 }
                                 let my_min = 0
