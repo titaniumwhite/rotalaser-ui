@@ -95,6 +95,9 @@ import axios from 'axios'
         seriesAreaHumiditySes: [],
         seriesAreaSpeedSes: [],
 
+        singleExpand: false,
+        expanded: [],
+
         cardboards_headers: [
           { text: 'Id cartone', value: 'cardboardId'},
           {
@@ -103,7 +106,7 @@ import axios from 'axios'
             sortable: false,
             value: 'timestamp',
           },
-          { text: '', value: 'data-table-expand' },
+          { text: 'Text', value: 'data-table-expand' },
         ],
 
         headers: [
@@ -114,7 +117,7 @@ import axios from 'axios'
 
         cardboards: [],
         cardboardErrors: [],
-        errorItem: '',
+        errorItem: undefined,
 
         chartOptionsAreaRotation: {
           chart: {

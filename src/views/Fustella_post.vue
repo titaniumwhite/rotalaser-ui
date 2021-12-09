@@ -486,18 +486,21 @@
               <v-data-table
                 :headers="cardboards_headers"
                 :items="cardboards"
-                single-expand
+                :single-expand="singleExpand"
+                :expanded.sync="expanded"
                 :items-per-page="5"
-                class="row-pointer"
+                class="row-pointer elevation1"
                 item-key="cardboardId"
                 show-expand
                 @click:row="rowClick"
                 @item-expanded="getErrorData"
-              >
+              >  
+              
                 <template v-slot:expanded-item="{ headers, errorItem }">
+                   
                   <td :colspan="headers.length">
                   
-                  <v-simple-table>
+                 <!-- <v-simple-table>
                         <template v-slot:default>
                           <thead>
                             <tr>
@@ -508,16 +511,36 @@
                           </thead>
                           <tbody>
                             <tr v-for="(error, index) in errorItem" :key="index">
-                              <td>{{ error.id }}</td>
-                              <td>{{ error.diecutterpart.kind }}</td>
-                              <td>{{ error.diecutterpart.id }}</td>
+                              <td>{{ errorItem.id }}</td>
+                              <td>{{ errorItem.diecutterpart.kind }}</td>
+                              <td>{{ errorItem.diecutterpart.id }}</td>
                             </tr>
                           </tbody>
                         </template>
-                      </v-simple-table>
-                    </td>
+                   </v-simple-table>-->
+
+                   <v-data-iterator
+                    :headers="headers"
+                    :items="errorItem"
+                    :items-per-page="5"
+                    class="elevation-2"
+                    item-key="errorId"
+                  ></v-data-iterator>
+
+                  
+                    
+                  </td>
+                 
                 </template>
               </v-data-table>
+
+                   <v-data-table
+                    :headers="headers"
+                    :items="errorItem"
+                    :items-per-page="5"
+                    class="row-pointer elevation-2"
+                    item-key="errorId"
+                  ></v-data-table>
 
               <v-overlay
                 :value="overlay"
