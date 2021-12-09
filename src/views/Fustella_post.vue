@@ -484,12 +484,39 @@
             <v-card v-if="ses && !ses_loading">
             <v-card-title>Errori</v-card-title>          
               <v-data-table
-                :headers="errortable_headers"
-                :items="errors"
+                :headers="cardboards_headers"
+                :items="cardboards"
+                single-expand
                 :items-per-page="5"
                 class="row-pointer"
+                item-key="cardboardId"
+                show-expand
                 @click:row="rowClick"
+                @item-expanded="getErrorData"
               >
+                <template v-slot:expanded-item="{ headers, errorItem }">
+                  <td :colspan="headers.length">
+                  
+                  <v-simple-table>
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th>Id errore</th>
+                              <th>Tipo</th>
+                              <th>Id elemento</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="(error, index) in errorItem" :key="index">
+                              <td>{{ error.id }}</td>
+                              <td>{{ error.diecutterpart.kind }}</td>
+                              <td>{{ error.diecutterpart.id }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </td>
+                </template>
               </v-data-table>
 
               <v-overlay

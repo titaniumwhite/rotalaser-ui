@@ -95,20 +95,26 @@ import axios from 'axios'
         seriesAreaHumiditySes: [],
         seriesAreaSpeedSes: [],
 
-        errortable_headers: [
-          { text: 'Id errore', value: 'errorId'},
+        cardboards_headers: [
+          { text: 'Id cartone', value: 'cardboardId'},
           {
             text: 'Timestamp',
             align: 'start',
             sortable: false,
             value: 'timestamp',
           },
-          { text: 'Id cartone', value: 'cardboardId'},
-          { text: 'Tipo', value: 'kind' },
+          { text: '', value: 'data-table-expand' },
+        ],
+
+        headers: [
+          { text: 'Id errore', value: 'errorId'},
+          { text: 'Tipo', value: 'kind'},
           { text: 'Id elemento', value: 'elemId' },
         ],
 
-        errors: [],
+        cardboards: [],
+        cardboardErrors: [],
+        errorItem: '',
 
         chartOptionsAreaRotation: {
           chart: {
@@ -1087,47 +1093,38 @@ import axios from 'axios'
         this.from = this.timeConverter(this.from_[n])
         this.to   = this.timeConverter(this.to_[n])
 
-        // Errori per sessione
-        axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_id_unique+'/warnings',{
+        // Cardboard sbagliati
+        axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_id_unique+'/cardboards',{
           headers:{
             'key':this.$session.get("key")
           },
           params:{
             startDate : this.from_[n],
-            endDate: this.to_[n]
+            endDate: this.to_[n],
+            filter: 'Fault'
           }
         }).then(response =>{
-          let e = []     
+
+          let c = []     
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
             //console.log(rsp[i])
             
-            let errorCouple = "{ "
-            errorCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '
-            errorCouple += '"errorId": "' + rsp[i].id + '", '
-            errorCouple += '"cardboardId": "' + rsp[i].cardboard.id + '", '
-            errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '", '
-            errorCouple += '"elemId": "' + rsp[i].diecutterpart.elemId + '", '
-            errorCouple += '"warningImage": "' + rsp[i].cardboard.cardboardImage.href + '" '
-            errorCouple += " }"
-            e.push(JSON.parse(errorCouple))
+            let cardboardCouple = "{ "
+            cardboardCouple += '"cardboardId": "' + rsp[i].id + '", '
+            cardboardCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '
+            cardboardCouple += '"cardboardImage": "' + rsp[i].cardboardImage.href + '" '
+            cardboardCouple += " }"
+            c.push(JSON.parse(cardboardCouple))
           }
 
-          this.errors = e
+          this.cardboards = c
 
-          this.seriesError = [{
-            name: "Errori",
-            data: e
-          }]
-  
           this.ses =  true
           this.ses_loading = false
           }).catch( (error) => {
             console.log(error)
-            this.$router.push("/")
-        })
-
-        
+        })     
         
         axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/measurements',{
           headers:{
@@ -1247,9 +1244,9 @@ import axios from 'axios'
       },
 
       rowClick(item){
-        console.log('row ' + item.warningImage + ' clicked')
         this.overlay = !this.overlay
-        axios.get('http://195.231.3.173:8080' + item.warningImage,{
+        this.warningCad = ''
+        axios.get('http://195.231.3.173:8080' + item.cardboardImage,{
           headers:{
             'key':this.$session.get("key")
           },
@@ -1260,6 +1257,36 @@ import axios from 'axios'
           alert("Non è presente alcuna immagine")
           this.overlay = false
           console.log(error)
+        })
+      },
+
+      getErrorData(item) {
+        // Errori per sessione
+        axios.get('http://195.231.3.173:8080/v1/cardboards/'+item.item.cardboardId+'/warnings',{
+          headers:{
+            'key':this.$session.get("key")
+          },
+        }).then(response =>{
+          let e = []     
+          for (let i = 0; i < response.data.data.length; i++){
+            let rsp = response.data.data
+            
+            let errorCouple = "{ "
+            errorCouple += '"errorId": "' + rsp[i].id + '", '
+            errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '", '
+            errorCouple += '"elemId": "' + rsp[i].diecutterpart.elemId + '" '
+            errorCouple += " }"
+            e.push(JSON.parse(errorCouple))
+            
+          }
+
+          this.errorItem = e
+          console.log(this.errorItem)
+          
+          this.ses =  true
+          this.ses_loading = false
+          }).catch( (error) => {
+            console.log(error)
         })
       },
       
