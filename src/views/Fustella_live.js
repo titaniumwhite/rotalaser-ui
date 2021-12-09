@@ -447,11 +447,13 @@ import axios from 'axios'
         setInterval(() => this.update(),10000) 
       },
       update(){
+       
         axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/sessions/latest',{
           headers:{
             'key':this.$session.get("key")
           }
         }).then(response =>{
+          
           this.session_ = response.data.data.id
 
         
@@ -459,13 +461,12 @@ import axios from 'axios'
        
           this.last_update = this.timeConverter(Date.now())
 
-
         axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_+'/measurements',{
           headers:{
             'key':this.$session.get("key")
           }
         }).then(response =>{
-
+          
           let rotationData = []
           let h = []
           let s = []
@@ -556,14 +557,13 @@ import axios from 'axios'
           let e = []     
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
-            //console.log(rsp[i])
             
             let errorCouple = "{ "
             errorCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '
             errorCouple += '"errorId": "' + rsp[i].cardboard.id + '", '
             errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '", '
             errorCouple += '"elemId": "' + rsp[i].diecutterpart.elemId + '", '
-            errorCouple += '"warningImage": "' + rsp[i].cardboardImage.href + '" '
+            errorCouple += '"warningImage": "' + rsp[i].cardboard.cardboardImage.href + '" '
             errorCouple += " }"
             e.push(JSON.parse(errorCouple))
           }
@@ -572,7 +572,7 @@ import axios from 'axios'
 
           }).catch( (error) => {
             console.log(error)
-            this.$router.push("/")
+            //this.$router.push("/")
         })
 
         this.loading=false 
