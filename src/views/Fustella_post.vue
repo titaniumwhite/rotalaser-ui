@@ -521,15 +521,16 @@
             sm="12" 
             cols="12"
           >
-          <v-card >
-            <v-card-title>Cad</v-card-title>
-            
-            <v-img
-                v-bind:src="'data:image/jpeg;base64,'+cad"
-                max-height="1000px"
-              >
-            </v-img>
-          </v-card>
+            <v-card >
+              <v-card-title>Cad</v-card-title>  
+              <simple-svg
+                  id="target"
+                  v-bind:src="'data:image/svg+xml;base64,'+cad"
+                  max-height="1000px"
+                  @click="handleStateClick"
+                >
+              </simple-svg>
+            </v-card>
           </v-col>
 
           <!-- PAGINA TAGLI A CAMPIONE -->

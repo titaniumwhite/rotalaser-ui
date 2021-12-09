@@ -6,6 +6,7 @@ import Fabbriche from '../views/Fabbriche.vue'
 import Fustelle from '../views/Fustelle.vue'
 import Fustella_post from '../views/Fustella_post.vue'
 import Fustella_live from '../views/Fustella_live.vue'
+import PageNotFound from '../views/PageNotFound.vue'
 
 Vue.use(VueRouter)
 
@@ -36,7 +37,7 @@ const routes = [
     component: Fustelle
   },
   {
-    path: '/fustella/postanalisi/:id',
+    path: '/fustella/storico/:id',
     name: 'fustella_post',
     component: Fustella_post
   },
@@ -44,6 +45,9 @@ const routes = [
     path: '/fustella/live/:id',
     name: 'fustella_live',
     component: Fustella_live
+  },
+  { path: "*", 
+    component: PageNotFound
   }
 ]
 

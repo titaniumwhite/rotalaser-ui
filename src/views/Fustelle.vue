@@ -310,7 +310,7 @@
                 <v-btn
                   text
                   color="secondary"
-                  @click="$router.push('/fustella/postanalisi/'+item.id)">
+                  @click="$router.push('/fustella/storico/'+item.id)">
                   Storico
                 </v-btn>
                   </v-col>
