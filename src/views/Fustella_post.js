@@ -535,7 +535,6 @@ import axios from 'axios'
           'key':this.$session.get("key")
         }
       }).then(response =>{
-        console.log(response.data.data)
         this.diecutter_name = response.data.data.cadName
         this.diecutter_mac = response.data.data.id
         this.diecutter_factory = response.data.data.factory.name
@@ -627,7 +626,7 @@ import axios from 'axios'
 
                                 if(this.got.length<1){
                                   this.loading = false
-                                  this.err=true
+                                  //this.err=true
                                   return
                                 }
                                 let my_min = 0
@@ -781,24 +780,6 @@ import axios from 'axios'
                                   }
                                 }
 
-                                /*  SESSION STORAGE  */
-                                /*
-                                this.$session.set("fustellaR",rotationData)
-                                this.$session.set("fustellaRT",totalRotationData)
-                                
-                                this.$session.set("id",this.$route.params.id)
-                                
-                                this.$session.set("min",my_min)
-                                this.$session.set("max",my_max)
-                                this.$session.set("total_errors",total_errors)
-                                this.$session.set("total_sessions",total_session)
-                                this.$session.set("total_rotations",total_rotations)
-                                this.$session.set("diecutter_name",this.diecutter_name)
-
-                                this.$session.set("text",annotation_text)
-                                this.$session.set("from_",this.from_)
-                                this.$session.set("to_",this.to_)
-                                */
                                 
                                 
                                 this.seriesAreaTemperatureSes = temperatureSesData
@@ -899,13 +880,11 @@ import axios from 'axios'
             /* get the effin CAD */
             axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+"/cadimage",{
               headers:{
-                'key':this.$session.get("key")
+                'key':this.$session.get("key"),
+                'type':'svg'
               }
             }).then(response =>{
-            
-                this.cad = response.data.data
-                this.$session.set("cad",this.cad)
-
+              this.cad = response.data.data
             }).catch( (error) => {
                 console.log(error)
                 this.$router.push("/")
@@ -922,9 +901,7 @@ import axios from 'axios'
                 this.factories_name[i] = response.data.data[i].name                 
               }
 
-              //this.$session.set("customers_name",JSON.stringify(this.customers_name))
-              //this.$session.set("customers",JSON.stringify(this.customers))
-
+            
 
             }).catch( (error) => {
                 console.log(error)
@@ -932,74 +909,7 @@ import axios from 'axios'
             })
 
           
-          }else{
-              this.cad =this.$session.get("cad")
-
-              this.from_ = this.$session.get("from_")
-              this.to_ = this.$session.get("to_")
-              this.total_rotations = this.$session.get("total_rotations")
-              this.total_errors = this.$session.get("total_errors")
-              this.total_sessions = this.$session.get("total_sessions")
-              this.diecutter_name = this.$session.get("diecutter_name")
-
-              this.customers_name = JSON.parse(this.$session.get("customers_name"))
-              this.customers = JSON.parse(this.$session.get("customers"))
-
-              this.seriesAreaHumiditySes = this.$session.get("humidity")
-              this.seriesAreaTemperatureSes = this.$session.get("temperature")
-              this.seriesAreaSpeedSes = this.$session.get("speed")
-              
-              this.seriesLineBrush = [{
-                name: "RotazioniBrush",
-                data: this.$session.get("fustellaR")
-              }]
-
-              this.seriesAreaRotation = [{
-                name: "Rotazioni",
-                data: this.$session.get("fustellaR")
-              }]  
- 
-              this.seriesAreaTotalRotation = [{
-                name: "RotazioniTotali",
-                data: this.$session.get("fustellaRT")
-              }]
-
-              this.chartOptionsAreaRotation ={...this.chartOptionsAreaRotation,
-                                  annotations: {
-                                    xaxis: this.$session.get("text")
-                                  }
-                                }
-              this.chartOptionsAreaTotalRotation ={...this.chartOptionsAreaTotalRotation,...{
-                  annotations: {
-                    xaxis: this.$session.get("text")
-                  }
-                }
-              }
-              this.chartOptionsLineBrush = {...this.chartOptionsLineBrush,...{
-                chart: {
-                  id: 'brushChart',
-                  height: 120,
-                  type: 'area',
-                  brush:{
-                    target: 'rotazioni',
-                    enabled: true,
-                    autoScaleYaxis: false 
-                  }, 
-                  selection:{
-                      enabled: true,
-                      xaxis: {
-                        min: this.$session.get("min"),
-                        max: this.$session.get("max")
-                      }
-                  }
-                }
-              }
-            }
-              this.loading=false 
-              this.annotation_loading = false
           }
-         
-
     },
     methods: {
       create_slider(){  
@@ -1310,6 +1220,9 @@ import axios from 'axios'
             data: computed
           }]
         }
+      },
+      handleStateClick(e){
+        console.log(e)
       }
     },
   };

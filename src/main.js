@@ -4,11 +4,14 @@ import router from './router'
 import vuetify from '@/plugins/vuetify'
 import VueSessionStorage from "vue-sessionstorage";
 import VueApexCharts from 'vue-apexcharts'
+import VueSimpleSVG from 'vue-simple-svg'
+
 
 Vue.config.productionTip = false
 
 Vue.use(VueSessionStorage);
 Vue.use(VueApexCharts);
+Vue.use(VueSimpleSVG)
 
 Vue.component('apexchart', VueApexCharts);
 
