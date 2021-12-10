@@ -590,7 +590,7 @@ import axios from 'axios'
     rowClick(item){
       console.log('row ' + item.warningImage + ' clicked')
       this.overlay = !this.overlay
-      axios.get('http://195.231.3.173:8080/' + item.warningImage,{
+      axios.get('http://195.231.3.173:8080' + item.warningImage,{
         headers:{
           'key':this.$session.get("key")
         },
