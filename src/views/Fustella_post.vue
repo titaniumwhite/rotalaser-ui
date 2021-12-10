@@ -555,13 +555,24 @@
           >
             <v-card >
               <v-card-title>Cad</v-card-title>  
-              <simple-svg
+              <!--<simple-svg
                   id="target"
                   v-bind:src="'data:image/svg+xml;base64,'+cad"
                   max-height="1000px"
                   @click="handleStateClick"
                 >
-              </simple-svg>
+              </simple-svg>-->
+              <!-- tooltip -->
+              <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
+              <!-- CAD container tag -->
+             
+             
+              
+              <div v-html="cad__"></div>
+             
+              
+              
+              
             </v-card>
           </v-col>
 

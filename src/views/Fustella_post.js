@@ -1,4 +1,7 @@
 import axios from 'axios'
+import { SVG } from '@svgdotjs/svg.js'
+import '@svgdotjs/svg.draggable.js'
+
 
   export default {
     name: "ChartPage",
@@ -62,6 +65,8 @@ import axios from 'axios'
 
         cr_ratio:0,
         n_cardboards: 0,
+
+        cad__: undefined,
 
         /* data per pagina 'modifica' */
         customers_name: [],
@@ -887,6 +892,7 @@ import axios from 'axios'
                 'type':'svg'
               }
             }).then(response_svg =>{
+
               this.cad = response_svg.data.data
               axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+"/diecutterparts",{
               headers:{
@@ -894,7 +900,94 @@ import axios from 'axios'
                 'type':'svg'
                 }
               }).then(response =>{
-                  console.log(response)
+                  const cadParts = response.data.data;
+
+                  // build a object out of cadParts
+                  const cadPartsDict = {};
+                  for (let cadElem of cadParts) {
+                      //const elemId = cadElem.elemId;
+                      // append new attribute to the object
+                      cadPartsDict.elemId = cadElem;
+                  
+                  }
+                  let svgString = response_svg.data.data;
+                  svgString = atob(svgString);
+                  // parse svg into a XML element
+                  const parser = new DOMParser();
+                  const parsedSVG = parser.parseFromString(svgString, 'image/svg+xml');
+
+                  // set svg width 
+                  const svgNode = parsedSVG.documentElement
+                  //svgNode.setAttribute('width', '50%');
+
+                  // parse the SVG viewbox
+                  const alpha = 0.1
+                  let viewBox = svgNode.getAttribute("viewBox");
+                  let x0, y0, x1, y1;
+                  [x0, y0, x1, y1] = viewBox.split(" ");
+                  
+                  x1 = parseInt(x1);
+                  y1 = parseInt(y1);
+
+                  // increase the canvas space by editing the max width (x1) and height (y1)
+                  const padding = Math.round(alpha * y1);
+                  x1 = x1 + padding;
+                  y1 = y1 + padding;
+                  
+                  // update the viewBox
+                  viewBox = `${x0} ${y0} ${x1} ${y1}`
+                  svgNode.setAttribute("viewBox", viewBox);
+
+                  // translate the CAD in the bottom right direction to make use of the 
+                  // additional canvas space
+                  const svgGroupTag = svgNode.getElementById('cad-container');
+                  const translation = Math.round(padding/2);
+                  svgGroupTag.setAttribute('transform', `translate(${translation}, ${translation})`);
+                  
+                  // attach svg to DOM
+                  //const svgContainer = document.getElementById('cad');
+                  //svgContainer.appendChild(svgNode);
+
+                  
+                  
+                  this.cad__ =  new XMLSerializer().serializeToString(svgNode);
+
+                  // wrap the svgNode in a SVG.js object
+                  const svgRootNode = SVG(svgNode);
+
+                  // add event listener to each cad part (except holes and special ids e.g. "generale")
+                  svgRootNode.findOne(`g#cad-container`).attr('pointer-events', 'all');
+
+                  const ignoreTypes = ["buco", "generale"];
+
+                  for (let cadElem of cadParts) {
+                      
+                      const elemType = cadElem.kind;
+
+                      if (!ignoreTypes.includes(elemType)) {
+                          const elemId = cadElem.elemId;
+                          const svgElem = svgRootNode.find(`#${elemId}`);
+
+                          //console.log(svgElem)
+                          
+                          // attach listeners
+                          //svgElem.setAttribute("onmouseover", "console.log('H')");
+
+
+                          svgElem.on('mouseover', function(event) {
+                              console.log("H")
+                              this.attr('stroke-width','3');
+                              this.showTooltip(event, elemId);
+
+                          });
+                          svgElem.on('mouseout', function() {
+                            console.log("Ḧ-")
+                              this.attr('stroke-width','1');
+                              this.hideTooltip();
+                          });
+                      }
+                    }
+
               }).catch( (error) => {
                 console.log(error)
               })
@@ -975,11 +1068,6 @@ import axios from 'axios'
 
         var a = new Date(utc_date);
 
-        //console.log(a)
-        // a.setHours(a.getHours() + 2); /* GMT +2 (?)*/
-        //console.log(a)
-        
-        
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         var year = a.getFullYear();
         var month = months[a.getMonth()];
@@ -1235,6 +1323,18 @@ import axios from 'axios'
       },
       handleStateClick(e){
         console.log(e)
+      },
+      showTooltip(evt, text) {
+        
+        let tooltip = document.getElementById("tooltip");
+        tooltip.innerHTML = text;
+        tooltip.style.display = "block";
+        tooltip.style.left = evt.pageX + 10 + 'px';
+        tooltip.style.top = evt.pageY + 10 + 'px';
+      },
+      hideTooltip() {
+        var tooltip = document.getElementById("tooltip");
+        tooltip.style.display = "none";
       }
     },
   };

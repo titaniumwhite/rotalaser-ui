@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@mdi/font": "^6.1.95",
+    "@svgdotjs/svg.draggable.js": "^3.0.2",
+    "@svgdotjs/svg.js": "^3.1.1",
     "apexcharts": "^3.29.0",
     "chart.js": "^2.9.4",
     "core-js": "^3.6.5",
