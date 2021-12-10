@@ -167,14 +167,47 @@
 
             <v-card>
             <v-card-title>Errori</v-card-title>          
+              <v-card-title>Errori</v-card-title>          
               <v-data-table
-                :headers="errortable_headers"
-                :items="errors"
+                :headers="cardboards_headers"
+                :items="cardboards"
+                :single-expand="singleExpand"
+                :expanded.sync="expanded"
                 :items-per-page="5"
-                class="elevation-1"
+                class="row-pointer elevation1"
+                item-key="cardboardId"
+                show-expand
                 @click:row="rowClick"
-              >
+                @item-expanded="getErrorData"
+              >  
+              
+                <template v-slot:expanded-item="{ headers }">
+                   
+                  <td :colspan="headers.length">
+                  
+                    <v-simple-table>
+                          <template v-slot:default>
+                            <thead>
+                              <tr>
+                                <th>Id errore</th>
+                                <th>Tipo</th>
+                                <th>Id elemento</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr v-for="item in errorItem" :key="item.elemId">
+                                <td>{{ item.elemId }}</td>
+                                <td>{{ item.kind }}</td>
+                                <td>{{ item.errorId }}</td>
+                              </tr>
+                            </tbody>
+                          </template>
+                    </v-simple-table>
+                  </td>
+                 
+                </template>
               </v-data-table>
+
 
               <v-overlay
                 :value="overlay"

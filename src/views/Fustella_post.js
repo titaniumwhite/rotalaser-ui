@@ -95,7 +95,7 @@ import axios from 'axios'
         seriesAreaHumiditySes: [],
         seriesAreaSpeedSes: [],
 
-        singleExpand: false,
+        singleExpand: true,
         expanded: [],
 
         cardboards_headers: [
@@ -106,7 +106,7 @@ import axios from 'axios'
             sortable: false,
             value: 'timestamp',
           },
-          { text: 'Text', value: 'data-table-expand' },
+          { text: '', value: 'data-table-expand' },
         ],
 
         headers: [
@@ -886,11 +886,21 @@ import axios from 'axios'
                 'key':this.$session.get("key"),
                 'type':'svg'
               }
-            }).then(response =>{
-              this.cad = response.data.data
+            }).then(response_svg =>{
+              this.cad = response_svg.data.data
+              axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+"/diecutterparts",{
+              headers:{
+                'key':this.$session.get("key"),
+                'type':'svg'
+                }
+              }).then(response =>{
+                  console.log(response)
+              }).catch( (error) => {
+                console.log(error)
+              })
             }).catch( (error) => {
                 console.log(error)
-                this.$router.push("/")
+                
             })
 
              /* CHIAMATE API PER MODIFICA FUSTELLA */
@@ -1194,7 +1204,6 @@ import axios from 'axios'
           }
 
           this.errorItem = e
-          console.log(this.errorItem)
           
           this.ses =  true
           this.ses_loading = false

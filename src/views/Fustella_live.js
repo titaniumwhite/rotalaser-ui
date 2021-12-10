@@ -60,17 +60,33 @@ import axios from 'axios'
 
         hour: false,
 
-        errortable_headers: [
+        startDate_: undefined,
+        endDate_:undefined,
+
+        singleExpand: true,
+        expanded: [],
+
+        errorItem: [],
+
+        cardboards: [],
+
+        cardboards_headers: [
+          { text: 'Id cartone', value: 'cardboardId'},
           {
             text: 'Timestamp',
             align: 'start',
             sortable: false,
             value: 'timestamp',
           },
+          { text: '', value: 'data-table-expand' },
+        ],
+
+        headers: [
           { text: 'Id errore', value: 'errorId'},
-          { text: 'Tipo', value: 'kind' },
+          { text: 'Tipo', value: 'kind'},
           { text: 'Id elemento', value: 'elemId' },
         ],
+
 
         /* data per pagina 'modifica' */
         customers_name: [],
@@ -455,10 +471,9 @@ import axios from 'axios'
         }).then(response =>{
           
           this.session_ = response.data.data.id
+          this.startDate_ = response.data.data.startDate
+          this.endDate_ = Date.now()
 
-        
-          
-       
           this.last_update = this.timeConverter(Date.now())
 
         axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_+'/measurements',{
@@ -489,9 +504,6 @@ import axios from 'axios'
           for(let i=0; i<this.got.length;i++){
 
             let rotationCouple;
-            
-          
-
             let time = new Date(this.got[i].timestamp)
 
 
@@ -526,9 +538,7 @@ import axios from 'axios'
 
           }
         }
-
-    
-                                      
+                                  
         this.seriesAreaRotation = [{
           name: "Rotazioni",
           data: rotationData
@@ -549,30 +559,35 @@ import axios from 'axios'
           data: s
         }]
         
-        axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_+'/warnings',{
+        axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_+'/cardboards',{
           headers:{
             'key':this.$session.get("key")
+          },
+          params:{
+            startDate : this.startDate_,
+            endDate: this.endDate_,
+            filter: 'Fault'
           }
         }).then(response =>{
-          let e = []     
+
+          let c = []     
           for (let i = 0; i < response.data.data.length; i++){
             let rsp = response.data.data
             
-            let errorCouple = "{ "
-            errorCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '
-            errorCouple += '"errorId": "' + rsp[i].cardboard.id + '", '
-            errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '", '
-            errorCouple += '"elemId": "' + rsp[i].diecutterpart.elemId + '", '
-            errorCouple += '"warningImage": "' + rsp[i].cardboard.cardboardImage.href + '" '
-            errorCouple += " }"
-            e.push(JSON.parse(errorCouple))
+            let cardboardCouple = "{ "
+            cardboardCouple += '"cardboardId": "' + rsp[i].id + '", '
+            cardboardCouple += '"timestamp": "' + this.timeConverter(rsp[i].timestamp) + '", '
+            cardboardCouple += '"cardboardImage": "' + rsp[i].cardboardImage.href + '" '
+            cardboardCouple += " }"
+            c.push(JSON.parse(cardboardCouple))
           }
 
-          this.errors = e
+          this.cardboards = c
 
+          this.ses =  true
+          this.ses_loading = false
           }).catch( (error) => {
             console.log(error)
-            //this.$router.push("/")
         })
 
         this.loading=false 
@@ -588,9 +603,9 @@ import axios from 'axios'
       })
     },
     rowClick(item){
-      console.log('row ' + item.warningImage + ' clicked')
       this.overlay = !this.overlay
-      axios.get('http://195.231.3.173:8080' + item.warningImage,{
+      this.warningCad = ''
+      axios.get('http://195.231.3.173:8080' + item.cardboardImage,{
         headers:{
           'key':this.$session.get("key")
         },
@@ -603,6 +618,7 @@ import axios from 'axios'
         console.log(error)
       })
     },
+
     switchClick(){
       !this.switch1
       
@@ -625,7 +641,36 @@ import axios from 'axios'
           data: computed
         }]
       }
-    }
+    },
+
+    getErrorData(item) {
+      // Errori per sessione
+      axios.get('http://195.231.3.173:8080/v1/cardboards/'+item.item.cardboardId+'/warnings',{
+        headers:{
+          'key':this.$session.get("key")
+        },
+      }).then(response =>{
+        let e = []     
+        for (let i = 0; i < response.data.data.length; i++){
+          let rsp = response.data.data
+          
+          let errorCouple = "{ "
+          errorCouple += '"errorId": "' + rsp[i].id + '", '
+          errorCouple += '"kind": "' + rsp[i].diecutterpart.kind + '", '
+          errorCouple += '"elemId": "' + rsp[i].diecutterpart.elemId + '" '
+          errorCouple += " }"
+          e.push(JSON.parse(errorCouple))
+          
+        }
+
+        this.errorItem = e
+        
+        this.ses =  true
+        this.ses_loading = false
+        }).catch( (error) => {
+          console.log(error)
+      })
+    },
   },
   
 };

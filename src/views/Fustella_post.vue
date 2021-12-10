@@ -496,52 +496,34 @@
                 @item-expanded="getErrorData"
               >  
               
-                <template v-slot:expanded-item="{ headers, errorItem }">
+                <template v-slot:expanded-item="{ headers }">
                    
                   <td :colspan="headers.length">
                   
-                 <!-- <v-simple-table>
-                        <template v-slot:default>
-                          <thead>
-                            <tr>
-                              <th>Id errore</th>
-                              <th>Tipo</th>
-                              <th>Id elemento</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr v-for="(error, index) in errorItem" :key="index">
-                              <td>{{ errorItem.id }}</td>
-                              <td>{{ errorItem.diecutterpart.kind }}</td>
-                              <td>{{ errorItem.diecutterpart.id }}</td>
-                            </tr>
-                          </tbody>
-                        </template>
-                   </v-simple-table>-->
-
-                   <v-data-iterator
-                    :headers="headers"
-                    :items="errorItem"
-                    :items-per-page="5"
-                    class="elevation-2"
-                    item-key="errorId"
-                  ></v-data-iterator>
-
-                  
-                    
+                    <v-simple-table>
+                          <template v-slot:default>
+                            <thead>
+                              <tr>
+                                <th>Id errore</th>
+                                <th>Tipo</th>
+                                <th>Id elemento</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr v-for="item in errorItem" :key="item.elemId">
+                                <td>{{ item.elemId }}</td>
+                                <td>{{ item.kind }}</td>
+                                <td>{{ item.errorId }}</td>
+                              </tr>
+                            </tbody>
+                          </template>
+                    </v-simple-table>
                   </td>
                  
                 </template>
               </v-data-table>
 
-                   <v-data-table
-                    :headers="headers"
-                    :items="errorItem"
-                    :items-per-page="5"
-                    class="row-pointer elevation-2"
-                    item-key="errorId"
-                  ></v-data-table>
-
+                  
               <v-overlay
                 :value="overlay"
                 @click.native="overlay = false"
