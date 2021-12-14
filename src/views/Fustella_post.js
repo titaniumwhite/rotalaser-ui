@@ -704,7 +704,7 @@ const xml2js = require('xml2js');
                                       //console.log("f" + this.from_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
                                       //console.log("t" +this.to_[this.got[i].session.localSessionId] + this.got[i].session.localSessionId)
                                       
-                                      if(this.got[i].session.startedAt !== null && this.got[i].session.startedAt !== undefined){
+                                      if(this.got[i].session.endedAt !== null && this.got[i].session.startedAt !== null){
                                         let curr_text =     '{'+
                                                             '"x": '+ new Date(this.got[i].session.startedAt).getTime() +
                                                             ',"strokeDashArray": 0,"borderColor": "#ff6090",'+
