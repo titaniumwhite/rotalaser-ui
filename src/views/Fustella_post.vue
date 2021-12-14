@@ -568,7 +568,9 @@
              
              
               
-              <div v-html="cad__"></div>
+              <div v-html="cad__" @click="handleClick"></div>
+
+              <svg></svg>
              
               
               

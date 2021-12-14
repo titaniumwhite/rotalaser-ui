@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { SVG } from '@svgdotjs/svg.js'
 import '@svgdotjs/svg.draggable.js'
+const xml2js = require('xml2js');
+
 
 
   export default {
@@ -757,23 +759,36 @@ import '@svgdotjs/svg.draggable.js'
                                       && this.from_[parseInt(this.got[i].session.localSessionId)-1] !== null 
                                       && this.from_[parseInt(this.got[i].session.localSessionId)] !== null 
                                       && this.to_[parseInt(this.got[i].session.localSessionId)-1] !== null){
+                                        /* workaround brutale */
+                                        if( !(this.$route.params.id == "d4:30:15:4a:ab:2d" 
+                                        && (this.got[i].session.localSessionId == 2 ||
+                                            this.got[i].session.localSessionId == 3 || 
+                                            this.got[i].session.localSessionId == 4) ) 
+                                            && 
+                                            !(this.$route.params.id == "c7:02:8f:47:f2:0d" 
+                                              && (this.got[i].session.localSessionId == 1 || 
+                                              this.got[i].session.localSessionId == 2))
+                                              && 
+                                            !(this.$route.params.id == "ee:ea:4b:24:65:33" 
+                                              && (this.got[i].session.localSessionId == 116 ))
+                                              ){
                                        
-                                        let timeCouple_ = "{ "
-                                        timeCouple_ += '"x": ' + new Date(
-                                          new Date(this.to_[parseInt(this.got[i].session.localSessionId)-1])
-                                          .getTime() + 10*60000).getTime() + ', '
-                                        rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
-                                        rotationData.push(JSON.parse(rotationCouple))
-                                        
-                                       
-                                        timeCouple_ = "{ "
-                                        timeCouple_ += '"x": ' + new Date(
-                                          new Date(this.from_[parseInt(this.got[i].session.localSessionId)])
-                                          .getTime() - 1*60000).getTime() + ', '
-                                        rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
-                                        rotationData.push(JSON.parse(rotationCouple))
-                                        
-
+                                              let timeCouple_ = "{ "
+                                              timeCouple_ += '"x": ' + new Date(
+                                                new Date(this.to_[parseInt(this.got[i].session.localSessionId)-1])
+                                                .getTime() + 10*60000).getTime() + ', '
+                                              rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
+                                              rotationData.push(JSON.parse(rotationCouple))
+                                              
+                                            
+                                              timeCouple_ = "{ "
+                                              timeCouple_ += '"x": ' + new Date(
+                                                new Date(this.from_[parseInt(this.got[i].session.localSessionId)])
+                                                .getTime() - 1*60000).getTime() + ', '
+                                              rotationCouple = timeCouple_ + ' "y": '+ 0 + " }"
+                                              rotationData.push(JSON.parse(rotationCouple))
+                                              
+                                        }
                                       }
 
                                       rotationCouple = timeCouple + ' "y": '+ this.got[i].rotationCount + " }"
@@ -948,9 +963,31 @@ import '@svgdotjs/svg.draggable.js'
                   //const svgContainer = document.getElementById('cad');
                   //svgContainer.appendChild(svgNode);
 
-                  
+                  let gs = svgNode.getElementsByTagName("g");
+                  for(let g of gs){
+                    if(g.getAttribute("id") != "cad-container"){
+                      console.log("G " + g)
+                      g.setAttribute("v-on:click","console.log('H')")
+                      g.setAttribute("v-on:mouseover","console.log('H')")
+                    }
+                  }
                   
                   this.cad__ =  new XMLSerializer().serializeToString(svgNode);
+
+                  xml2js.parseString(this.cad__, (err, result) => {
+                    if(err) {
+                        throw err;
+                    }
+                
+                    // `result` is a JavaScript object
+                    // convert it to a JSON string
+                    console.log(result.svg['g'][0]['g'][0])
+                    const json = JSON.stringify(result, null, 4);
+                
+                    // log JSON string
+                    console.log(json);
+                    
+                });
 
                   // wrap the svgNode in a SVG.js object
                   const svgRootNode = SVG(svgNode);
@@ -959,6 +996,16 @@ import '@svgdotjs/svg.draggable.js'
                   svgRootNode.findOne(`g#cad-container`).attr('pointer-events', 'all');
 
                   const ignoreTypes = ["buco", "generale"];
+
+                  /*
+                  var gEl_ = this.$el.getElementsByTagName('g')
+                  for(let gEl of gEl_ ){
+                    console.log("gEL "+ gEl)
+                    gEl.addEventListener('click', function() {
+                      alert('I got clicked');
+                    });
+                  }
+                  */
 
                   for (let cadElem of cadParts) {
                       
@@ -972,8 +1019,9 @@ import '@svgdotjs/svg.draggable.js'
                           
                           // attach listeners
                           //svgElem.setAttribute("onmouseover", "console.log('H')");
+                          //svgElem.setAttribute("@click","handleClick")
 
-
+                          
                           svgElem.on('mouseover', function(event) {
                               console.log("H")
                               this.attr('stroke-width','3');
@@ -1335,7 +1383,13 @@ import '@svgdotjs/svg.draggable.js'
       hideTooltip() {
         var tooltip = document.getElementById("tooltip");
         tooltip.style.display = "none";
-      }
+      },
+      handleClick(e) {
+        console.log(e.target)
+        if (e.target.matches('.play-video, .play-video *')) {
+          console.log('Got a click on .play-video or a child element')
+        }
+      }  
     },
   };
 

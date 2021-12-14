@@ -23,7 +23,8 @@
     "vue-apexcharts": "^1.6.2",
     "vue-sessionstorage": "^1.0.0",
     "vue-simple-svg": "^2.0.2",
-    "vuetify": "^2.5.8"
+    "vuetify": "^2.5.8",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
