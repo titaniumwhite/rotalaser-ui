@@ -761,16 +761,29 @@ const xml2js = require('xml2js');
                                       && this.to_[parseInt(this.got[i].session.localSessionId)-1] !== null){
                                         /* workaround brutale */
                                         if( !(this.$route.params.id == "d4:30:15:4a:ab:2d" 
-                                        && (this.got[i].session.localSessionId == 2 ||
-                                            this.got[i].session.localSessionId == 3 || 
-                                            this.got[i].session.localSessionId == 4) ) 
+                                            && (this.got[i].session.localSessionId == 2 ||
+                                                this.got[i].session.localSessionId == 3 || 
+                                                this.got[i].session.localSessionId == 4) ) 
                                             && 
                                             !(this.$route.params.id == "c7:02:8f:47:f2:0d" 
                                               && (this.got[i].session.localSessionId == 1 || 
                                               this.got[i].session.localSessionId == 2))
                                               && 
                                             !(this.$route.params.id == "ee:ea:4b:24:65:33" 
-                                              && (this.got[i].session.localSessionId == 116 ))
+                                              && (
+                                                this.got[i].session.localSessionId >= 84 && 
+                                                ! (this.got[i].session.localSessionId >= 88 &&
+                                                  this.got[i].session.localSessionId <= 94)
+                                                )
+                                            )
+                                                
+                                                 && 
+                                            !(this.$route.params.id == "da:5b:93:12:58:30" 
+                                              && (
+                                                this.got[i].session.localSessionId >= 51 && 
+                                                  this.got[i].session.localSessionId <= 54
+                                                  )
+                                                )
                                               ){
                                        
                                               let timeCouple_ = "{ "
@@ -869,19 +882,14 @@ const xml2js = require('xml2js');
                                 
                                 
                                 // CARTONE PER ROTAZIONI
-                                axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/cardboardstats',{
+                                axios.get('http://195.231.3.173:8080/v1/diecutters/'+this.$route.params.id+'/cardboardstats/aggregation',{
                                   headers:{
                                     'key':this.$session.get("key")
                                   },
-                                  params:{
-                                    'offset' : 1,
-                                    'limit' : 1,
-                                    'sortingOrder' : 'DESC',
-                                    'sortingField' : 'timestamp'
-                                  }
+                                  
                                 }).then(response =>{
-                                  this.cr_ratio = response.data.data[0].cardboardCount/this.total_rotations
-                                  this.n_cardboards = response.data.data[0].cardboardCount
+                                  this.cr_ratio = response.data.data.sum/this.total_rotations
+                                  this.n_cardboards = response.data.data.sum
 
                                 }).catch( (error) => {
                                     console.log(error.response.data)
