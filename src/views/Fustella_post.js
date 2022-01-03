@@ -105,6 +105,10 @@ const xml2js = require('xml2js');
         singleExpand: true,
         expanded: [],
 
+        gs: [],
+        lines: {},
+        paths: {},
+
         cardboards_headers: [
           { text: 'Id cartone', value: 'cardboardId'},
           {
@@ -974,7 +978,7 @@ const xml2js = require('xml2js');
                   let gs = svgNode.getElementsByTagName("g");
                   for(let g of gs){
                     if(g.getAttribute("id") != "cad-container"){
-                      console.log("G " + g)
+                      //console.log("G " + g)
                       g.setAttribute("v-on:click","console.log('H')")
                       g.setAttribute("v-on:mouseover","console.log('H')")
                     }
@@ -986,15 +990,23 @@ const xml2js = require('xml2js');
                     if(err) {
                         throw err;
                     }
+
+                    //const json = JSON.stringify(result, null, 4);
+                
+                    // log JSON string
+                    //console.log(json);
                 
                     // `result` is a JavaScript object
                     // convert it to a JSON string
-                    console.log(result.svg['g'][0]['g'][0])
-                    const json = JSON.stringify(result, null, 4);
-                
-                    // log JSON string
-                    console.log(json);
-                    
+                    //console.log(result.svg['g'][0].$.id)
+                    this.gs = result.svg.g[0].g
+                    //console.log(this.gs)
+                    for(let i =0; i< this.gs.length; i++){
+                      
+                      this.lines[this.gs[i].$.id] = this.gs[i].line
+                      this.paths[this.gs[i].$.id] = this.gs[i].path
+                    }
+                                       
                 });
 
                   // wrap the svgNode in a SVG.js object
@@ -1393,10 +1405,9 @@ const xml2js = require('xml2js');
         tooltip.style.display = "none";
       },
       handleClick(e) {
-        console.log(e.target)
-        if (e.target.matches('.play-video, .play-video *')) {
-          console.log('Got a click on .play-video or a child element')
-        }
+        //console.log(e.target)
+        console.log(e.target.id)
+        
       }  
     },
   };

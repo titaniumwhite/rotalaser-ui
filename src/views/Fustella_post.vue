@@ -567,10 +567,63 @@
               <!-- CAD container tag -->
              
              
-              
-              <div v-html="cad__" @click="handleClick"></div>
+              <!--
+              <div v-html="cad__" @click="handleClick"></div>-->
 
-              <svg></svg>
+              <svg  xmlns= "http://www.w3.org/2000/svg" viewBox="0 0 1462 1089"
+                    style= "background-color: #102027;">
+                <g 
+                    id= "cad-container"
+                    stroke-width= "1"
+                    fill= "None"
+                    transform="translate(50, 50)"
+                    
+                    >
+                    <template v-for="g in gs">
+                      
+                      <g 
+                        v-bind:key="g.$.id" 
+                        :id="g.$.id"
+                        v-on:click= "handleClick">
+
+                        
+                        
+                       
+                        <template v-for="line in lines[g.$.id]">
+                        
+                          <line 
+                                v-bind:key="line.$.id"
+                                :id="line.$.id"
+                                :x1= "line.$.x1"
+                                :y1= "line.$.y1"
+                                :x2= "line.$.x2"
+                                :y2= "line.$.y2"
+                                :stroke= "line.$.stroke"
+                               >
+                                 <title>{{line.$.id}}</title>
+                          </line>
+                        </template>
+                          
+                          <template v-for="path in paths[g.$.id]">
+                            
+                            <path
+                              v-bind:key="path.$.id"
+                              :id="path.$.id"
+                              :d="path.$.d"
+                              :stroke= "path.$.stroke"
+                             
+                            >
+                            <title>{{path.$.id}}</title>
+                            </path>
+                            
+                              
+                          </template>
+
+                        
+                      </g>
+                    </template>
+                    </g>
+              </svg>
              
               
               
