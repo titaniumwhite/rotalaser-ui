@@ -6,6 +6,7 @@ import Fabbriche from '../views/Fabbriche.vue'
 import Fustelle from '../views/Fustelle.vue'
 import Fustella_post from '../views/Fustella_post.vue'
 import Fustella_live from '../views/Fustella_live.vue'
+import Fustella_live_dash from '../views/Fustella_live_dash.vue'
 import PageNotFound from '../views/PageNotFound.vue'
 
 Vue.use(VueRouter)
@@ -45,6 +46,11 @@ const routes = [
     path: '/fustella/live/:id',
     name: 'fustella_live',
     component: Fustella_live
+  },
+  {
+    path: '/fustella/live/dash/:id',
+    name: 'fustella_live_dash',
+    component: Fustella_live_dash
   },
   { path: "*", 
     component: PageNotFound
