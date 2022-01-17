@@ -39,10 +39,12 @@ import axios from 'axios'
         class_holes:"green--text",
         class_folds:"red--text",
         class_tot:"orange--text",
+        class_m_tot:"orange--text",
 
         holes_last_30s: 10,
         folds_last_30s: 1,
         total_overall_errors: 11,
+        total_overall_m_errors: 11,
 
         curr_rpm_perc: 0,
 
@@ -253,6 +255,10 @@ import axios from 'axios'
         axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_+'/measurements',{
           headers:{
             'key':this.$session.get("key")
+          },
+          params:{
+            sortingField: "timestamp",
+            sortingOrder: "DESC"
           }
         }).then(response =>{
           
@@ -271,8 +277,7 @@ import axios from 'axios'
           
           this.name_ = this.got[0].session.localSessionId
 
-
-          this.curr_rpm_perc = this.got[this.got.length-1].rotationSpeed*3600 /10000
+          this.curr_rpm_perc = this.got[0].rotationSpeed*3600 /10000
 
           this.seriesRadial = [this.curr_rpm_perc]
                                                                       
@@ -300,6 +305,7 @@ import axios from 'axios'
               this.class_tot = "red--text"
             }
           })
+
           /*get updated numbers */
           axios.get('http://195.231.3.173:8080/v1/sessions/'+this.session_+'/warnings',{
             headers:{

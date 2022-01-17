@@ -83,10 +83,6 @@
           <v-card-text><h3>Ultimo aggiornamento: {{last_update}}</h3></v-card-text>
           
             <v-row centered>
-              
-
-              
-                  
               <v-col 
               lg="4"
               md="4"
@@ -97,11 +93,10 @@
                     <div>
                       <!-- ROTAZIONI PER SESSIONE -->
                       <div id="chart-line1">
-                        <apexchart width='100%' height="300" type="radialBar" :options="chartOptionsRadial" :series="seriesRadial"></apexchart>
+                        <apexchart width='100%' height="500" type="radialBar" :options="chartOptionsRadial" :series="seriesRadial"></apexchart>
                       </div>
                     </div>
                   </v-card>
-              
               </v-col>
 
 
@@ -111,60 +106,75 @@
                 sm="12"
                 cols="12"
               >
-              <v-row>
-              <v-col 
-              lg="6"
-              md="4"
-              sm="4"
-              cols="4"
-              >   <v-card>
-                    <v-card-title>Errori pieghe ultimi 30s</v-card-title>
-                    <v-card-text
-                      :class = 'class_folds'
-                    ><h1>{{folds_last_30s}}</h1></v-card-text>
-                    
-                  </v-card>
-              
+                <v-row>
+                  <v-col 
+                  lg="6"
+                  md="4"
+                  sm="4"
+                  cols="4"
+                  >   <v-card>
+                        <v-card-title>Errori pieghe ultimi 30s</v-card-title>
+                        <v-card-text
+                          :class = 'class_folds'
+                          class="text-h2"
+                        ><h1>{{folds_last_30s}}</h1></v-card-text>
+                        
+                      </v-card>
+                  
+                  </v-col>
+
+                  <v-col 
+                  lg="6"
+                  md="4"
+                  sm="4"
+                  cols="4"
+                  >   <v-card>
+                        <v-card-title>Errori buchi ultimi 30s</v-card-title>
+                        <v-card-text
+                          :class = 'class_holes'
+                          class="text-h2"
+                        ><h1>{{holes_last_30s}}</h1></v-card-text>
+                      </v-card>
+                  
+                  </v-col>
+
+                  <v-col 
+                  lg="6"
+                  md="4"
+                  sm="4"
+                  cols="4"
+                  >   <v-card>
+                        <v-card-title>Errori Totali sessione</v-card-title>
+                        <v-card-text
+                          :class = 'class_tot'
+                          class="text-h2"
+                        ><h1>{{total_overall_errors}}</h1></v-card-text>
+                      </v-card>
+                  
+                  </v-col>
+
+                  <v-col 
+                  lg="6"
+                  md="4"
+                  sm="4"
+                  cols="4"
+                  >   <v-card>
+                        <v-card-title>Errori Misurazioni Totali sessione</v-card-title>
+                        <v-card-text
+                          :class = 'class_tot'
+                          class="text-h2"
+                        ><h1>{{total_overall_errors}}</h1></v-card-text>
+                      </v-card>
+                  
+                  </v-col>
+                
+                </v-row>
               </v-col>
 
-              
-
-              <v-col 
-              lg="6"
-              md="4"
-              sm="4"
-              cols="4"
-              >   <v-card>
-                    <v-card-title>Errori buchi ultimi 30s</v-card-title>
-                    <v-card-text
-                      :class = 'class_holes'
-                    ><h1>{{holes_last_30s}}</h1></v-card-text>
-                  </v-card>
-              
-              </v-col>
-
-              <v-col 
-              lg="6"
-              md="4"
-              sm="4"
-              cols="4"
-              >   <v-card>
-                    <v-card-title>Errori Totali sessione</v-card-title>
-                    <v-card-text
-                       :class = 'class_tot'
-                    ><h1>{{total_overall_errors}}</h1></v-card-text>
-                  </v-card>
-              
-              </v-col>
             </v-row>
 
-            </v-col>
-
-            </v-row>
-
-
-           
-
+          
+         
             <!--
             <v-card>
             <v-card-title>Errori</v-card-title>          
