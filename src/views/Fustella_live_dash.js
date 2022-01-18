@@ -159,7 +159,7 @@ import axios from 'axios'
                 },
                 value: {
                   formatter: function(val) {
-                    return (val/100*10000) + " RPM";
+                    return Math.floor(val/100*10000) + " RPM";
                   },
                   offsetY: -2,
                   fontSize: '22px'
@@ -277,7 +277,7 @@ import axios from 'axios'
           
           this.name_ = this.got[0].session.localSessionId
 
-          this.curr_rpm_perc = this.got[0].rotationSpeed*3600 /10000
+          this.curr_rpm_perc = this.got[0].rotationSpeed*3600 /100
 
           this.seriesRadial = [this.curr_rpm_perc]
                                                                       
@@ -303,6 +303,25 @@ import axios from 'axios'
               this.class_tot = "orange--text"
             }else{
               this.class_tot = "red--text"
+            }
+
+            let e_x = []
+            let e_y = []
+            for(let i=0;i<response.data.data.length;i++){
+              e_x.push = response.data.data[i].x_deform
+              e_y.push = response.data.data[i].y_deform
+            }
+            let sum_x = e_x.reduce((a, b) => a + b)
+            let sum_y = e_x.reduce((a, b) => a + b)
+
+            this.total_overall_m_errors = sum_x+sum_y/(e_x.length*2)
+            
+            if(this.total_overall_m_errors < 10){
+              this.class_m_tot = "green--text"
+            }else if(this.total_overall_m_errors >= 10 && this.total_overall_m_errors < 20){
+              this.class_m_tot = "orange--text"
+            }else{
+              this.class_m_tot = "red--text"
             }
           })
 

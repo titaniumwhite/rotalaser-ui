@@ -159,11 +159,11 @@
                   sm="4"
                   cols="4"
                   >   <v-card>
-                        <v-card-title>Errori Misurazioni Totali sessione</v-card-title>
+                        <v-card-title>Errori Medi Misurazioni per sessione (in cm)</v-card-title>
                         <v-card-text
                           :class = 'class_tot'
                           class="text-h2"
-                        ><h1>{{total_overall_errors}}</h1></v-card-text>
+                        ><h1>{{total_overall_errors}}</h1>  </v-card-text>
                       </v-card>
                   
                   </v-col>
