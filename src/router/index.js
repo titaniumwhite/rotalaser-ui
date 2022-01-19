@@ -8,6 +8,9 @@ import Fustella_post from '../views/Fustella_post.vue'
 import Fustella_live from '../views/Fustella_live.vue'
 import Fustella_live_dash from '../views/Fustella_live_dash.vue'
 import PageNotFound from '../views/PageNotFound.vue'
+import WaitRoom from '../views/WaitRoom.vue'
+
+
 
 Vue.use(VueRouter)
 
@@ -51,6 +54,11 @@ const routes = [
     path: '/fustella/live/dash/:id',
     name: 'fustella_live_dash',
     component: Fustella_live_dash
+  },
+  {
+    path: '/wait',
+    name: 'wait',
+    component: WaitRoom
   },
   { path: "*", 
     component: PageNotFound

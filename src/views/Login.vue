@@ -137,7 +137,7 @@ export default {
    methods: {
       validate(){
          if(this.email == "admin@admin.com" && this.password == "Rotalaser2021!")
-            this.$router.push("/clienti")
+            this.$router.push("/wait")
          else
             this.snackbar = true
       }

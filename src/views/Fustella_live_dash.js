@@ -273,6 +273,7 @@ import axios from 'axios'
 
           if(this.got[0].session.endedAt != null){
             this.live = false
+            this.$router.push("/wait")
           }
           
           this.name_ = this.got[0].session.localSessionId
@@ -311,11 +312,17 @@ import axios from 'axios'
               e_x.push = response.data.data[i].x_deform
               e_y.push = response.data.data[i].y_deform
             }
-            let sum_x = e_x.reduce((a, b) => a + b)
-            let sum_y = e_x.reduce((a, b) => a + b)
+            if(e_x.length>0){
+              let sum_x = e_x.reduce((a, b) => a + b)
+              let sum_y = e_x.reduce((a, b) => a + b)
+              this.total_overall_m_errors = Math.round(sum_x+sum_y/(e_x.length*2) *10)/10
+            }
+            else{
+              this.total_overall_m_errors = 0
+            }
 
-            this.total_overall_m_errors = sum_x+sum_y/(e_x.length*2)
-            
+           
+
             if(this.total_overall_m_errors < 10){
               this.class_m_tot = "green--text"
             }else if(this.total_overall_m_errors >= 10 && this.total_overall_m_errors < 20){

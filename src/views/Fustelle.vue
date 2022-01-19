@@ -413,13 +413,13 @@ export default {
           }).then(response =>{
           
             axios.get('http://195.231.3.173:8080/v1/customers/'+this.$route.params.id,{
-            headers:{
-              'key':this.$session.get("key")
-            }
-          }).then(response =>{
-              this.name = response.data.data.name
-          })
-            
+              headers:{
+                'key':this.$session.get("key")
+              }
+            }).then(response =>{
+                this.name = response.data.data.name
+            })
+          
             let filtered = []
             
             if(response.data.data.length == undefined){
