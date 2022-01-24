@@ -159,7 +159,7 @@ import axios from 'axios'
                 },
                 value: {
                   formatter: function(val) {
-                    return Math.floor(val/100*10000) + " RPM";
+                    return Math.floor(val * 3) + " RPM";
                   },
                   offsetY: -2,
                   fontSize: '22px'
@@ -278,7 +278,7 @@ import axios from 'axios'
           
           this.name_ = this.got[0].session.localSessionId
 
-          this.curr_rpm_perc = this.got[0].rotationSpeed*3600 /100
+          this.curr_rpm_perc = this.got[0].rotationSpeed*60 / 3
 
           this.seriesRadial = [this.curr_rpm_perc]
                                                                       
@@ -410,7 +410,7 @@ import axios from 'axios'
       if(this.switch1){
         this.hour = false
         this.switch1_text = "colpi al secondo" 
-        let computed = this.seriesAreaSpeed[0].data.map(item =>  JSON.parse('{ "x": '+item.x +', "y": '+ (item.y/3600).toFixed(5)+'}'))
+        let computed = this.seriesAreaSpeed[0].data.map(item =>  JSON.parse('{ "x": '+item.x +', "y": '+ (item.y/60).toFixed(5)+'}'))
         
         this.seriesAreaSpeed = [{
           name: "Velocità",
@@ -419,7 +419,7 @@ import axios from 'axios'
       }else{
         this.hour = true
         this.switch1_text = "colpi all'ora" 
-        let computed = this.seriesAreaSpeed[0].data.map(item => JSON.parse('{ "x": '+item.x.toString() +', "y": '+ (item.y*3600).toFixed(5)+"}"))
+        let computed = this.seriesAreaSpeed[0].data.map(item => JSON.parse('{ "x": '+item.x.toString() +', "y": '+ (item.y*60).toFixed(5)+"}"))
        
         this.seriesAreaSpeed = [{
           name: "Velocità",
